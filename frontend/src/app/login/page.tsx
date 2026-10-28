@@ -1,18 +1,18 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Lock, Phone, ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowUpRight, Lock, Eye, EyeOff } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Logo } from "@/components/shared/Logo";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [phone, setPhone] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [email, setEmail] = React.useState("nusrat@example.com");
+  const [password, setPassword] = React.useState("••••••••••");
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [rememberMe, setRememberMe] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,108 +21,163 @@ export default function LoginPage() {
     setTimeout(() => {
       setIsLoading(false);
       router.push("/account");
-    }, 800);
+    }, 600);
   };
 
   return (
     <StorefrontLayout>
-      <div className="min-h-[75vh] flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md p-8 rounded-3xl border border-brand-border bg-white shadow-xl space-y-6">
-          <div className="text-center space-y-2">
-            <div className="flex justify-center pb-2">
-              <Logo showTagline={false} />
-            </div>
-            <h1 className="font-heading font-black text-2xl text-charcoal-900">
-              Welcome Back
-            </h1>
-            <p className="text-xs text-charcoal-500">
-              Sign in with your phone number to access your order history and saved addresses.
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-charcoal-800">
-                Phone Number
-              </label>
-              <Input
-                required
-                type="tel"
-                placeholder="017XXXXXXXX"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex justify-between">
-                <label className="text-xs font-bold text-charcoal-800">
-                  Password
-                </label>
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert("A password reset SMS will be sent to your verified mobile number.");
-                  }}
-                  className="text-[11px] text-forest-800 hover:underline font-semibold"
-                >
-                  Forgot password?
-                </a>
+      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16">
+        <div className="max-w-[1040px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+            {/* Left Column: Lifestyle photo & copy (6 cols) */}
+            <div className="lg:col-span-6">
+              <div className="relative aspect-[4/3] rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
+                <Image
+                  src="/images/auth-lifestyle.png"
+                  alt="Woven jute baskets with fresh foliage on sunlit stone ledge"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 520px"
+                  className="object-cover"
+                  priority
+                />
               </div>
-              <Input
-                required
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+
+              <div className="mt-6">
+                <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2">
+                  YOUR EVERYDAY, A LITTLE MORE PERSONAL
+                </span>
+                <h2 className="font-serif text-2xl sm:text-[32px] text-[#143527] font-normal leading-snug mb-2">
+                  Keep your favourites close.
+                </h2>
+                <p className="text-[13px] text-[#6F7771] font-light leading-relaxed max-w-md">
+                  Follow your orders and keep your delivery details ready for next
+                  time.
+                </p>
+              </div>
             </div>
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              isLoading={isLoading}
-              className="w-full shadow-md"
-            >
-              Sign In
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          </form>
+            {/* Right Column: Sign In Form & Tabs (6 cols) */}
+            <div className="lg:col-span-6">
+              {/* Header Tabs */}
+              <div className="flex items-center gap-8 mb-8 text-[13.5px]">
+                <span className="font-medium text-[#143527] border-b-2 border-[#143527] pb-1 cursor-default">
+                  Sign in —
+                </span>
+                <Link
+                  href="/register"
+                  className="font-light text-[#7A837C] hover:text-[#143527] transition-colors pb-1"
+                >
+                  Create account
+                </Link>
+              </div>
 
-          {/* Quick Demo Fill */}
-          <div className="pt-2 text-center">
-            <button
-              type="button"
-              onClick={() => {
-                setPhone("01712345678");
-                setPassword("demo1234");
-              }}
-              className="text-xs text-gold-700 hover:underline font-semibold cursor-pointer"
-            >
-              Click to autofill sample customer credentials
-            </button>
-          </div>
+              {/* Title & Subtitle */}
+              <h1 className="font-serif text-3xl sm:text-[40px] text-[#143527] font-normal leading-tight mb-2">
+                Welcome back.
+              </h1>
+              <p className="text-[13px] text-[#6F7771] font-light mb-8">
+                Sign in to your SHOILPIKKABBO account.
+              </p>
 
-          <div className="border-t border-sand pt-4 text-center text-xs text-charcoal-600">
-            <span>Don't have an account yet? </span>
-            <Link
-              href="/register"
-              className="font-bold text-forest-800 hover:underline"
-            >
-              Create Account
-            </Link>
-          </div>
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
+                    Email address *
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
+                  />
+                </div>
 
-          {/* Admin shortcut */}
-          <div className="pt-2 border-t border-sand text-center">
-            <Link
-              href="/admin"
-              className="text-[11px] text-charcoal-500 hover:text-forest-900 font-semibold"
-            >
-              Staff & Operations Login ➔
-            </Link>
+                <div>
+                  <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
+                    Password *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••••"
+                      className="w-full h-11 px-3.5 pr-10 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8C948E] hover:text-[#143527] cursor-pointer"
+                      title={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Remember & Forgot Password */}
+                <div className="flex items-center justify-between text-[11.5px] text-[#6F7771] pt-1">
+                  <label className="flex items-center gap-2 cursor-pointer font-light">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-3.5 h-3.5 text-[#143527] rounded-[2px] focus:ring-[#143527]"
+                    />
+                    <span>Keep me signed in</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      alert("Password reset instructions will be sent to your email address.")
+                    }
+                    className="hover:text-[#143527] font-light cursor-pointer"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+
+                {/* Action Button */}
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full h-11 bg-[#143527] hover:bg-[#1B4332] text-white text-[13.5px] font-medium rounded-[3px] inline-flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs disabled:opacity-75"
+                  >
+                    <span>{isLoading ? "Signing in..." : "Sign in"}</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Security Advisory */}
+                <div className="flex items-center gap-2 text-[11px] text-[#8C948E] font-light pt-2">
+                  <Lock className="w-3.5 h-3.5 text-[#8C948E] shrink-0" />
+                  <span>We never ask for payment PINs or OTPs by message.</span>
+                </div>
+              </form>
+
+              {/* Guest Checkout Alternative */}
+              <div className="mt-10 pt-6">
+                <p className="text-[12px] text-[#6F7771] font-light mb-3">
+                  Just placing an order? You can check out as a guest.
+                </p>
+                <Link
+                  href="/shop"
+                  className="h-10 px-5 bg-white hover:bg-[#F3EFE7] border border-[#D5CDC0] text-[#143527] text-[12.5px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer w-fit shadow-xs"
+                >
+                  <span>Continue shopping</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
