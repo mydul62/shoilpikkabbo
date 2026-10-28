@@ -1,209 +1,234 @@
+"use client";
+
 import * as React from "react";
 import Link from "next/link";
-import { Phone, Mail, MapPin, ShieldCheck, Truck, Clock, Sparkles } from "lucide-react";
-import { Logo } from "@/components/shared/Logo";
+import { ArrowUpRight } from "lucide-react";
 import { CLIENT_INFO } from "@/data/mock-data";
 
 export function Footer() {
   return (
-    <footer className="bg-forest-950 text-sand border-t border-forest-900 mt-auto">
-      {/* Value Proposition Bar */}
-      <div className="border-b border-forest-900/60 bg-forest-900/40 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
-          <div className="flex items-center justify-center md:justify-start gap-4 p-4 rounded-xl bg-forest-900/40 border border-forest-800/40">
-            <div className="h-12 w-12 rounded-xl bg-forest-800 flex items-center justify-center text-gold-500 shrink-0">
-              <Truck className="h-6 w-6" />
+    <div className="mt-auto">
+      {/* 1. Value Proposition 3-Step Process & Help Bar */}
+      <div className="bg-[#F7F4EE] border-t border-[#EAE3D5]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          {/* 3-Step Ordering Process */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 lg:gap-16 py-12 sm:py-16">
+            {/* Step 1 */}
+            <div className="flex items-start gap-4">
+              <span className="font-serif text-2xl sm:text-[28px] font-normal text-[#B85D38] leading-none shrink-0 pt-0.5">
+                01
+              </span>
+              <div>
+                <h4 className="text-[14px] sm:text-[15px] font-medium text-[#143527] leading-snug">
+                  Find something you love
+                </h4>
+                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1.5 leading-relaxed">
+                  Browse by category or search the collection.
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="font-heading font-semibold text-white text-sm">
-                Reliable Delivery
-              </h4>
-              <p className="text-xs text-sand/70 mt-0.5">
-                Fast shipping across Dhaka & nationwide districts.
-              </p>
+
+            {/* Step 2 */}
+            <div className="flex items-start gap-4">
+              <span className="font-serif text-2xl sm:text-[28px] font-normal text-[#B85D38] leading-none shrink-0 pt-0.5">
+                02
+              </span>
+              <div>
+                <h4 className="text-[14px] sm:text-[15px] font-medium text-[#143527] leading-snug">
+                  Choose how to pay
+                </h4>
+                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1.5 leading-relaxed">
+                  bKash, Nagad, BRAC Bank transfer or card.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex items-start gap-4">
+              <span className="font-serif text-2xl sm:text-[28px] font-normal text-[#B85D38] leading-none shrink-0 pt-0.5">
+                03
+              </span>
+              <div>
+                <h4 className="text-[14px] sm:text-[15px] font-medium text-[#143527] leading-snug">
+                  Follow your delivery
+                </h4>
+                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1.5 leading-relaxed">
+                  View order updates and delivery details.
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-center md:justify-start gap-4 p-4 rounded-xl bg-forest-900/40 border border-forest-800/40">
-            <div className="h-12 w-12 rounded-xl bg-forest-800 flex items-center justify-center text-gold-500 shrink-0">
-              <ShieldCheck className="h-6 w-6" />
-            </div>
-            <div>
-              <h4 className="font-heading font-semibold text-white text-sm">
-                Artisanal Quality
-              </h4>
-              <p className="text-xs text-sand/70 mt-0.5">
-                Authentic handcrafted, organic, and industrial goods.
-              </p>
-            </div>
-          </div>
+          {/* Divider Line */}
+          <div className="border-t border-[#EAE3D5]" />
 
-          <div className="flex items-center justify-center md:justify-start gap-4 p-4 rounded-xl bg-forest-900/40 border border-forest-800/40">
-            <div className="h-12 w-12 rounded-xl bg-forest-800 flex items-center justify-center text-gold-500 shrink-0">
-              <Clock className="h-6 w-6" />
-            </div>
-            <div>
-              <h4 className="font-heading font-semibold text-white text-sm">
-                Customer Reliability
-              </h4>
-              <p className="text-xs text-sand/70 mt-0.5">
-                Direct phone support & transparent order tracking.
-              </p>
+          {/* Customer Pre-Purchase Consultation Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 py-8 sm:py-10">
+            <p className="text-[13.5px] sm:text-[14.5px] text-[#556059] font-light">
+              A question before you choose? We&apos;re here to help.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href={`https://wa.me/88${CLIENT_INFO.phonePrimary}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/70 hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group shadow-2xs"
+              >
+                <span>WhatsApp</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </a>
+              <a
+                href="https://m.me/shoilpikkabbo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/70 hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group shadow-2xs"
+              >
+                <span>Facebook Messenger</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Brand Info */}
-          <div className="lg:col-span-2 space-y-4">
-            <Logo variant="light" />
-            <p className="text-xs text-sand/80 leading-relaxed max-w-sm mt-3">
-              SHOILPIKKABBO is dedicated to delivering excellence across traditional Bangladeshi handicrafts, eco-friendly jute creations, lifestyle essentials, and custom corporate e-sheba solutions.
-            </p>
-
-            <div className="space-y-2 pt-2 text-xs">
-              <div className="flex items-center gap-2 text-sand/90">
-                <Phone className="h-4 w-4 text-gold-500 shrink-0" />
-                <span>
-                  Support: {CLIENT_INFO.phonePrimary} / {CLIENT_INFO.phoneSecondary}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-sand/90">
-                <Mail className="h-4 w-4 text-gold-500 shrink-0" />
-                <span>Email: {CLIENT_INFO.email}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sand/90">
-                <MapPin className="h-4 w-4 text-gold-500 shrink-0" />
-                <span>Dhaka, Bangladesh</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Catalog Categories */}
-          <div>
-            <h4 className="font-heading font-bold text-white text-sm uppercase tracking-wider mb-4">
-              Categories
-            </h4>
-            <ul className="space-y-2 text-xs text-sand/80">
-              <li>
-                <Link href="/shop?category=handicraft" className="hover:text-gold-500 transition-colors">
-                  Handicraft
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=jute-items" className="hover:text-gold-500 transition-colors">
-                  Jute Items
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=polymer" className="hover:text-gold-500 transition-colors">
-                  Polymer
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=baby-items" className="hover:text-gold-500 transition-colors">
-                  Baby Items
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=corporate-gift-items" className="hover:text-gold-500 transition-colors">
-                  Corporate Gifts
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=rudiment-garments" className="hover:text-gold-500 transition-colors">
-                  Rudiment Garments
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=health-and-beauty" className="hover:text-gold-500 transition-colors">
-                  Health & Beauty
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Quick & Support Links */}
-          <div>
-            <h4 className="font-heading font-bold text-white text-sm uppercase tracking-wider mb-4">
-              Customer Support
-            </h4>
-            <ul className="space-y-2 text-xs text-sand/80">
-              <li>
-                <Link href="/track-order" className="hover:text-gold-500 transition-colors">
-                  Track Your Order
-                </Link>
-              </li>
-              <li>
-                <Link href="/e-sheba" className="hover:text-gold-500 transition-colors font-medium text-gold-400">
-                  Special E-Sheba
-                </Link>
-              </li>
-              <li>
-                <Link href="/offers" className="hover:text-gold-500 transition-colors">
-                  Promotions & Coupons
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-gold-500 transition-colors">
-                  About Our Brand
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-gold-500 transition-colors">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/careers" className="hover:text-gold-500 transition-colors">
-                  Careers & Vacancies
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Payment & Security */}
-          <div>
-            <h4 className="font-heading font-bold text-white text-sm uppercase tracking-wider mb-4">
-              Payment Partners
-            </h4>
-            <p className="text-xs text-sand/70 mb-3 leading-relaxed">
-              We support verified manual payments via bKash, Nagad, and BRAC Bank PLC, plus Cash on Delivery.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <span className="px-2.5 py-1 rounded bg-forest-900 border border-forest-800 text-[11px] font-semibold text-pink-400">
-                bKash
-              </span>
-              <span className="px-2.5 py-1 rounded bg-forest-900 border border-forest-800 text-[11px] font-semibold text-amber-400">
-                Nagad
-              </span>
-              <span className="px-2.5 py-1 rounded bg-forest-900 border border-forest-800 text-[11px] font-semibold text-blue-400">
-                BRAC Bank
-              </span>
-              <span className="px-2.5 py-1 rounded bg-forest-900 border border-forest-800 text-[11px] font-semibold text-emerald-400">
-                Cash on Delivery
-              </span>
-            </div>
-            <div className="mt-4 pt-3 border-t border-forest-900">
-              <p className="text-[11px] text-sand/60">
-                Payment Verification: <strong className="text-sand">{CLIENT_INFO.phonePayment}</strong>
+      {/* 2. Main Deep Green Footer */}
+      <footer className="bg-[#133829] text-white overflow-hidden">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 pt-16 sm:pt-20 pb-12 sm:pb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-14 sm:pb-16">
+            {/* Column 1: Brand Info */}
+            <div className="lg:col-span-5">
+              <h3 className="font-serif text-2xl sm:text-[28px] font-normal tracking-[0.08em] text-white uppercase mb-2">
+                SHOILPIKKABBO
+              </h3>
+              <p className="text-[12px] sm:text-[12.5px] text-[#A8BDB2] font-light mb-6 tracking-wide">
+                Delivery • Quality • Reliability
               </p>
+              <div className="space-y-1.5 text-[13px] text-[#A8BDB2] font-light">
+                <a
+                  href={`mailto:${CLIENT_INFO.email}`}
+                  className="hover:text-white transition-colors block"
+                >
+                  {CLIENT_INFO.email}
+                </a>
+                <p className="text-[#A8BDB2]">
+                  {CLIENT_INFO.phonePrimary} · {CLIENT_INFO.phoneSecondary}
+                </p>
+              </div>
+            </div>
+
+            {/* Column 2: Explore */}
+            <div className="lg:col-span-2">
+              <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-4 sm:mb-5">
+                Explore
+              </h4>
+              <ul className="space-y-2.5 text-[12.5px] sm:text-[13px] text-[#A8BDB2] font-light">
+                <li>
+                  <Link href="/shop" className="hover:text-white transition-colors">
+                    Shop all products
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/e-sheba" className="hover:text-white transition-colors">
+                    Services
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/about" className="hover:text-white transition-colors">
+                    About us
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/careers" className="hover:text-white transition-colors">
+                    Career
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/offers" className="hover:text-white transition-colors">
+                    Offers / Discounts
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: Here to help */}
+            <div className="lg:col-span-2">
+              <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-4 sm:mb-5">
+                Here to help
+              </h4>
+              <ul className="space-y-2.5 text-[12.5px] sm:text-[13px] text-[#A8BDB2] font-light">
+                <li>
+                  <Link href="/track-order" className="hover:text-white transition-colors">
+                    Track an order
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-white transition-colors">
+                    Contact us
+                  </Link>
+                </li>
+                <li>
+                  <a
+                    href={`https://wa.me/88${CLIENT_INFO.phonePrimary}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    WhatsApp
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://m.me/shoilpikkabbo"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors"
+                  >
+                    Facebook Messenger
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 4: Pay your way */}
+            <div className="lg:col-span-3">
+              <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-4 sm:mb-5">
+                Pay your way
+              </h4>
+              <div className="space-y-1.5 text-[12.5px] sm:text-[13px] text-[#D0DFD7] font-light">
+                <p>bKash · Nagad · Card</p>
+                <p>Bank transfer · BRAC Bank</p>
+                <p className="text-[11.5px] sm:text-[12px] text-[#869E90] pt-2 leading-relaxed max-w-[260px]">
+                  Online payments continue through a secure payment gateway.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Bottom Copyright */}
-        <div className="border-t border-forest-900 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-sand/60 gap-4">
-          <p>© {new Date().getFullYear()} SHOILPIKKABBO. All rights reserved.</p>
-          <div className="flex items-center gap-1 text-gold-500 font-medium">
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Delivery • Quality • Reliability</span>
+          {/* Bottom Hairline Divider & Legal / Language */}
+          <div className="border-t border-[#1C4936] pt-8 sm:pt-10 flex flex-col gap-4">
+            <div className="flex flex-wrap items-center gap-x-2 text-[12px] text-[#869E90] font-light">
+              <Link href="/privacy" className="hover:text-white transition-colors">
+                Privacy
+              </Link>
+              <span>·</span>
+              <Link href="/terms" className="hover:text-white transition-colors">
+                Terms
+              </Link>
+              <span>·</span>
+              <Link href="/refund" className="hover:text-white transition-colors">
+                Return / refund
+              </Link>
+              <span>·</span>
+              <Link href="/shipping" className="hover:text-white transition-colors">
+                Shipping policy
+              </Link>
+            </div>
+            <p className="text-[11px] sm:text-[11.5px] text-[#71887A] font-light">
+              © SHOILPIKKABBO <span className="mx-1">·</span> EN / বাংলা
+            </p>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </div>
   );
 }

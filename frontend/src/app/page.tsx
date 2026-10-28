@@ -4,32 +4,15 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  ArrowRight,
   ArrowUpRight,
   Plus,
   Check,
   Gift,
   Factory,
   Headset,
-  Sparkles,
-  ShieldCheck,
-  Truck,
-  Layers,
-  HeartHandshake,
-  CheckCircle2,
-  PhoneCall,
-  Clock,
 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
-import { ProductCard } from "@/components/shop/ProductCard";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/context/CartContext";
-import {
-  MOCK_CATEGORIES,
-  MOCK_PRODUCTS,
-  CLIENT_INFO,
-} from "@/data/mock-data";
 
 export default function HomePage() {
   const { addToCart, setIsCartOpen } = useCart();
@@ -70,8 +53,6 @@ export default function HomePage() {
     setIsCartOpen(true);
   };
 
-  const featuredProducts = MOCK_PRODUCTS.filter((p) => p.isFeatured);
-  const newArrivals = MOCK_PRODUCTS.filter((p) => p.isNewArrival);
 
   return (
     <StorefrontLayout>
@@ -735,86 +716,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* 8. New Arrivals Grid */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-          <div>
-            <span className="text-xs font-bold text-forest-800 uppercase tracking-wider">
-              Fresh Inventory
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-charcoal-900 font-heading mt-1">
-              New Arrivals
-            </h2>
-          </div>
-          <Link
-            href="/shop"
-            className="text-xs font-bold text-forest-800 hover:text-forest-700 flex items-center gap-1.5"
-          >
-            <span>View All Products</span>
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {newArrivals.map((prod) => (
-            <ProductCard key={prod.id} product={prod} />
-          ))}
-        </div>
-      </section>
-
-      {/* 7. Brand Values & Quality Assurance */}
-      <section className="bg-sand/40 border-t border-brand-border py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center space-y-4">
-          <Badge variant="primary" className="text-xs px-3 py-1">
-            Why Choose SHOILPIKKABBO
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-charcoal-900 font-heading max-w-2xl mx-auto">
-            Committed to Quality, Empowering Artisans, Serving Businesses
-          </h2>
-          <p className="text-xs sm:text-sm text-charcoal-600 max-w-2xl mx-auto leading-relaxed">
-            Every product in our store is crafted or sourced with strict adherence to durability, ecological sustainability, and ethical trade standards across Bangladesh.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 text-left">
-            <div className="p-6 rounded-2xl bg-white border border-brand-border shadow-xs">
-              <div className="h-10 w-10 rounded-xl bg-forest-100 text-forest-800 flex items-center justify-center mb-4">
-                <HeartHandshake className="h-5 w-5" />
-              </div>
-              <h3 className="font-heading font-bold text-base text-charcoal-900 mb-2">
-                Ethical Artisan Partnerships
-              </h3>
-              <p className="text-xs text-charcoal-600 leading-relaxed">
-                Directly supporting local potteries, weavers, and small-batch fabricators without exploitative middleman markups.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white border border-brand-border shadow-xs">
-              <div className="h-10 w-10 rounded-xl bg-gold-100 text-gold-700 flex items-center justify-center mb-4">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <h3 className="font-heading font-bold text-base text-charcoal-900 mb-2">
-                Rigorous Quality Verification
-              </h3>
-              <p className="text-xs text-charcoal-600 leading-relaxed">
-                Every single item undergoes physical inspection for material authenticity, dimension accuracy, and finish quality prior to dispatch.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white border border-brand-border shadow-xs">
-              <div className="h-10 w-10 rounded-xl bg-forest-100 text-forest-800 flex items-center justify-center mb-4">
-                <Truck className="h-5 w-5" />
-              </div>
-              <h3 className="font-heading font-bold text-base text-charcoal-900 mb-2">
-                Punctual & Secure Delivery
-              </h3>
-              <p className="text-xs text-charcoal-600 leading-relaxed">
-                Protective corrugated bubble packaging tailored for fragile ceramics, ensuring your order arrives in pristine condition.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
     </StorefrontLayout>
   );
 }
+
