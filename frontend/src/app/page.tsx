@@ -112,87 +112,164 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. Value Propositions Bar */}
-      <section className="bg-sand/60 border-b border-brand-border py-6 px-4">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="flex flex-col items-center p-3">
-            <Truck className="h-6 w-6 text-forest-800 mb-1.5" />
-            <h4 className="text-xs font-bold text-charcoal-900 uppercase tracking-wide">
-              Nationwide Delivery
-            </h4>
-            <p className="text-[11px] text-charcoal-500">Dhaka & all 64 districts</p>
-          </div>
-          <div className="flex flex-col items-center p-3">
-            <ShieldCheck className="h-6 w-6 text-forest-800 mb-1.5" />
-            <h4 className="text-xs font-bold text-charcoal-900 uppercase tracking-wide">
-              Verified Quality
-            </h4>
-            <p className="text-[11px] text-charcoal-500">Artisan direct inspection</p>
-          </div>
-          <div className="flex flex-col items-center p-3">
-            <Layers className="h-6 w-6 text-forest-800 mb-1.5" />
-            <h4 className="text-xs font-bold text-charcoal-900 uppercase tracking-wide">
-              10 Catalog Niches
-            </h4>
-            <p className="text-[11px] text-charcoal-500">Retail & corporate solutions</p>
-          </div>
-          <div className="flex flex-col items-center p-3">
-            <Clock className="h-6 w-6 text-forest-800 mb-1.5" />
-            <h4 className="text-xs font-bold text-charcoal-900 uppercase tracking-wide">
-              Direct Support
-            </h4>
-            <p className="text-[11px] text-charcoal-500">{CLIENT_INFO.phonePrimary}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Featured Categories Grid */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-          <div>
-            <span className="text-xs font-bold text-forest-800 uppercase tracking-wider">
-              Curated Collections
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-charcoal-900 font-heading mt-1">
-              Explore Our Product Categories
-            </h2>
-          </div>
-          <Link
-            href="/shop"
-            className="text-xs font-bold text-forest-800 hover:text-forest-700 flex items-center gap-1.5"
-          >
-            <span>View All Categories</span>
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {MOCK_CATEGORIES.map((cat) => (
+      {/* 2. Category Discovery Section - Exact Match with Client Reference */}
+      <section className="bg-[#F7F4EE] py-14 sm:py-18 lg:py-20 border-b border-[#EAE3D5]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          {/* Header Row: Overline, Title, and Right 'Explore all categories' Link */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-12">
+            <div>
+              <p className="text-[11px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-2 sm:mb-3">
+                MANY NEEDS. ONE DESTINATION.
+              </p>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-[#143527] leading-[1.1] tracking-tight">
+                Find your everyday.
+              </h2>
+            </div>
             <Link
-              key={cat.id}
-              href={cat.isService ? "/e-sheba" : `/shop?category=${cat.slug}`}
-              className="group relative flex flex-col rounded-2xl border border-brand-border bg-white overflow-hidden shadow-xs hover:shadow-md hover:border-forest-700 transition-all duration-300"
+              href="/shop"
+              className="inline-flex items-center gap-1.5 text-[13px] sm:text-[14px] font-medium text-[#143527] hover:text-[#B85D38] transition-colors self-start sm:self-auto group"
             >
-              <div className="relative aspect-4/3 w-full bg-sand/50 overflow-hidden">
-                <Image
-                  src={cat.imageUrl}
-                  alt={cat.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  sizes="(max-width: 640px) 50vw, 20vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-charcoal-950/70 via-charcoal-950/20 to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 text-white">
-                  <h3 className="font-heading font-bold text-sm leading-tight drop-shadow-sm">
-                    {cat.name}
-                  </h3>
-                  <p className="text-[10px] text-sand/80 mt-0.5">
-                    {cat.isService ? "Service Inquiries" : `${cat.itemCount} items`}
-                  </p>
-                </div>
-              </div>
+              <span>Explore all categories</span>
+              <ArrowUpRight className="w-4 h-4 text-[#143527] group-hover:text-[#B85D38] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </Link>
-          ))}
+          </div>
+
+          {/* 3 Featured Category Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-8 sm:mb-10">
+            {/* 1. Handicrafts */}
+            <Link
+              href="/shop?category=handicraft"
+              className="group block"
+            >
+              <div className="relative w-full aspect-[1.65/1] rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4">
+                <Image
+                  src="/images/category-handicrafts.png"
+                  alt="Handcrafted ceramic pottery vase with dried botanical branch"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif text-2xl sm:text-[25px] font-normal text-[#143527] group-hover:text-[#B85D38] transition-colors leading-tight">
+                  Handicrafts
+                </h3>
+                <ArrowUpRight className="w-4 h-4 text-[#143527] group-hover:text-[#B85D38] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
+              </div>
+              <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1">
+                Objects with a human touch
+              </p>
+            </Link>
+
+            {/* 2. Jute Items */}
+            <Link
+              href="/shop?category=jute-items"
+              className="group block"
+            >
+              <div className="relative w-full aspect-[1.65/1] rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4">
+                <Image
+                  src="/images/category-jute.png"
+                  alt="Eco-friendly golden jute tote bag with dark green handles"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif text-2xl sm:text-[25px] font-normal text-[#143527] group-hover:text-[#B85D38] transition-colors leading-tight">
+                  Jute Items
+                </h3>
+                <ArrowUpRight className="w-4 h-4 text-[#143527] group-hover:text-[#B85D38] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
+              </div>
+              <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1">
+                Naturally useful, beautifully simple
+              </p>
+            </Link>
+
+            {/* 3. Corporate Gift Items */}
+            <Link
+              href="/shop?category=corporate-gift-items"
+              className="group block"
+            >
+              <div className="relative w-full aspect-[1.65/1] rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4">
+                <Image
+                  src="/images/category-corporate.png"
+                  alt="Kraft paper corporate gift box with dark green ribbon and ceramic tea mug"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif text-2xl sm:text-[25px] font-normal text-[#143527] group-hover:text-[#B85D38] transition-colors leading-tight">
+                  Corporate Gift Items
+                </h3>
+                <ArrowUpRight className="w-4 h-4 text-[#143527] group-hover:text-[#B85D38] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform shrink-0" />
+              </div>
+              <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1">
+                A thoughtful way to say thank you
+              </p>
+            </Link>
+          </div>
+
+          {/* 7 Pill Tags for Remaining Categories */}
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-2 sm:pt-4">
+            <Link
+              href="/shop?category=polymer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full border border-[#D5CDC0] bg-[#F7F4EE] hover:bg-white hover:border-[#143527] text-[#2D3F33] hover:text-[#143527] text-[12px] sm:text-[12.5px] font-normal transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] group"
+            >
+              <span>Polymer</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#6A736C] group-hover:text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+
+            <Link
+              href="/shop?category=baby-items"
+              className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full border border-[#D5CDC0] bg-[#F7F4EE] hover:bg-white hover:border-[#143527] text-[#2D3F33] hover:text-[#143527] text-[12px] sm:text-[12.5px] font-normal transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] group"
+            >
+              <span>Baby Items</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#6A736C] group-hover:text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+
+            <Link
+              href="/shop?category=rudiment-garments"
+              className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full border border-[#D5CDC0] bg-[#F7F4EE] hover:bg-white hover:border-[#143527] text-[#2D3F33] hover:text-[#143527] text-[12px] sm:text-[12.5px] font-normal transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] group"
+            >
+              <span>Rudiment Garments</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#6A736C] group-hover:text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+
+            <Link
+              href="/shop?category=industrial-solutions"
+              className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full border border-[#D5CDC0] bg-[#F7F4EE] hover:bg-white hover:border-[#143527] text-[#2D3F33] hover:text-[#143527] text-[12px] sm:text-[12.5px] font-normal transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] group"
+            >
+              <span>Industrial Solutions</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#6A736C] group-hover:text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+
+            <Link
+              href="/shop?category=health-and-beauty"
+              className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full border border-[#D5CDC0] bg-[#F7F4EE] hover:bg-white hover:border-[#143527] text-[#2D3F33] hover:text-[#143527] text-[12px] sm:text-[12.5px] font-normal transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] group"
+            >
+              <span>Health & Beauty (Cosmetics, Food, Medicine)</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#6A736C] group-hover:text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+
+            <Link
+              href="/shop?category=agriculture"
+              className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full border border-[#D5CDC0] bg-[#F7F4EE] hover:bg-white hover:border-[#143527] text-[#2D3F33] hover:text-[#143527] text-[12px] sm:text-[12.5px] font-normal transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] group"
+            >
+              <span>Agriculture</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#6A736C] group-hover:text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+
+            <Link
+              href="/e-sheba"
+              className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full border border-[#D5CDC0] bg-[#F7F4EE] hover:bg-white hover:border-[#143527] text-[#2D3F33] hover:text-[#143527] text-[12px] sm:text-[12.5px] font-normal transition-all shadow-[0_1px_2px_rgba(0,0,0,0.02)] group"
+            >
+              <span>Special E-Sheba / Services</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#6A736C] group-hover:text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </Link>
+          </div>
         </div>
       </section>
 
