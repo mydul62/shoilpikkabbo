@@ -495,6 +495,42 @@ export const MOCK_PRODUCTS: Product[] = [
 // Mock Orders
 export const MOCK_ORDERS: Order[] = [
   {
+    id: "ord-mockup-nusrat",
+    orderNumber: "SK-261102-1042",
+    customerName: "Nusrat Rahman",
+    customerPhone: "01700 000000",
+    customerEmail: "nusrat@example.com",
+    shippingAddress: "House 12, Road 7, Dhanmondi",
+    city: "Dhaka 1209",
+    totalAmount: 1900,
+    deliveryCharge: 80,
+    discountAmount: 150,
+    finalAmount: 1830,
+    orderStatus: "DELIVERED",
+    paymentStatus: "PAID",
+    paymentMethod: "BKASH",
+    transactionId: "TRX8829104",
+    createdAt: "2 Nov 2026, 10:24 AM",
+    items: [
+      {
+        id: "item-jute-basket",
+        productId: "prod-jute-basket",
+        productName: "Everyday jute basket",
+        price: 1450,
+        quantity: 1,
+        imageUrl: "/images/product-jute-basket.png",
+      },
+      {
+        id: "item-woven-coasters",
+        productId: "prod-woven-coasters",
+        productName: "Woven coaster set",
+        price: 450,
+        quantity: 1,
+        imageUrl: "/images/product-woven-coasters.png",
+      },
+    ],
+  },
+  {
     id: "ord-1",
     orderNumber: "SK-2026-101",
     customerName: "Tanvir Ahmed",
