@@ -1,119 +1,134 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Sparkles, HeartHandshake, ShieldCheck, Truck, ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { CLIENT_INFO } from "@/data/mock-data";
+
+export const metadata = {
+  title: "About Us | SHOILPIKKABBO",
+  description:
+    "A Bangladeshi destination connecting craft, everyday commerce and practical services. Delivery • Quality • Reliability.",
+};
 
 export default function AboutPage() {
   return (
     <StorefrontLayout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
-        {/* Hero Section */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
-          <Badge variant="primary" className="text-xs px-3 py-1">
-            Our Brand Story
-          </Badge>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-charcoal-900 font-heading">
-            Preserving Artisanal Heritage, <br />
-            <span className="text-forest-800">Delivering Modern Reliability</span>
+      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16">
+        <div className="max-w-[1040px] mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumb */}
+          <nav className="text-[12px] text-[#7A837C] font-light mb-4">
+            <Link href="/" className="hover:text-[#143527] transition-colors">
+              Home
+            </Link>
+            <span className="mx-1.5">/</span>
+            <span className="text-[#143527]">About us</span>
+          </nav>
+
+          {/* Page Title & Subtitle */}
+          <h1 className="font-serif text-3xl sm:text-[42px] text-[#143527] font-normal tracking-tight leading-tight">
+            Thoughtfully brought together.
           </h1>
-          <p className="text-xs sm:text-sm text-charcoal-600 leading-relaxed">
-            Founded in Dhaka, Bangladesh, <strong>SHOILPIKKABBO</strong> bridges timeless rural craft traditions with high-standards modern e-commerce fulfillment.
+          <p className="text-[13px] text-[#7A837C] font-light mt-2 mb-10 sm:mb-12">
+            SHOILPIKKABBO · Delivery • Quality • Reliability
           </p>
-        </div>
 
-        {/* Brand Story Image + Narrative */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          <div className="lg:col-span-6 relative aspect-4/3 rounded-2xl overflow-hidden border border-brand-border shadow-md">
-            <Image
-              src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80"
-              alt="Bangladeshi Artisan Crafting Pottery"
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
-          </div>
+          {/* Hero Story: 2 Column Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Left Column: Artisan weaving image (6 cols) */}
+            <div className="lg:col-span-6">
+              <div className="relative aspect-[4/3] rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
+                <Image
+                  src="/images/story-artisan.png"
+                  alt="Artisan hands hand-weaving a natural golden jute basket"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 520px"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+            </div>
 
-          <div className="lg:col-span-6 space-y-4 text-xs sm:text-sm text-charcoal-700 leading-relaxed">
-            <h2 className="font-heading font-extrabold text-2xl text-charcoal-900">
-              Who We Are
-            </h2>
-            <p>
-              At <strong>SHOILPIKKABBO</strong>, we believe every handwoven jute basket, finely turned terracotta cup, and precision-manufactured textile tells a story of dignity, patience, and uncompromising craftsmanship.
-            </p>
-            <p>
-              Too often, rural master artisans struggle with logistics, fragile product transit, and delayed payment terms. We created a centralized, verified digital marketplace that ensures transparent artisan compensation while providing consumers and institutions with dependable nationwide delivery and certified quality.
-            </p>
-            <div className="pt-2">
-              <Link href="/shop">
-                <Button variant="primary" size="md">
-                  Explore Handcrafted Collections
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
+            {/* Right Column: Introduction Narrative (6 cols) */}
+            <div className="lg:col-span-6 flex flex-col justify-center">
+              <span className="text-[10.5px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2.5">
+                OUR PROFILE / PROPOSED INTRODUCTION
+              </span>
+              <h2 className="font-serif text-2xl sm:text-[34px] text-[#143527] font-normal leading-snug mb-4">
+                A place for products, people and possibilities.
+              </h2>
+              <p className="text-[13.5px] sm:text-[14px] text-[#556059] font-light leading-relaxed mb-6">
+                SHOILPIKKABBO is envisioned as a Bangladeshi destination connecting
+                craft, everyday commerce and practical services. This proposed
+                introduction expresses the direction of the brand; the official
+                company profile will be added after approval.
+              </p>
+              <div>
+                <Link
+                  href="/shop"
+                  className="h-11 px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+                >
+                  <span>Explore our collection</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Mission & Vision Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="p-8 rounded-2xl bg-white border border-brand-border shadow-xs space-y-3">
-            <span className="text-xs font-bold text-forest-800 uppercase tracking-wider">
-              Our Purpose
-            </span>
-            <h3 className="font-heading font-black text-xl text-charcoal-900">
-              Our Mission
-            </h3>
-            <p className="text-xs sm:text-sm text-charcoal-600 leading-relaxed">
-              To be Bangladesh’s most reliable e-commerce gateway for artisanal crafts, organic wellness goods, and institutional procurement—delivering authentic items safely, transparently, and swiftly to every doorstep.
-            </p>
-          </div>
-
-          <div className="p-8 rounded-2xl bg-white border border-brand-border shadow-xs space-y-3">
-            <span className="text-xs font-bold text-gold-700 uppercase tracking-wider">
-              Long-term Outlook
-            </span>
-            <h3 className="font-heading font-black text-xl text-charcoal-900">
-              Our Vision
-            </h3>
-            <p className="text-xs sm:text-sm text-charcoal-600 leading-relaxed">
-              To elevate Bangladeshi handicraft, sustainable jute goods, and regional enterprise to world-class standards, creating sustainable livelihoods for artisan clusters while maintaining 100% customer satisfaction.
-            </p>
-          </div>
-        </div>
-
-        {/* Three Core Pillars */}
-        <div className="p-8 rounded-3xl bg-forest-950 text-sand border border-forest-900 text-center space-y-6">
-          <Badge variant="gold" className="text-xs px-3 py-1">
-            Our Brand Philosophy
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
-            Delivery • Quality • Reliability
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 text-left">
-            <div className="p-5 rounded-xl bg-forest-900/60 border border-forest-800">
-              <Truck className="h-6 w-6 text-gold-500 mb-2" />
-              <h4 className="font-heading font-bold text-white text-sm">Delivery</h4>
-              <p className="text-xs text-sand/70 mt-1 leading-relaxed">
-                Punctual dispatch, specialized shock-proof packaging for ceramics, and delivery across all 64 districts.
+          {/* Mission & Vision Cards: 2 Columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-14 sm:mt-16 mb-14 sm:mb-16">
+            {/* Mission Card */}
+            <div className="bg-[#EFECE6] border border-[#E5DFD3] rounded-[4px] p-6 sm:p-8">
+              <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2">
+                01 / PROPOSED FOR APPROVAL
+              </span>
+              <h3 className="font-serif text-[24px] text-[#143527] font-normal mb-3">
+                Our mission
+              </h3>
+              <p className="text-[13px] text-[#556059] font-light leading-relaxed">
+                To make thoughtfully selected products and useful services
+                easier to discover, understand and order, with clear information
+                and considerate support.
               </p>
             </div>
-            <div className="p-5 rounded-xl bg-forest-900/60 border border-forest-800">
-              <ShieldCheck className="h-6 w-6 text-gold-500 mb-2" />
-              <h4 className="font-heading font-bold text-white text-sm">Quality</h4>
-              <p className="text-xs text-sand/70 mt-1 leading-relaxed">
-                Rigorous inspection of all clay, fabric weave, polymer strength, and cold-pressed oil purity before warehouse acceptance.
+
+            {/* Vision Card */}
+            <div className="bg-[#EFECE6] border border-[#E5DFD3] rounded-[4px] p-6 sm:p-8">
+              <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2">
+                02 / PROPOSED FOR APPROVAL
+              </span>
+              <h3 className="font-serif text-[24px] text-[#143527] font-normal mb-3">
+                Our vision
+              </h3>
+              <p className="text-[13px] text-[#556059] font-light leading-relaxed">
+                To create a welcoming destination where Bangladeshi craft and
+                everyday needs meet a transparent, accessible shopping
+                experience.
               </p>
             </div>
-            <div className="p-5 rounded-xl bg-forest-900/60 border border-forest-800">
-              <HeartHandshake className="h-6 w-6 text-gold-500 mb-2" />
-              <h4 className="font-heading font-bold text-white text-sm">Reliability</h4>
-              <p className="text-xs text-sand/70 mt-1 leading-relaxed">
-                Audited payment records, direct human phone support, and transparent return policies for your absolute peace of mind.
+          </div>
+
+          {/* Bottom Pillar Row: Delivery. Quality. Reliability. */}
+          <div className="border-t border-[#E8E2D8] pt-12 pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="lg:col-span-6">
+              <h2 className="font-serif text-3xl sm:text-[38px] text-[#143527] font-normal tracking-tight leading-tight">
+                Delivery. Quality. Reliability.
+              </h2>
+            </div>
+            <div className="lg:col-span-6">
+              <p className="text-[13px] text-[#556059] font-light leading-relaxed mb-5 max-w-lg">
+                Three words to guide the experience: clear delivery information,
+                useful product details and a dependable way to get help. Our
+                policies and service standards will be published before launch.
               </p>
+              <div>
+                <Link
+                  href="/contact"
+                  className="h-10 px-5 bg-transparent hover:bg-black/[0.03] border border-[#D5CDC0] text-[#143527] text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
+                >
+                  <span>Talk to us</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
