@@ -1,9 +1,13 @@
+"use client";
+
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
   ArrowRight,
   ArrowUpRight,
+  Plus,
+  Check,
   Sparkles,
   ShieldCheck,
   Truck,
@@ -17,6 +21,7 @@ import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { ProductCard } from "@/components/shop/ProductCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useCart } from "@/context/CartContext";
 import {
   MOCK_CATEGORIES,
   MOCK_PRODUCTS,
@@ -24,6 +29,44 @@ import {
 } from "@/data/mock-data";
 
 export default function HomePage() {
+  const { addToCart, setIsCartOpen } = useCart();
+  const [addedProductId, setAddedProductId] = React.useState<string | null>(null);
+
+  const handleQuickAdd = (productData: {
+    id: string;
+    name: string;
+    slug: string;
+    price: number;
+    salePrice?: number;
+    imageUrl: string;
+    categoryName: string;
+    stock: number;
+  }) => {
+    addToCart(
+      {
+        id: productData.id,
+        name: productData.name,
+        slug: productData.slug,
+        categoryId: "quick-cat",
+        categoryName: productData.categoryName,
+        price: productData.price,
+        salePrice: productData.salePrice,
+        stock: productData.stock,
+        sku: `SK-${productData.slug}`,
+        rating: 5,
+        reviewCount: 18,
+        imageUrl: productData.imageUrl,
+        galleryUrls: [productData.imageUrl],
+        description: productData.name,
+        specifications: {},
+      },
+      1
+    );
+    setAddedProductId(productData.id);
+    setTimeout(() => setAddedProductId(null), 1500);
+    setIsCartOpen(true);
+  };
+
   const featuredProducts = MOCK_PRODUCTS.filter((p) => p.isFeatured);
   const newArrivals = MOCK_PRODUCTS.filter((p) => p.isNewArrival);
 
@@ -273,32 +316,225 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Featured Products Spotlight */}
-      <section className="py-12 bg-white border-y border-brand-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+      {/* 3. The Considered Edit - Pixel-Exact to User Design */}
+      <section className="bg-[#F7F4EE] py-14 sm:py-18 lg:py-20 border-b border-[#EAE3D5]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-12">
             <div>
-              <div className="flex items-center gap-1.5 text-xs font-bold text-gold-700 uppercase tracking-wider">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Handpicked Excellence</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-charcoal-900 font-heading mt-1">
-                Featured Products
+              <p className="text-[11px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-2 sm:mb-3">
+                THE CONSIDERED EDIT
+              </p>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-[#143527] leading-[1.1] tracking-tight">
+                Small details. Lasting delight.
               </h2>
             </div>
             <Link
               href="/shop"
-              className="text-xs font-bold text-forest-800 hover:text-forest-700 flex items-center gap-1.5"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[2px] border border-[#D5CDC0] bg-transparent hover:bg-white hover:border-[#143527] text-[#143527] text-[13px] sm:text-[13.5px] font-medium transition-all shadow-2xs self-start sm:self-auto group"
             >
-              <span>Browse Catalog</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <span>Shop all products</span>
+              <ArrowUpRight className="w-4 h-4 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((prod) => (
-              <ProductCard key={prod.id} product={prod} />
-            ))}
+          {/* 4-Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7">
+            {/* Product 1: Everyday jute basket */}
+            <div className="group flex flex-col">
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-3.5">
+                <Link href="/products/natural-braided-golden-jute-floor-rug" className="block relative w-full h-full">
+                  <Image
+                    src="/images/product-jute-basket.png"
+                    alt="Everyday handwoven jute basket with handles"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+                  />
+                </Link>
+                {/* Floating Add to Bag Button */}
+                <button
+                  onClick={() => handleQuickAdd({
+                    id: "prod-jute-basket",
+                    name: "Everyday jute basket",
+                    slug: "everyday-jute-basket",
+                    price: 1450,
+                    imageUrl: "/images/product-jute-basket.png",
+                    categoryName: "Jute Items",
+                    stock: 25,
+                  })}
+                  className="absolute bottom-3 right-3 h-9 w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
+                  title="Add to bag"
+                  aria-label="Add Everyday jute basket to bag"
+                >
+                  {addedProductId === "prod-jute-basket" ? (
+                    <Check className="w-4 h-4 text-[#143527]" />
+                  ) : (
+                    <Plus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
+                  )}
+                </button>
+              </div>
+              <span className="text-[11px] sm:text-[11.5px] text-[#6A736C] font-light">
+                Jute Items
+              </span>
+              <Link href="/products/natural-braided-golden-jute-floor-rug">
+                <h3 className="text-[14.5px] sm:text-[15px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug">
+                  Everyday jute basket
+                </h3>
+              </Link>
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className="text-[14px] sm:text-[14.5px] font-semibold text-[#143527]">
+                  ৳1,450
+                </span>
+                <span className="text-[12px] text-[#8C948E] line-through font-light">
+                  ৳1,650
+                </span>
+              </div>
+            </div>
+
+            {/* Product 2: Woven coaster set */}
+            <div className="group flex flex-col">
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-3.5">
+                <Link href="/products/handcrafted-terracotta-ceramic-tea-set" className="block relative w-full h-full">
+                  <Image
+                    src="/images/product-woven-coasters.png"
+                    alt="Natural woven circular jute coaster set"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+                  />
+                </Link>
+                <button
+                  onClick={() => handleQuickAdd({
+                    id: "prod-woven-coasters",
+                    name: "Woven coaster set",
+                    slug: "woven-coaster-set",
+                    price: 450,
+                    imageUrl: "/images/product-woven-coasters.png",
+                    categoryName: "Handicrafts",
+                    stock: 35,
+                  })}
+                  className="absolute bottom-3 right-3 h-9 w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
+                  title="Add to bag"
+                  aria-label="Add Woven coaster set to bag"
+                >
+                  {addedProductId === "prod-woven-coasters" ? (
+                    <Check className="w-4 h-4 text-[#143527]" />
+                  ) : (
+                    <Plus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
+                  )}
+                </button>
+              </div>
+              <span className="text-[11px] sm:text-[11.5px] text-[#6A736C] font-light">
+                Handicrafts
+              </span>
+              <Link href="/products/handcrafted-terracotta-ceramic-tea-set">
+                <h3 className="text-[14.5px] sm:text-[15px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug">
+                  Woven coaster set
+                </h3>
+              </Link>
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className="text-[14px] sm:text-[14.5px] font-semibold text-[#143527]">
+                  ৳450
+                </span>
+              </div>
+            </div>
+
+            {/* Product 3: Terracotta stem vase */}
+            <div className="group flex flex-col">
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-3.5">
+                <Link href="/products/handcrafted-terracotta-ceramic-tea-set" className="block relative w-full h-full">
+                  <Image
+                    src="/images/product-terracotta-vase.png"
+                    alt="Handmade terracotta bud and stem vase on stone block"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+                  />
+                </Link>
+                <button
+                  onClick={() => handleQuickAdd({
+                    id: "prod-terracotta-vase",
+                    name: "Terracotta stem vase",
+                    slug: "terracotta-stem-vase",
+                    price: 680,
+                    imageUrl: "/images/product-terracotta-vase.png",
+                    categoryName: "Handicrafts",
+                    stock: 20,
+                  })}
+                  className="absolute bottom-3 right-3 h-9 w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
+                  title="Add to bag"
+                  aria-label="Add Terracotta stem vase to bag"
+                >
+                  {addedProductId === "prod-terracotta-vase" ? (
+                    <Check className="w-4 h-4 text-[#143527]" />
+                  ) : (
+                    <Plus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
+                  )}
+                </button>
+              </div>
+              <span className="text-[11px] sm:text-[11.5px] text-[#6A736C] font-light">
+                Handicrafts
+              </span>
+              <Link href="/products/handcrafted-terracotta-ceramic-tea-set">
+                <h3 className="text-[14.5px] sm:text-[15px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug">
+                  Terracotta stem vase
+                </h3>
+              </Link>
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className="text-[14px] sm:text-[14.5px] font-semibold text-[#143527]">
+                  ৳680
+                </span>
+              </div>
+            </div>
+
+            {/* Product 4: The everyday jute tote */}
+            <div className="group flex flex-col">
+              <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-3.5">
+                <Link href="/products/executive-eco-jute-laptop-tote-bag" className="block relative w-full h-full">
+                  <Image
+                    src="/images/product-jute-tote.png"
+                    alt="The everyday natural golden jute tote bag with dark green handles"
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
+                  />
+                </Link>
+                <button
+                  onClick={() => handleQuickAdd({
+                    id: "prod-jute-tote",
+                    name: "The everyday jute tote",
+                    slug: "the-everyday-jute-tote",
+                    price: 850,
+                    imageUrl: "/images/product-jute-tote.png",
+                    categoryName: "Jute Items",
+                    stock: 40,
+                  })}
+                  className="absolute bottom-3 right-3 h-9 w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
+                  title="Add to bag"
+                  aria-label="Add The everyday jute tote to bag"
+                >
+                  {addedProductId === "prod-jute-tote" ? (
+                    <Check className="w-4 h-4 text-[#143527]" />
+                  ) : (
+                    <Plus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
+                  )}
+                </button>
+              </div>
+              <span className="text-[11px] sm:text-[11.5px] text-[#6A736C] font-light">
+                Jute Items
+              </span>
+              <Link href="/products/executive-eco-jute-laptop-tote-bag">
+                <h3 className="text-[14.5px] sm:text-[15px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug">
+                  The everyday jute tote
+                </h3>
+              </Link>
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className="text-[14px] sm:text-[14.5px] font-semibold text-[#143527]">
+                  ৳850
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
