@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Product, MOCK_COUPONS, Coupon, CLIENT_INFO } from "@/data/mock-data";
+import { Product, MOCK_PRODUCTS, MOCK_COUPONS, Coupon, CLIENT_INFO } from "@/data/mock-data";
 
 export interface CartItem {
   product: Product;
@@ -30,18 +30,89 @@ interface CartContextType {
 
 const CartContext = React.createContext<CartContextType | undefined>(undefined);
 
+const defaultInitialItems: CartItem[] = [
+  {
+    product: {
+      id: "prod-jute-basket",
+      name: "Everyday jute basket",
+      slug: "everyday-jute-basket",
+      categoryId: "cat-2",
+      categoryName: "Jute Items",
+      price: 1450,
+      salePrice: 1650,
+      stock: 25,
+      sku: "JT-BSK-001",
+      rating: 4.9,
+      reviewCount: 38,
+      isFeatured: true,
+      imageUrl: "/images/product-jute-basket.png",
+      galleryUrls: ["/images/product-jute-basket.png"],
+      description: "Everyday natural braided golden jute basket with handles for home storage and living room character.",
+      specifications: {
+        Material: "100% Biodegradable Golden Jute",
+        Origin: "Faridpur, Bangladesh",
+        Craft: "Hand-braided spiral weave",
+      },
+    },
+    quantity: 1,
+  },
+  {
+    product: {
+      id: "prod-woven-coasters",
+      name: "Woven coaster set",
+      slug: "woven-coaster-set",
+      categoryId: "cat-2",
+      categoryName: "Jute Items",
+      price: 450,
+      stock: 35,
+      sku: "JT-CST-003",
+      rating: 4.8,
+      reviewCount: 29,
+      isFeatured: true,
+      imageUrl: "/images/product-woven-coasters.png",
+      galleryUrls: ["/images/product-woven-coasters.png"],
+      description: "Set of 4 circular hand-braided golden jute drink coasters protecting delicate tables with natural warmth.",
+      specifications: {
+        Material: "Hand-braided golden jute",
+        Set: "4 Pieces",
+        Diameter: "10 cm",
+      },
+    },
+    quantity: 1,
+  },
+];
+
+const defaultInitialCoupon: Coupon = {
+  code: "WELCOME150",
+  discountPercentage: 0,
+  discountAmount: 150,
+  minOrderValue: 1500,
+  description: "৳150 off on orders of ৳1,500 or more",
+  expiresAt: "2026-11-30",
+};
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = React.useState<CartItem[]>([]);
+  const [items, setItems] = React.useState<CartItem[]>(defaultInitialItems);
   const [isCartOpen, setIsCartOpen] = React.useState(false);
-  const [appliedCoupon, setAppliedCoupon] = React.useState<Coupon | null>(null);
+  const [appliedCoupon, setAppliedCoupon] = React.useState<Coupon | null>(defaultInitialCoupon);
   const [shippingCity, setShippingCity] = React.useState<"Dhaka" | "Outside Dhaka">("Dhaka");
 
-  // Load cart from localStorage on mount
+  // Load cart from localStorage on mount if client has custom cart
   React.useEffect(() => {
     try {
       const saved = localStorage.getItem("shoilpikkabbo_cart");
       if (saved) {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setItems(parsed);
+          const savedCoupon = localStorage.getItem("shoilpikkabbo_coupon");
+          if (savedCoupon) {
+            const found = MOCK_COUPONS.find((c) => c.code === savedCoupon);
+            if (found) setAppliedCoupon(found);
+          } else if (parsed.length === 0) {
+            setAppliedCoupon(null);
+          }
+        }
       }
     } catch {
       // ignore
@@ -97,32 +168,46 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     const cleanCode = code.trim().toUpperCase();
     const coupon = MOCK_COUPONS.find((c) => c.code === cleanCode);
     if (!coupon) {
-      return { success: false, message: "Invalid promo code. Try WELCOME10." };
+      return { success: false, message: "Invalid promo code. Try WELCOME150." };
     }
     if (subtotal < coupon.minOrderValue) {
       return {
         success: false,
-        message: `This coupon requires a minimum subtotal of ৳${coupon.minOrderValue}.`,
+        message: `This coupon requires a minimum subtotal of ৳${coupon.minOrderValue.toLocaleString()}.`,
       };
     }
     setAppliedCoupon(coupon);
+    try {
+      localStorage.setItem("shoilpikkabbo_coupon", coupon.code);
+    } catch {
+      // ignore
+    }
+    const discountText = coupon.discountAmount
+      ? `You saved ৳${coupon.discountAmount}.`
+      : `You saved ${coupon.discountPercentage}%.`;
     return {
       success: true,
-      message: `Coupon "${coupon.code}" applied! (${coupon.discountPercentage}% off)`,
+      message: `${coupon.code} applied. ${discountText}`,
     };
   };
 
   const removeCoupon = () => {
     setAppliedCoupon(null);
+    try {
+      localStorage.removeItem("shoilpikkabbo_coupon");
+    } catch {
+      // ignore
+    }
   };
 
   const subtotal = items.reduce((acc, item) => {
-    const price = item.product.salePrice ?? item.product.price;
-    return acc + price * item.quantity;
+    return acc + item.product.price * item.quantity;
   }, 0);
 
   const discount = appliedCoupon
-    ? Math.round((subtotal * appliedCoupon.discountPercentage) / 100)
+    ? appliedCoupon.discountAmount
+      ? appliedCoupon.discountAmount
+      : Math.round((subtotal * appliedCoupon.discountPercentage) / 100)
     : 0;
 
   const deliveryCharge =

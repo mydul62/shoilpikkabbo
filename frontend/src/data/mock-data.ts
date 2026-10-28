@@ -73,6 +73,7 @@ export interface PaymentVerification {
 export interface Coupon {
   code: string;
   discountPercentage: number;
+  discountAmount?: number;
   minOrderValue: number;
   description: string;
   expiresAt: string;
@@ -661,7 +662,8 @@ export const MOCK_COUPONS: Coupon[] = [
   },
   {
     code: "WELCOME150",
-    discountPercentage: 10,
+    discountPercentage: 0,
+    discountAmount: 150,
     minOrderValue: 1500,
     description: "৳150 off on orders of ৳1,500 or more",
     expiresAt: "2026-11-30",
@@ -718,7 +720,7 @@ export const CLIENT_INFO = {
   phoneSecondary: "01811909068",
   phonePayment: "01977765999",
   bankName: "BRAC Bank PLC",
-  deliveryChargeDhaka: 70,
+  deliveryChargeDhaka: 80,
   deliveryChargeOutside: 130,
   freeDeliveryThreshold: 3000,
 };
