@@ -8,6 +8,9 @@ import {
   ArrowUpRight,
   Plus,
   Check,
+  Gift,
+  Factory,
+  Headset,
   Sparkles,
   ShieldCheck,
   Truck,
@@ -573,59 +576,83 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. Special E-Sheba Introduction Banner */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="rounded-3xl bg-gradient-to-r from-forest-950 via-forest-900 to-forest-950 text-sand p-8 sm:p-12 border border-forest-800 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-gold-600/10 blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-4">
-              <Badge variant="gold" className="text-xs px-3 py-1">
-                B2B & Custom Solutions
-              </Badge>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-heading">
-                Special E-Sheba — Institutional & Custom Procurement
-              </h2>
-              <p className="text-sand/80 text-sm leading-relaxed max-w-2xl">
-                Need customized corporate gifts, bespoke handicraft production runs, tailored industrial components, or specialized institutional procurement? Submit an inquiry and our dedicated team will consult directly with you.
+      {/* 5. Beyond the Basket - Services & B2B Showcase - Exact Match with Client Reference */}
+      <section className="bg-[#F7F4EE] py-16 sm:py-20 lg:py-24 border-b border-[#EAE3D5]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          {/* Header Row: Overline, Headline, and Right Description + Action */}
+          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8 mb-12 sm:mb-16">
+            <div>
+              <p className="text-[11px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3 sm:mb-4">
+                BEYOND THE BASKET
               </p>
-              <div className="flex flex-wrap gap-4 pt-2">
-                <div className="flex items-center gap-2 text-xs text-sand/90">
-                  <CheckCircle2 className="h-4 w-4 text-gold-500" />
-                  <span>Custom Brand Logo Embossing</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-sand/90">
-                  <CheckCircle2 className="h-4 w-4 text-gold-500" />
-                  <span>Bulk Corporate Tier Pricing</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-sand/90">
-                  <CheckCircle2 className="h-4 w-4 text-gold-500" />
-                  <span>Dedicated Account Manager</span>
-                </div>
-              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-[#143527] leading-[1.12] tracking-tight">
+                Let&apos;s make room for<br className="hidden sm:inline" /> possibilities.
+              </h2>
             </div>
 
-            <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-center">
-              <Link href="/e-sheba" className="w-full">
-                <Button variant="accent" size="lg" className="w-full shadow-lg">
-                  Submit Service Inquiry
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-              <a
-                href={`tel:${CLIENT_INFO.phonePrimary}`}
-                className="w-full"
+            <div className="flex flex-col items-start max-w-[460px] lg:pt-1">
+              <p className="text-[13px] sm:text-[14px] text-[#556059] font-light leading-relaxed mb-6">
+                Have a sourcing, gifting or service request? Tell us what you need. Our proposed service areas are a starting point for a conversation.
+              </p>
+              <Link
+                href="/e-sheba"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-transparent hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group"
               >
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full border-sand/40 text-sand hover:bg-forest-800"
-                >
-                  <PhoneCall className="h-4 w-4 mr-2" />
-                  Call: {CLIENT_INFO.phonePrimary}
-                </Button>
-              </a>
+                <span>Explore services</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
             </div>
+          </div>
+
+          {/* 3 Minimalist Service Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            {/* Card 1: Corporate gifting */}
+            <Link
+              href="/e-sheba?service=corporate-gifting"
+              className="group block p-7 sm:p-8 lg:p-9 bg-transparent hover:bg-white/60 border border-[#E2DDD2] hover:border-[#C4B8A5] rounded-[2px] transition-all duration-300"
+            >
+              <div className="mb-7 sm:mb-9 text-[#143527]">
+                <Gift className="w-6 h-6 stroke-[1.4] text-[#143527] group-hover:text-[#B85D38] transition-colors" />
+              </div>
+              <h3 className="font-serif text-2xl sm:text-[25px] font-normal text-[#143527] group-hover:text-[#B85D38] transition-colors mb-3 leading-snug">
+                Corporate gifting
+              </h3>
+              <p className="text-[13px] sm:text-[13.5px] text-[#6A736C] font-light leading-relaxed">
+                Discuss occasions, quantities and thoughtful packaging.
+              </p>
+            </Link>
+
+            {/* Card 2: Industrial Solutions */}
+            <Link
+              href="/e-sheba?service=industrial-solutions"
+              className="group block p-7 sm:p-8 lg:p-9 bg-transparent hover:bg-white/60 border border-[#E2DDD2] hover:border-[#C4B8A5] rounded-[2px] transition-all duration-300"
+            >
+              <div className="mb-7 sm:mb-9 text-[#143527]">
+                <Factory className="w-6 h-6 stroke-[1.4] text-[#143527] group-hover:text-[#B85D38] transition-colors" />
+              </div>
+              <h3 className="font-serif text-2xl sm:text-[25px] font-normal text-[#143527] group-hover:text-[#B85D38] transition-colors mb-3 leading-snug">
+                Industrial Solutions
+              </h3>
+              <p className="text-[13px] sm:text-[13.5px] text-[#6A736C] font-light leading-relaxed">
+                Share a product or sourcing brief for review.
+              </p>
+            </Link>
+
+            {/* Card 3: Special E-Sheba / Services */}
+            <Link
+              href="/e-sheba"
+              className="group block p-7 sm:p-8 lg:p-9 bg-transparent hover:bg-white/60 border border-[#E2DDD2] hover:border-[#C4B8A5] rounded-[2px] transition-all duration-300"
+            >
+              <div className="mb-7 sm:mb-9 text-[#143527]">
+                <Headset className="w-6 h-6 stroke-[1.4] text-[#143527] group-hover:text-[#B85D38] transition-colors" />
+              </div>
+              <h3 className="font-serif text-2xl sm:text-[25px] font-normal text-[#143527] group-hover:text-[#B85D38] transition-colors mb-3 leading-snug">
+                Special E-Sheba / Services
+              </h3>
+              <p className="text-[13px] sm:text-[13.5px] text-[#6A736C] font-light leading-relaxed">
+                Describe the assistance you need. Scope is confirmed before any commitment.
+              </p>
+            </Link>
           </div>
         </div>
       </section>
