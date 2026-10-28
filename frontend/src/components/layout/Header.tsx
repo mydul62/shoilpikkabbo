@@ -162,7 +162,7 @@ export function Header() {
             Gifting
           </Link>
           <Link
-            href="/e-sheba"
+            href="/services"
             className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
           >
             Services
@@ -239,11 +239,11 @@ export function Header() {
                 Gifting
               </Link>
               <Link
-                href="/e-sheba"
+                href="/services"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="hover:text-[#B85D38]"
               >
-                Special E-Sheba (Services)
+                Services
               </Link>
             </div>
 
