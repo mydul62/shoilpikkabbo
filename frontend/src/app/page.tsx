@@ -657,7 +657,46 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. New Arrivals Grid */}
+      {/* 6. Brand Story & Craft Heritage - Exact Match with Client Reference */}
+      <section className="w-full bg-[#ECE7DB] border-b border-[#E0D8CB] overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch min-h-[460px] lg:min-h-[520px]">
+          {/* Left Column: Artisan Photo */}
+          <div className="relative w-full h-[360px] sm:h-[440px] lg:h-full min-h-[380px] lg:min-h-[500px]">
+            <Image
+              src="/images/story-artisan.png"
+              alt="Artisan hand-weaving natural jute basket on wooden table"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+              priority
+            />
+          </div>
+
+          {/* Right Column: Editorial Copy */}
+          <div className="flex flex-col justify-center px-8 sm:px-14 lg:px-16 xl:px-24 py-14 sm:py-18 lg:py-20">
+            <div className="max-w-xl">
+              <p className="text-[11px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3 sm:mb-4">
+                TEXTURE, TRADITION, EVERYDAY LIFE
+              </p>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] xl:text-[48px] font-normal text-[#143527] leading-[1.14] tracking-tight mb-5 sm:mb-6">
+                There&apos;s beauty in the things<br className="hidden sm:inline" /> we choose.
+              </h2>
+              <p className="text-[13.5px] sm:text-[14.5px] text-[#556059] font-light leading-relaxed mb-8 max-w-[460px]">
+                The curve of a basket. The warmth of clay. The quiet character of natural fibres. Make space for objects that feel at home in your life.
+              </p>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group self-start shadow-2xs"
+              >
+                <span>Get to know us</span>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. New Arrivals Grid */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
