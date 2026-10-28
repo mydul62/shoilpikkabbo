@@ -723,4 +723,6 @@ export const CLIENT_INFO = {
   deliveryChargeDhaka: 80,
   deliveryChargeOutside: 130,
   freeDeliveryThreshold: 3000,
+  whatsapp: "8801731214379",
+  messengerUrl: "https://m.me/shoilpikkabbo",
 };

@@ -202,11 +202,11 @@ export default function CheckoutPage() {
                   Order updates will be sent to {completedOrder.email}. Keep your order number for tracking.
                 </p>
 
-                {/* Buttons */}
-                <div className="pt-4 flex flex-wrap items-center gap-3">
+                {/* Buttons - Stacked vertically matching mockup */}
+                <div className="pt-3 flex flex-col items-start gap-2.5">
                   <Link
                     href={`/track-order?order=${completedOrder.orderNumber}`}
-                    className="h-11 px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
+                    className="h-10 px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
                   >
                     <span>Track my order</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -214,7 +214,7 @@ export default function CheckoutPage() {
 
                   <Link
                     href="/shop"
-                    className="h-11 px-6 bg-white hover:bg-[#F4F1EB] border border-[#D5CDC0] text-[#143527] text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
+                    className="h-10 px-6 bg-white hover:bg-[#F3EFE7] border border-[#D5CDC0] text-[#143527] text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
                   >
                     <span>Continue shopping</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -224,7 +224,7 @@ export default function CheckoutPage() {
 
               {/* Right Column: Your finds */}
               <div className="md:col-span-6">
-                <h2 className="font-serif text-[22px] text-[#143527] font-normal mb-5">
+                <h2 className="font-serif text-[24px] text-[#143527] font-normal mb-5">
                   Your finds
                 </h2>
 
@@ -232,9 +232,9 @@ export default function CheckoutPage() {
                   {completedOrder.items.map((item) => (
                     <div
                       key={item.product.id}
-                      className="flex items-center gap-4 py-2"
+                      className="flex items-center gap-4 py-1"
                     >
-                      <div className="relative w-16 h-16 rounded-md overflow-hidden bg-[#EFECE6] shrink-0 border border-[#E8E2D8]">
+                      <div className="relative w-16 h-16 rounded-[3px] overflow-hidden bg-[#EBE7DF] shrink-0 border border-[#E0D9CD]">
                         <Image
                           src={item.product.imageUrl}
                           alt={item.product.name}
@@ -244,10 +244,10 @@ export default function CheckoutPage() {
                         />
                       </div>
                       <div>
-                        <h4 className="font-serif text-[15px] text-[#143527] font-normal">
+                        <h4 className="text-[13.5px] font-medium text-[#143527]">
                           {item.product.name}
                         </h4>
-                        <p className="text-[12.5px] text-[#7A837C] font-light mt-0.5">
+                        <p className="text-[12px] text-[#6F7771] font-light mt-0.5">
                           Quantity {item.quantity} · ৳{item.product.price.toLocaleString()}
                         </p>
                       </div>
@@ -255,11 +255,11 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
-                <div className="border-t border-[#E8E2D8] mt-6 pt-4 text-[12.5px] text-[#6A736C] font-light">
+                <div className="border-t border-[#E8E2D8] mt-6 pt-3 text-[12px] text-[#6F7771] font-light">
                   <p>
                     Subtotal ৳{completedOrder.subtotal.toLocaleString()} · Discount -৳{completedOrder.discount.toLocaleString()} · Delivery ৳{completedOrder.deliveryCharge.toLocaleString()}
                   </p>
-                  <p className="mt-2 text-[#8C948E]">
+                  <p className="mt-2 text-[#8C948E] text-[11.5px]">
                     Need to make a change? Contact support with your order number as soon as possible.
                   </p>
                 </div>
@@ -267,23 +267,24 @@ export default function CheckoutPage() {
             </div>
 
             {/* Bottom Support Bar */}
-            <div className="border-t border-[#E8E2D8] mt-16 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[12.5px] text-[#6A736C] font-light">
+            <div className="border-t border-[#E8E2D8] mt-16 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[12px] text-[#6F7771] font-light">
               <span>We're here for the next step.</span>
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4 text-[12px]">
                 <a
-                  href="https://wa.me/8801731214379"
+                  href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#143527] hover:text-[#B85D38] inline-flex items-center gap-1 transition-colors"
+                  className="text-[#143527] hover:text-[#B85D38] font-medium inline-flex items-center gap-1 transition-colors"
                 >
                   <span>WhatsApp</span>
                   <ArrowUpRight className="w-3 h-3" />
                 </a>
+                <span className="text-[#B0AAA0]">·</span>
                 <a
-                  href="https://m.me/shoilpikkabbo"
+                  href={CLIENT_INFO.messengerUrl || "https://m.me/shoilpikkabbo"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#143527] hover:text-[#B85D38] inline-flex items-center gap-1 transition-colors"
+                  className="text-[#143527] hover:text-[#B85D38] font-medium inline-flex items-center gap-1 transition-colors"
                 >
                   <span>Facebook Messenger</span>
                   <ArrowUpRight className="w-3 h-3" />
