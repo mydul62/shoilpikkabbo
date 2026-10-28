@@ -696,7 +696,47 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 7. New Arrivals Grid */}
+      {/* 7. Corporate Gifting Feature - Exact Match with Client Reference */}
+      <section className="bg-[#F7F4EE] py-16 sm:py-20 lg:py-24 border-b border-[#EAE3D5]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+            {/* Left Column: Text & CTA */}
+            <div className="lg:col-span-6 flex flex-col justify-center">
+              <p className="text-[11px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3 sm:mb-4">
+                FOR PEOPLE, NOT JUST OCCASIONS
+              </p>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[46px] xl:text-[48px] font-normal text-[#143527] leading-[1.12] tracking-tight mb-4 sm:mb-5">
+                A thoughtful gesture<br className="hidden sm:inline" /> goes a long way.
+              </h2>
+              <p className="text-[13.5px] sm:text-[14.5px] text-[#556059] font-light leading-relaxed mb-8 max-w-[440px]">
+                Explore gift-worthy pieces for your home, your people or your team. For larger orders, start with a simple brief.
+              </p>
+              <Link
+                href="/shop?category=corporate-gift-items"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[2px] transition-all group self-start shadow-sm"
+              >
+                <span>Discover corporate gifting</span>
+                <ArrowUpRight className="w-4 h-4 text-white group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            </div>
+
+            {/* Right Column: Visual Feature Image */}
+            <div className="lg:col-span-6">
+              <div className="relative w-full aspect-[2.05/1] rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                <Image
+                  src="/images/corporate-gifting-feature.png"
+                  alt="Kraft paper gift box tied with forest green ribbon and ceramic mug on stone table"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. New Arrivals Grid */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
