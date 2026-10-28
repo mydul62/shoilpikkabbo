@@ -554,6 +554,13 @@ export const MOCK_COUPONS: Coupon[] = [
     expiresAt: "2026-12-31",
   },
   {
+    code: "WELCOME150",
+    discountPercentage: 10,
+    minOrderValue: 1500,
+    description: "৳150 off on orders of ৳1,500 or more",
+    expiresAt: "2026-11-30",
+  },
+  {
     code: "SHOILPIK15",
     discountPercentage: 15,
     minOrderValue: 2500,

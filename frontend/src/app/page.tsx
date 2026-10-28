@@ -539,6 +539,40 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 4. Promotional Welcome Offer Banner - Exact Match with Client Reference */}
+      <section className="bg-[#133829] text-white py-14 sm:py-16 lg:py-20 border-y border-[#0E2C1F] overflow-hidden">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+            {/* Left Column: Heading */}
+            <div className="lg:col-span-6 flex flex-col justify-center">
+              <p className="text-[11px] sm:text-xs font-medium tracking-[0.16em] uppercase text-[#A8BDB2] mb-3 sm:mb-4">
+                A LITTLE SOMETHING TO BEGIN
+              </p>
+              <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] xl:text-[46px] font-normal text-white leading-[1.12] tracking-tight">
+                Your first find, a little<br className="hidden sm:inline" /> sweeter.
+              </h2>
+            </div>
+
+            {/* Right Column: Offer Details & Action */}
+            <div className="lg:col-span-6 flex flex-col items-start lg:items-start justify-center">
+              <p className="text-lg sm:text-[20px] font-normal text-[#E6EFE9] mb-1.5 leading-snug">
+                ৳150 off your first order of ৳1,500 or more.
+              </p>
+              <p className="text-xs sm:text-[13px] font-light text-[#9EB5A7] mb-6">
+                Use WELCOME150 <span className="select-none mx-1">·</span> One use per customer <span className="select-none mx-1">·</span> Until 30 Nov 2026
+              </p>
+              <Link
+                href="/offers"
+                className="inline-flex items-center gap-2.5 px-6 py-3 bg-white hover:bg-[#FAF7F2] text-[#133829] text-xs sm:text-sm font-medium rounded-[2px] shadow-sm transition-all group"
+              >
+                <span>Explore offers</span>
+                <ArrowUpRight className="w-4 h-4 text-[#133829] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 5. Special E-Sheba Introduction Banner */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="rounded-3xl bg-gradient-to-r from-forest-950 via-forest-900 to-forest-950 text-sand p-8 sm:p-12 border border-forest-800 shadow-xl relative overflow-hidden">
