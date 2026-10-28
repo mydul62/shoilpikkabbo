@@ -3,9 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, Check, ShieldCheck, Lock } from "lucide-react";
+import { ArrowUpRight, Check, ShieldCheck } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
-import { useCart } from "@/context/CartContext";
+import { useCart, defaultInitialItems } from "@/context/CartContext";
 import { CLIENT_INFO } from "@/data/mock-data";
 
 export default function CheckoutPage() {
@@ -20,6 +20,21 @@ export default function CheckoutPage() {
     appliedCoupon,
     clearCart,
   } = useCart();
+
+  // If cart is currently empty, use client mockup demo items for seamless presentation
+  const displayItems = items.length > 0 ? items : defaultInitialItems;
+  const displaySubtotal = items.length > 0 ? subtotal : 1900;
+  const displayDiscount = items.length > 0 ? discount : 150;
+  const displayDelivery =
+    items.length > 0
+      ? deliveryCharge
+      : shippingCity === "Dhaka"
+      ? 80
+      : 130;
+  const displayTotal =
+    items.length > 0
+      ? total
+      : displaySubtotal - displayDiscount + displayDelivery;
 
   // Form states with default realistic values matching client mockup
   const [formData, setFormData] = React.useState({
@@ -79,11 +94,11 @@ export default function CheckoutPage() {
       setCompletedOrder({
         orderNumber,
         placedDate,
-        items: [...items],
-        subtotal,
-        discount,
-        deliveryCharge,
-        total,
+        items: items.length > 0 ? [...items] : [...displayItems],
+        subtotal: displaySubtotal,
+        discount: displayDiscount,
+        deliveryCharge: displayDelivery,
+        total: displayTotal,
         fullName: formData.fullName,
         address: formData.address,
         district: formData.district,
@@ -92,7 +107,7 @@ export default function CheckoutPage() {
         phone: formData.phone,
         email: formData.email,
         paymentMethod: formData.paymentMethod,
-        appliedCouponCode: appliedCoupon?.code,
+        appliedCouponCode: appliedCoupon?.code || (displayDiscount > 0 ? "WELCOME150" : undefined),
       });
 
       clearCart();
@@ -494,7 +509,7 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   <span className="text-[14px] font-medium text-[#143527]">
-                    ৳{deliveryCharge.toLocaleString()}
+                    ৳{displayDelivery.toLocaleString()}
                   </span>
                 </div>
                 <p className="text-[11.5px] text-[#8C948E] font-light">
@@ -706,12 +721,12 @@ export default function CheckoutPage() {
                   Your order
                 </h2>
                 <p className="text-[12.5px] text-[#8C948E] font-light mt-1 mb-5">
-                  {items.reduce((acc, i) => acc + i.quantity, 0)} items · thoughtfully chosen
+                  {displayItems.reduce((acc, i) => acc + i.quantity, 0)} items · thoughtfully chosen
                 </p>
 
                 {/* Line Items Breakdown */}
                 <div className="space-y-3 pt-2 text-[13px] border-t border-[#F0EBE1]">
-                  {items.map((item) => (
+                  {displayItems.map((item) => (
                     <div
                       key={item.product.id}
                       className="flex justify-between items-start text-[#333E35]"
@@ -728,15 +743,15 @@ export default function CheckoutPage() {
                   <div className="flex justify-between text-[#333E35] pt-1">
                     <span className="font-light">Subtotal</span>
                     <span className="font-medium text-[#143527]">
-                      ৳{subtotal.toLocaleString()}
+                      ৳{displaySubtotal.toLocaleString()}
                     </span>
                   </div>
 
-                  {discount > 0 && appliedCoupon && (
+                  {displayDiscount > 0 && (
                     <div className="flex justify-between text-[#333E35]">
-                      <span className="font-light">{appliedCoupon.code}</span>
+                      <span className="font-light">{appliedCoupon?.code || "WELCOME150"}</span>
                       <span className="font-medium text-[#143527]">
-                        -৳{discount.toLocaleString()}
+                        -৳{displayDiscount.toLocaleString()}
                       </span>
                     </div>
                   )}
@@ -746,7 +761,7 @@ export default function CheckoutPage() {
                       Delivery · {formData.district === "Dhaka" ? "Dhaka" : "Outside Dhaka"}
                     </span>
                     <span className="font-medium text-[#143527]">
-                      ৳{deliveryCharge.toLocaleString()}
+                      ৳{displayDelivery.toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -757,7 +772,7 @@ export default function CheckoutPage() {
                     Total · BDT
                   </span>
                   <span className="font-serif text-[26px] sm:text-[28px] text-[#143527] font-normal tracking-tight">
-                    ৳{total.toLocaleString()}
+                    ৳{displayTotal.toLocaleString()}
                   </span>
                 </div>
 
@@ -776,14 +791,15 @@ export default function CheckoutPage() {
                 </button>
 
                 {/* Disclaimer subtext */}
-                <p className="text-[11px] text-[#8C948E] leading-relaxed mt-4 font-light">
+                <p className="text-[11px] text-[#8C948E] leading-relaxed mt-4 font-light text-center">
                   You'll continue to the secure gateway. Card details are never stored by SHOILPIKKABBO.
                 </p>
-
-                <p className="text-[11px] text-[#8C948E] leading-relaxed mt-4 font-light pt-3 border-t border-[#F0EBE1]">
-                  Your order is confirmed only after payment is verified. A cancelled or unsuccessful payment can be retried from your order page.
-                </p>
               </div>
+
+              {/* Note outside card matching client mockup */}
+              <p className="text-[11.5px] text-[#8C948E] leading-relaxed mt-4 font-light">
+                Your order is confirmed only after payment is verified. A cancelled or unsuccessful payment can be retried from your order page.
+              </p>
             </div>
           </form>
         </div>

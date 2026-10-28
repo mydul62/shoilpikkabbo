@@ -30,7 +30,7 @@ interface CartContextType {
 
 const CartContext = React.createContext<CartContextType | undefined>(undefined);
 
-const defaultInitialItems: CartItem[] = [
+export const defaultInitialItems: CartItem[] = [
   {
     product: {
       id: "prod-jute-basket",
