@@ -7,26 +7,19 @@ import {
   Search,
   ShoppingBag,
   User,
-  Phone,
-  Mail,
   Menu,
   X,
-  Truck,
-  Sparkles,
-  ChevronDown,
-  LayoutDashboard,
+  ArrowRight,
 } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
 import { useCart } from "@/context/CartContext";
-import { MOCK_CATEGORIES, CLIENT_INFO } from "@/data/mock-data";
-import { Badge } from "@/components/ui/badge";
 
 export function Header() {
   const router = useRouter();
   const { totalItemCount, setIsCartOpen } = useCart();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = React.useState(false);
+  const [lang, setLang] = React.useState<"en" | "bn">("en");
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,321 +30,261 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-white border-b border-brand-border shadow-xs">
-      {/* Top Utility Bar */}
-      <div className="bg-forest-950 text-sand text-xs py-2 px-4 border-b border-forest-900">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          {/* Support Contacts */}
-          <div className="flex items-center gap-4 text-xs font-medium">
-            <a
-              href={`tel:${CLIENT_INFO.phonePrimary}`}
-              className="flex items-center gap-1.5 hover:text-gold-500 transition-colors"
-            >
-              <Phone className="h-3 w-3 text-gold-500" />
-              <span>{CLIENT_INFO.phonePrimary}</span>
-            </a>
-            <span className="text-forest-700 hidden sm:inline">|</span>
-            <a
-              href={`mailto:${CLIENT_INFO.email}`}
-              className="hidden md:flex items-center gap-1.5 hover:text-gold-500 transition-colors"
-            >
-              <Mail className="h-3 w-3 text-gold-500" />
-              <span>{CLIENT_INFO.email}</span>
-            </a>
+    <header className="w-full bg-[#F7F4EE] z-40 sticky top-0 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+      {/* 1. Top Announcement Bar */}
+      <div className="bg-[#133829] text-[#DCE5DF] py-2 px-6 sm:px-10 lg:px-16 border-b border-[#0F2D21]">
+        <div className="max-w-[1440px] mx-auto flex items-center justify-between text-[11.5px] sm:text-[12px] font-normal tracking-wide">
+          {/* Left Text */}
+          <div className="text-[#DCE5DF] font-light">
+            Thoughtful finds. Everyday possibilities.
           </div>
 
-          {/* Promo Announcement */}
-          <div className="flex items-center gap-2">
-            <span className="hidden lg:inline-flex items-center gap-1 text-gold-500 font-medium">
-              <Sparkles className="h-3 w-3" />
-              <span>Delivery • Quality • Reliability</span>
-            </span>
-            <span className="text-forest-600 hidden lg:inline">•</span>
-            <span className="text-[11px] text-sand/90">
-              Free Delivery on orders over ৳3,000!
-            </span>
-          </div>
-
-          {/* Utility Quick Links */}
-          <div className="flex items-center gap-3">
+          {/* Right Links */}
+          <div className="flex items-center gap-2.5 sm:gap-3 text-[#DCE5DF] font-light">
             <Link
               href="/track-order"
-              className="flex items-center gap-1 text-[11px] hover:text-gold-500 transition-colors"
+              className="hover:text-white transition-colors"
             >
-              <Truck className="h-3 w-3" />
-              <span>Track Order</span>
+              Track your order
             </Link>
-            <span className="text-forest-700">|</span>
+            <span className="text-[#6D8A7A] select-none">·</span>
             <Link
-              href="/admin"
-              className="flex items-center gap-1 text-[11px] text-gold-500 hover:text-gold-400 font-semibold transition-colors"
+              href="/contact"
+              className="hover:text-white transition-colors"
             >
-              <LayoutDashboard className="h-3 w-3" />
-              <span>Admin Portal</span>
+              Need help?
             </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Header Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
-        {/* Mobile Hamburger Button */}
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="lg:hidden p-2 rounded-lg text-charcoal-700 hover:bg-sand focus:outline-none cursor-pointer"
-          aria-label="Toggle Navigation Menu"
-        >
-          {isMobileMenuOpen ? (
-            <X className="h-6 w-6" />
-          ) : (
-            <Menu className="h-6 w-6" />
-          )}
-        </button>
-
-        {/* Brand Logo */}
-        <Logo variant="storefront" />
-
-        {/* Desktop Search Bar */}
-        <form
-          onSubmit={handleSearchSubmit}
-          className="hidden md:flex flex-1 max-w-lg mx-6 relative"
-        >
-          <input
-            type="text"
-            placeholder="Search handicrafts, jute products, baby items, agro..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-10 pr-24 rounded-full border border-brand-border bg-ivory text-xs text-charcoal-900 placeholder:text-charcoal-400 focus:outline-none focus:ring-2 focus:ring-forest-800/20 focus:border-forest-800 focus:bg-white transition-all shadow-inner"
-          />
-          <Search className="absolute left-3.5 top-3 h-4 w-4 text-charcoal-400" />
-          <button
-            type="submit"
-            className="absolute right-1 top-1 h-8 px-4 rounded-full bg-forest-800 text-white text-xs font-medium hover:bg-forest-700 transition-colors cursor-pointer"
-          >
-            Search
-          </button>
-        </form>
-
-        {/* Actions (Account & Cart) */}
-        <div className="flex items-center gap-2 sm:gap-4">
-          <Link
-            href="/account"
-            className="flex items-center gap-2 p-2 rounded-lg text-charcoal-700 hover:text-forest-800 hover:bg-sand transition-colors"
-            title="My Account"
-          >
-            <User className="h-5 w-5" />
-            <span className="hidden xl:inline text-xs font-semibold">
-              Account
-            </span>
-          </Link>
-
-          {/* Cart Icon & Live Badge */}
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-forest-50 hover:bg-forest-100 text-forest-900 border border-forest-100 transition-all cursor-pointer relative"
-            aria-label="Open Shopping Cart"
-          >
-            <div className="relative">
-              <ShoppingBag className="h-5 w-5 text-forest-800" />
-              {totalItemCount > 0 && (
-                <span className="absolute -top-2 -right-2 h-4 min-w-[16px] px-1 rounded-full bg-gold-600 text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
-                  {totalItemCount}
-                </span>
-              )}
-            </div>
-            <span className="hidden sm:inline text-xs font-bold text-forest-900">
-              Cart
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {/* Primary Category Navigation Bar (Desktop) */}
-      <nav className="hidden lg:block bg-ivory border-t border-brand-border/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs font-semibold">
-          {/* Category Dropdown */}
-          <div className="relative group">
+            <span className="text-[#6D8A7A] select-none">·</span>
             <button
-              onClick={() => setIsCategoryMenuOpen(!isCategoryMenuOpen)}
-              className="flex items-center gap-2 py-3 px-3 text-forest-900 bg-sand/60 hover:bg-sand rounded-t-lg transition-colors cursor-pointer"
+              onClick={() => setLang(lang === "en" ? "bn" : "en")}
+              className="hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1"
+              title="Toggle Language"
             >
-              <Menu className="h-4 w-4 text-forest-800" />
-              <span>All 10 Categories</span>
-              <ChevronDown className="h-3.5 w-3.5 text-charcoal-500" />
+              <span className={lang === "en" ? "text-white font-medium" : "text-[#DCE5DF]/80"}>
+                EN
+              </span>
+              <span className="text-[#6D8A7A]">/</span>
+              <span className={lang === "bn" ? "text-white font-medium" : "text-[#DCE5DF]/80"}>
+                বাংলা
+              </span>
             </button>
+          </div>
+        </div>
+      </div>
 
-            {/* Dropdown Menu */}
-            <div className="absolute left-0 top-full w-64 bg-white rounded-b-xl shadow-xl border border-brand-border py-2 hidden group-hover:block hover:block z-50">
-              {MOCK_CATEGORIES.map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={cat.isService ? "/e-sheba" : `/shop?category=${cat.slug}`}
-                  className="flex items-center justify-between px-4 py-2 hover:bg-forest-50 hover:text-forest-800 transition-colors"
-                >
-                  <span className="text-xs font-medium text-charcoal-800">
-                    {cat.name}
-                  </span>
-                  {cat.isService ? (
-                    <Badge variant="gold" className="text-[10px] py-0">
-                      Service
-                    </Badge>
-                  ) : (
-                    <span className="text-[10px] text-charcoal-400">
-                      {cat.itemCount} items
-                    </span>
-                  )}
-                </Link>
-              ))}
+      {/* 2. Main Header Row (Logo, Centered Search Bar, Actions) */}
+      <div className="border-b border-[#EAE3D5] bg-[#F7F4EE]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-4 sm:py-5 flex items-center justify-between gap-6 lg:gap-10">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-1.5 -ml-2 text-[#143527] hover:bg-[#EFE8DC] rounded-xs focus:outline-none cursor-pointer"
+            aria-label="Toggle navigation menu"
+          >
+            {isMobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
+          </button>
+
+          {/* Left: Brand Logo */}
+          <div className="shrink-0">
+            <Logo variant="storefront" />
+          </div>
+
+          {/* Center: Search Bar */}
+          <form
+            onSubmit={handleSearchSubmit}
+            className="hidden md:flex flex-1 max-w-[540px] mx-auto"
+          >
+            <div className="relative w-full flex items-center bg-[#F7F4EE] border border-[#D5CDC0] rounded-[2px] transition-all focus-within:border-[#143527] focus-within:bg-white focus-within:shadow-sm">
+              <div className="pl-4 pr-2.5 flex items-center pointer-events-none">
+                <Search className="w-[18px] h-[18px] text-[#243B2D]" strokeWidth={1.8} />
+              </div>
+              <input
+                type="text"
+                placeholder="Search products, categories & services"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-11 pr-4 bg-transparent text-[13.5px] text-[#143527] placeholder:text-[#6F7670] placeholder:font-normal focus:outline-none"
+              />
             </div>
-          </div>
+          </form>
 
-          {/* Quick Category Links */}
-          <div className="flex items-center space-x-1 xl:space-x-4">
+          {/* Right: Actions (Sign in & Bag) */}
+          <div className="flex items-center gap-7 sm:gap-9 shrink-0">
             <Link
-              href="/shop"
-              className="py-3 px-2 text-charcoal-700 hover:text-forest-800 transition-colors"
+              href="/login"
+              className="flex items-center gap-2.5 text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group"
             >
-              Shop All
+              <User className="w-[20px] h-[20px] text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
+              <span className="hidden sm:inline">Sign in</span>
             </Link>
-            <Link
-              href="/shop?category=handicraft"
-              className="py-3 px-2 text-charcoal-700 hover:text-forest-800 transition-colors"
+
+            <button
+              onClick={() => setIsCartOpen(true)}
+              className="flex items-center gap-2.5 text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium cursor-pointer group"
+              aria-label="Open Shopping Bag"
             >
-              Handicraft
-            </Link>
-            <Link
-              href="/shop?category=jute-items"
-              className="py-3 px-2 text-charcoal-700 hover:text-forest-800 transition-colors"
-            >
-              Jute Items
-            </Link>
-            <Link
-              href="/shop?category=corporate-gift-items"
-              className="py-3 px-2 text-charcoal-700 hover:text-forest-800 transition-colors"
-            >
-              Corporate Gifts
-            </Link>
-            <Link
-              href="/shop?category=baby-items"
-              className="py-3 px-2 text-charcoal-700 hover:text-forest-800 transition-colors"
-            >
-              Baby Items
-            </Link>
-            <Link
-              href="/shop?category=health-and-beauty"
-              className="py-3 px-2 text-charcoal-700 hover:text-forest-800 transition-colors"
-            >
-              Health & Beauty
-            </Link>
-            <Link
-              href="/offers"
-              className="py-3 px-2 text-gold-700 font-bold hover:text-gold-800 transition-colors flex items-center gap-1"
-            >
-              <Sparkles className="h-3 w-3 text-gold-600" />
-              <span>Offers & Deals</span>
-            </Link>
-            <Link
-              href="/e-sheba"
-              className="py-3 px-3 rounded-lg bg-forest-800 text-white font-bold hover:bg-forest-700 transition-colors"
-            >
-              Special E-Sheba
-            </Link>
+              <ShoppingBag className="w-[20px] h-[20px] text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
+              <span>Bag ({totalItemCount})</span>
+            </button>
           </div>
+        </div>
+      </div>
+
+      {/* 3. Secondary Category Bar (Evenly Distributed Nav Menu) */}
+      <nav className="hidden lg:block border-b border-[#EAE3D5] bg-[#F7F4EE]">
+        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 flex items-center justify-between w-full py-3 text-[13.5px]">
+          <Link
+            href="/shop"
+            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
+          >
+            Shop all
+          </Link>
+          <Link
+            href="/shop?category=handicraft"
+            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
+          >
+            Handicrafts
+          </Link>
+          <Link
+            href="/shop?category=jute-items"
+            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
+          >
+            Jute Items
+          </Link>
+          <Link
+            href="/shop?category=corporate-gift-items"
+            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
+          >
+            Gifting
+          </Link>
+          <Link
+            href="/e-sheba"
+            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
+          >
+            Services
+          </Link>
+          <Link
+            href="/about"
+            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
+          >
+            About us
+          </Link>
+          <Link
+            href="/careers"
+            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
+          >
+            Career
+          </Link>
+          <Link
+            href="/contact"
+            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
+          >
+            Contact us
+          </Link>
+          <Link
+            href="/offers"
+            className="text-[#B85D38] font-medium hover:text-[#9E4A28] transition-colors"
+          >
+            Offers / Discounts
+          </Link>
         </div>
       </nav>
 
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-brand-border bg-white px-4 pt-3 pb-6 space-y-4">
+        <div className="lg:hidden border-b border-[#EAE3D5] bg-[#F7F4EE] px-6 pt-4 pb-8 space-y-5 animate-in fade-in duration-200">
           <form onSubmit={handleSearchSubmit} className="relative">
+            <Search className="absolute left-3.5 top-3.5 h-4 w-4 text-[#243B2D]" />
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder="Search products, categories..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-9 pr-4 rounded-lg border border-brand-border bg-sand/30 text-xs"
+              className="w-full h-11 pl-10 pr-4 rounded-[2px] border border-[#D5CDC0] bg-white text-xs text-[#143527]"
             />
-            <Search className="absolute left-3 top-3 h-4 w-4 text-charcoal-400" />
           </form>
 
-          <div className="space-y-1">
-            <p className="text-[11px] font-bold text-charcoal-400 uppercase tracking-wider mb-2">
-              Browse Categories
-            </p>
-            {MOCK_CATEGORIES.map((cat) => (
+          <div className="space-y-2 text-sm text-[#243329] font-medium divide-y divide-[#EAE3D5]/60">
+            <div className="pt-2 flex flex-col space-y-2.5">
               <Link
-                key={cat.id}
-                href={cat.isService ? "/e-sheba" : `/shop?category=${cat.slug}`}
+                href="/shop"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2 text-sm text-charcoal-800 hover:text-forest-800"
+                className="hover:text-[#B85D38]"
               >
-                <span>{cat.name}</span>
-                {cat.isService && (
-                  <Badge variant="gold" className="text-[10px]">
-                    Service
-                  </Badge>
-                )}
+                Shop all
               </Link>
-            ))}
-          </div>
+              <Link
+                href="/shop?category=handicraft"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="hover:text-[#B85D38]"
+              >
+                Handicrafts
+              </Link>
+              <Link
+                href="/shop?category=jute-items"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="hover:text-[#B85D38]"
+              >
+                Jute Items
+              </Link>
+              <Link
+                href="/shop?category=corporate-gift-items"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="hover:text-[#B85D38]"
+              >
+                Gifting
+              </Link>
+              <Link
+                href="/e-sheba"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="hover:text-[#B85D38]"
+              >
+                Special E-Sheba (Services)
+              </Link>
+            </div>
 
-          <div className="border-t border-sand pt-3 space-y-2 text-sm">
-            <Link
-              href="/shop"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 text-charcoal-700"
-            >
-              All Products
-            </Link>
-            <Link
-              href="/offers"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 text-gold-700 font-semibold"
-            >
-              Seasonal Offers
-            </Link>
-            <Link
-              href="/track-order"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 text-charcoal-700"
-            >
-              Track Order
-            </Link>
-            <Link
-              href="/e-sheba"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 text-forest-800 font-bold"
-            >
-              Special E-Sheba
-            </Link>
-            <Link
-              href="/careers"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 text-charcoal-700"
-            >
-              Careers
-            </Link>
-            <Link
-              href="/about"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 text-charcoal-700"
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-1 text-charcoal-700"
-            >
-              Contact Us
-            </Link>
-            <Link
-              href="/admin"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block py-2 text-gold-600 font-bold border-t border-sand"
-            >
-              Admin Dashboard Portal
-            </Link>
+            <div className="pt-3 flex flex-col space-y-2.5">
+              <Link
+                href="/offers"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-[#B85D38] font-semibold"
+              >
+                Offers / Discounts
+              </Link>
+              <Link
+                href="/about"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="hover:text-[#B85D38]"
+              >
+                About us
+              </Link>
+              <Link
+                href="/careers"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="hover:text-[#B85D38]"
+              >
+                Career
+              </Link>
+              <Link
+                href="/contact"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="hover:text-[#B85D38]"
+              >
+                Contact us
+              </Link>
+              <Link
+                href="/admin"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-[#143527] font-bold flex items-center justify-between pt-1"
+              >
+                <span>Admin Dashboard</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       )}

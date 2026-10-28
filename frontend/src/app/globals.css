@@ -10,10 +10,10 @@
   --color-forest-100: #e8f3ee;
   --color-forest-50: #f2f8f5;
 
-  --color-ivory: #fdfbf7;
-  --color-sand: #f5f0e8;
+  --color-ivory: #f7f4ee;
+  --color-sand: #f0ebe1;
   --color-sand-dark: #eae1d3;
-  --color-brand-border: #e7dfd5;
+  --color-brand-border: #eae3d5;
 
   --color-gold-700: #a9821d;
   --color-gold-600: #c59b27;
@@ -30,10 +30,16 @@
   --color-charcoal-400: #9ca3af;
   --color-charcoal-300: #d1d5db;
   --color-charcoal-200: #e5e7eb;
+
+  --color-terracotta: #b85d38;
+  --color-terracotta-dark: #9e4a28;
+  --color-terracotta-light: #f7ebe6;
+
+  --font-serif: var(--font-serif), "Playfair Display", Georgia, serif;
 }
 
 :root {
-  --background: #fdfbf7;
+  --background: #f7f4ee;
   --foreground: #141414;
 }
 
