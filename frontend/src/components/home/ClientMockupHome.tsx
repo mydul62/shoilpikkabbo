@@ -1124,37 +1124,45 @@ export function ClientMockupHome() {
               </div>
             </div>
 
-            {/* Right Brand Mission Banner (5 Cols) */}
-            <div className="lg:col-span-5 bg-gradient-to-r from-[#0D3B37] to-[#124B46] rounded-2xl p-6 sm:p-7 text-white flex items-center justify-between gap-5 shadow-sm relative overflow-hidden">
-              <div className="space-y-2.5 z-10 max-w-[65%]">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 shrink-0">
-                    <svg className="w-full h-full" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M8 12C8 10.8954 8.89543 10 10 10H30C31.1046 10 32 10.8954 32 12L34 33C34 34.6569 32.6569 36 31 36H9C7.34315 36 6 34.6569 6 33L8 12Z" fill="#186A62" />
-                      <path d="M14 12V9C14 6.79086 15.7909 5 18 5H22C24.2091 5 26 6.79086 26 9V12" stroke="#186A62" strokeWidth="2.5" strokeLinecap="round" />
-                      <path d="M14 27C14 20 22 17 26 15C26 21 21 27 15 28" fill="#22C55E" />
-                      <path d="M12 29C14 24 19 22 23 23C20 26 16 30 12 29Z" fill="#E0592A" />
-                    </svg>
+            {/* Right Brand Mission Banner (5 Cols - Exact Client Mockup with High-Res BG Asset) */}
+            <div className="lg:col-span-5 relative bg-[#07382E] rounded-2xl sm:rounded-3xl p-6 sm:p-7 text-white flex flex-col justify-center min-h-[200px] sm:min-h-[220px] overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] transition-all duration-300 group">
+              {/* High-res background image with hands holding seedling */}
+              <Image
+                src="/images/client-mockup/trust-mission-banner-bg.png"
+                alt="Shoilpikkabbo - Delivery, Quality, Reliability"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 42vw"
+                className="object-cover object-right group-hover:scale-103 transition-transform duration-500"
+              />
+
+              {/* Text & Brand Content */}
+              <div className="relative z-10 max-w-[65%] sm:max-w-[62%] space-y-2.5">
+                {/* Brand Header: Logo Icon + SHOILPIKKABBO + Tagline */}
+                <div className="flex items-center gap-2.5 sm:gap-3">
+                  <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0">
+                    <Image
+                      src="/images/client-mockup/trust-brand-icon.png"
+                      alt="Shoilpikkabbo"
+                      fill
+                      className="object-contain"
+                    />
                   </div>
-                  <span className="font-extrabold text-xs tracking-wider uppercase text-emerald-300">
-                    SHOILPIKKABBO
-                  </span>
+                  <div>
+                    <h4 className="font-extrabold text-sm sm:text-base lg:text-[17px] text-white tracking-wide leading-tight drop-shadow-xs">
+                      SHOILPIKKABBO
+                    </h4>
+                    <p className="text-[9.5px] sm:text-[10px] font-semibold text-emerald-100/90 tracking-widest uppercase mt-0.5 drop-shadow-xs">
+                      DELIVERY • QUALITY • RELIABILITY
+                    </p>
+                  </div>
                 </div>
 
-                <p className="text-xs sm:text-sm text-white/95 leading-relaxed font-light">
-                  &ldquo;We are committed to delivering high-quality products
-                  and services with trust, care and reliability to make your
-                  life easier.&rdquo;
+                {/* Mission / Commitment Statement */}
+                <p className="text-xs sm:text-[13px] lg:text-[13.5px] text-white/95 leading-relaxed font-normal drop-shadow-xs">
+                  We are committed to delivering high-quality products and services
+                  with trust, care and reliability to make your life easier.
                 </p>
-              </div>
-
-              <div className="relative w-28 h-24 sm:w-32 sm:h-28 shrink-0">
-                <Image
-                  src="/images/client-mockup/trust-mission-banner.png"
-                  alt="Commitment and Trust"
-                  fill
-                  className="object-contain"
-                />
               </div>
             </div>
           </div>
