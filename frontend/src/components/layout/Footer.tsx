@@ -19,49 +19,40 @@ export function Footer() {
           </div>
 
           {/* 3-Step Ordering Process */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-12 lg:gap-16 pb-6 sm:pb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-10 lg:gap-16 pb-6 sm:pb-10">
             {/* Step 1 */}
-            <div className="flex items-start gap-4">
-              <span className="font-serif text-2xl sm:text-[28px] font-normal text-[#B85D38] leading-none shrink-0 pt-0.5">
+            <div className="flex flex-col sm:flex-row items-start gap-2.5 sm:gap-4">
+              <span className="text-[12px] sm:text-[14px] font-semibold text-[#B85D38] leading-none shrink-0 pt-0.5">
                 01
               </span>
               <div>
-                <h4 className="text-[14px] sm:text-[15px] font-medium text-[#143527] leading-snug">
-                  Find something you love
+                <h4 className="font-serif text-[20px] sm:text-[22px] lg:text-[24px] font-normal text-[#143527] leading-snug">
+                  Find your favourite
                 </h4>
-                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1 leading-relaxed">
-                  Browse by category or search the collection.
-                </p>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="flex items-start gap-4">
-              <span className="font-serif text-2xl sm:text-[28px] font-normal text-[#B85D38] leading-none shrink-0 pt-0.5">
+            <div className="flex flex-col sm:flex-row items-start gap-2.5 sm:gap-4">
+              <span className="text-[12px] sm:text-[14px] font-semibold text-[#B85D38] leading-none shrink-0 pt-0.5">
                 02
               </span>
               <div>
-                <h4 className="text-[14px] sm:text-[15px] font-medium text-[#143527] leading-snug">
-                  Pay through your chosen provider
+                <h4 className="font-serif text-[20px] sm:text-[22px] lg:text-[24px] font-normal text-[#143527] leading-snug">
+                  Choose how to pay
                 </h4>
-                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1 leading-relaxed">
-                  bKash, Nagad, BRAC Bank transfer or card.
-                </p>
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="flex items-start gap-4">
-              <span className="font-serif text-2xl sm:text-[28px] font-normal text-[#B85D38] leading-none shrink-0 pt-0.5">
+            <div className="flex flex-col sm:flex-row items-start gap-2.5 sm:gap-4">
+              <span className="text-[12px] sm:text-[14px] font-semibold text-[#B85D38] leading-none shrink-0 pt-0.5">
                 03
               </span>
               <div>
-                <h4 className="text-[14px] sm:text-[15px] font-medium text-[#143527] leading-snug">
-                  Follow your delivery
+                <h4 className="font-serif text-[20px] sm:text-[22px] lg:text-[24px] font-normal text-[#143527] leading-snug">
+                  Track your delivery
                 </h4>
-                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1 leading-relaxed">
-                  View order updates and delivery details.
-                </p>
               </div>
             </div>
           </div>
@@ -100,10 +91,10 @@ export function Footer() {
 
       {/* 2. Main Deep Green Footer */}
       <footer className="bg-[#133829] text-white overflow-hidden">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-16 pt-8 sm:pt-20 pb-8 sm:pb-16">
-          <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-8 pb-6 sm:pb-16">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-16 pt-8 sm:pt-14 lg:pt-20 pb-8 sm:pb-16">
+          <div className="space-y-6 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-8 pb-6 sm:pb-12">
             {/* Column 1: Brand Info */}
-            <div className="sm:col-span-2 lg:col-span-5">
+            <div className="sm:col-span-1 lg:col-span-5">
               <h3 className="font-serif text-2xl sm:text-[28px] font-normal tracking-[0.08em] text-white uppercase mb-1.5 sm:mb-2">
                 SHOILPIKKABBO
               </h3>
@@ -118,13 +109,29 @@ export function Footer() {
                   {CLIENT_INFO.email}
                 </a>
                 <p className="text-[#A8BDB2]">
-                  {CLIENT_INFO.phonePrimary} - {CLIENT_INFO.phoneSecondary}
+                  {CLIENT_INFO.phonePrimary} · {CLIENT_INFO.phoneSecondary}
                 </p>
               </div>
             </div>
 
-            {/* Desktop Link Columns (Visible on md+) */}
-            <div className="hidden md:block col-span-1 lg:col-span-2">
+            {/* Tablet Links Row (Visible on md to lg) - Matching Tablet Screenshot 4 */}
+            <div className="hidden md:flex lg:hidden flex-col justify-start gap-3 sm:col-span-1 text-[12.5px] text-[#A8BDB2] font-light">
+              <div className="flex flex-wrap items-center gap-x-2">
+                <Link href="/about" className="hover:text-white transition-colors">About us</Link>
+                <span>·</span>
+                <Link href="/services" className="hover:text-white transition-colors">Services</Link>
+                <span>·</span>
+                <Link href="/careers" className="hover:text-white transition-colors">Career</Link>
+                <span>·</span>
+                <Link href="/contact" className="hover:text-white transition-colors">Contact us</Link>
+              </div>
+              <p className="text-[#869E90] text-[12px]">
+                bKash · Nagad · Card · BRAC Bank transfer
+              </p>
+            </div>
+
+            {/* Desktop Link Columns (Visible on lg+) */}
+            <div className="hidden lg:block col-span-2">
               <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-3.5 sm:mb-5">
                 Explore
               </h4>
@@ -157,7 +164,7 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="hidden md:block col-span-1 lg:col-span-2">
+            <div className="hidden lg:block col-span-2">
               <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-3.5 sm:mb-5">
                 Here to help
               </h4>
@@ -195,7 +202,7 @@ export function Footer() {
               </ul>
             </div>
 
-            <div className="hidden md:block sm:col-span-2 lg:col-span-3">
+            <div className="hidden lg:block col-span-3">
               <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-3 sm:mb-5">
                 Pay your way
               </h4>

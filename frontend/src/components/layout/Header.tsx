@@ -76,11 +76,11 @@ export function Header() {
 
       {/* 2. Main Header Row */}
       <div className="border-b border-[#EAE3D5] bg-[#F7F4EE]">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-3.5 sm:py-5 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
-          {/* Mobile Menu Button (Left) */}
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-3.5 sm:py-4 lg:py-5 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
+          {/* Mobile & Tablet Menu Button (Left, visible on < lg) */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-1.5 -ml-1 text-[#143527] hover:bg-[#EFE8DC] rounded-xs focus:outline-none cursor-pointer"
+            className="lg:hidden p-1.5 -ml-1 text-[#143527] hover:bg-[#EFE8DC] rounded-xs focus:outline-none cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? (
@@ -90,8 +90,8 @@ export function Header() {
             )}
           </button>
 
-          {/* Brand Logo / Title: Centered on Mobile, Left on Desktop */}
-          <div className="shrink-0 flex items-center justify-center flex-1 md:flex-initial">
+          {/* Brand Logo / Title: Centered on Mobile & Tablet, Left on Desktop */}
+          <div className="shrink-0 flex items-center justify-center flex-1 lg:flex-initial">
             <Link href="/" className="group flex items-center gap-2">
               <span className="font-serif text-[18px] sm:text-[22px] lg:text-[24px] font-normal tracking-[0.14em] text-[#143527] uppercase">
                 SHOILPIKKABBO
@@ -99,10 +99,10 @@ export function Header() {
             </Link>
           </div>
 
-          {/* Center: Search Bar (Desktop & Tablet) */}
+          {/* Center: Search Bar (Desktop only, lg+) */}
           <form
             onSubmit={handleSearchSubmit}
-            className="hidden md:flex flex-1 max-w-[540px] mx-auto"
+            className="hidden lg:flex flex-1 max-w-[540px] mx-auto"
           >
             <div className="relative w-full flex items-center bg-[#F7F4EE] border border-[#D5CDC0] rounded-[2px] transition-all focus-within:border-[#143527] focus-within:bg-white focus-within:shadow-sm">
               <div className="pl-4 pr-2.5 flex items-center pointer-events-none">
@@ -118,14 +118,16 @@ export function Header() {
             </div>
           </form>
 
-          {/* Right: Actions (Sign in & Bag on Desktop; Bag Icon on Mobile) */}
-          <div className="flex items-center gap-4 sm:gap-7 lg:gap-9 shrink-0">
+          {/* Right: Actions (User icon & Bag icon on Tablet; full text on Desktop) */}
+          <div className="flex items-center gap-3.5 sm:gap-5 lg:gap-9 shrink-0">
             <Link
               href="/login"
-              className="hidden sm:flex items-center gap-2 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group"
+              className="flex items-center gap-2 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group"
+              title="Account"
+              aria-label="Account"
             >
               <User className="w-[19px] h-[19px] sm:w-[20px] sm:h-[20px] text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
-              <span>Sign in</span>
+              <span className="hidden lg:inline">Sign in</span>
             </Link>
 
             <button
@@ -141,21 +143,21 @@ export function Header() {
                   </span>
                 )}
               </div>
-              <span className="hidden sm:inline">Bag ({totalItemCount})</span>
+              <span className="hidden lg:inline">Bag ({totalItemCount})</span>
             </button>
           </div>
         </div>
 
-        {/* 2b. Always Visible Prominent Mobile Search Bar Matching Screenshot 1 */}
-        <div className="md:hidden px-4 py-2.5 bg-[#FAF7F2] border-t border-[#EAE3D5]/80">
-          <form onSubmit={handleSearchSubmit} className="relative">
+        {/* 2b. Full-Width Search Bar on Mobile & Tablet (< lg) Matching Tablet Screenshot 1 */}
+        <div className="lg:hidden px-4 sm:px-8 py-2.5 bg-[#FAF7F2] border-t border-[#EAE3D5]/80">
+          <form onSubmit={handleSearchSubmit} className="relative max-w-[768px] mx-auto">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6F7670]" strokeWidth={1.8} />
             <input
               type="text"
-              placeholder="Search products & services"
+              placeholder="Search products, categories & services"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-10 pl-10 pr-3.5 rounded-[2px] border border-[#D5CDC0] bg-white text-[12.5px] text-[#143527] placeholder:text-[#6F7670] focus:outline-none focus:border-[#143527]"
+              className="w-full h-10 pl-10 pr-3.5 rounded-[2px] border border-[#D5CDC0] bg-white text-[12.5px] sm:text-[13px] text-[#143527] placeholder:text-[#6F7670] focus:outline-none focus:border-[#143527]"
             />
           </form>
         </div>
