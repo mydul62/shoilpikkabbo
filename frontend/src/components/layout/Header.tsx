@@ -121,6 +121,18 @@ export function Header() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Prevent body scroll when mobile navigation drawer is open
+  React.useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "";
+      };
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [isMobileMenuOpen]);
+
   // Compute live global search results
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
@@ -615,88 +627,146 @@ export function Header() {
         </div>
       </nav>
 
-      {/* Mobile Menubar Dropdown with smooth slow height, opacity, and backdrop transition */}
+      {/* ========================================================================= */}
+      {/* Modern Slide-Over Mobile Navigation Drawer (from the Left) */}
+      {/* ========================================================================= */}
       <div
-        className={`lg:hidden grid transition-all duration-500 ease-in-out border-b bg-[#F7F4EE] ${
-          isMobileMenuOpen
-            ? "grid-rows-[1fr] opacity-100 border-[#EAE3D5]"
-            : "grid-rows-[0fr] opacity-0 pointer-events-none border-transparent"
+        className={`lg:hidden fixed inset-0 z-50 overflow-hidden transition-all duration-500 ease-in-out ${
+          isMobileMenuOpen ? "visible pointer-events-auto" : "invisible pointer-events-none delay-500"
         }`}
+        aria-hidden={!isMobileMenuOpen}
       >
-        <div className="overflow-hidden">
-          <div className="px-6 pt-5 pb-8 space-y-4">
-            <div className="space-y-2 text-sm text-[#243329] font-medium divide-y divide-[#EAE3D5]/60">
-              <div className="flex flex-col space-y-3">
+        {/* Full-Screen Dimmed Backdrop */}
+        <div
+          className={`fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-500 ease-in-out ${
+            isMobileMenuOpen ? "opacity-100" : "opacity-0"
+          }`}
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+
+        {/* Drawer Panel Sliding in from the Left */}
+        <div
+          className={`fixed inset-y-0 left-0 w-[84vw] max-w-[340px] bg-[#FAF7F2] shadow-2xl flex flex-col border-r border-[#EAE3D5] transform transition-transform duration-500 ease-out ${
+            isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {/* Drawer Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-[#EAE3D5] bg-[#F7F4EE]">
+            <Link
+              href="/"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="font-serif text-lg font-normal tracking-[0.14em] text-[#143527] uppercase"
+            >
+              SHOILPIKKABBO
+            </Link>
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-1.5 -mr-1 text-[#143527] hover:bg-[#EAE3D5] rounded-xs transition-colors cursor-pointer"
+              aria-label="Close navigation menu"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Drawer Scrollable Content */}
+          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+            {/* Primary Navigation */}
+            <div>
+              <p className="text-[10.5px] font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3">
+                Collections & Categories
+              </p>
+              <div className="flex flex-col space-y-2 text-[15px] font-medium text-[#143527]">
                 <Link
                   href="/shop"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="hover:text-[#B85D38] transition-colors"
+                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
                 >
-                  Shop all
+                  <span>Shop all</span>
+                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
                 </Link>
                 <Link
                   href="/shop?category=handicraft"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="hover:text-[#B85D38] transition-colors"
+                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
                 >
-                  Handicrafts
+                  <span>Handicrafts</span>
+                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
                 </Link>
                 <Link
                   href="/shop?category=jute-items"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="hover:text-[#B85D38] transition-colors"
+                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
                 >
-                  Jute Items
+                  <span>Jute Items</span>
+                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
                 </Link>
                 <Link
                   href="/shop?category=corporate-gift-items"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="hover:text-[#B85D38] transition-colors"
+                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
                 >
-                  Gifting
+                  <span>Corporate Gifting</span>
+                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
                 </Link>
                 <Link
                   href="/services"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="hover:text-[#B85D38] transition-colors"
+                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
                 >
-                  Services
+                  <span>Special E-Sheba & Services</span>
+                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
                 </Link>
               </div>
+            </div>
 
-              <div className="pt-3.5 flex flex-col space-y-3">
+            {/* Quick Links & Offers */}
+            <div>
+              <p className="text-[10.5px] font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3">
+                Explore More
+              </p>
+              <div className="flex flex-col space-y-2 text-[14px] text-[#2D3F33]">
                 <Link
                   href="/offers"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-[#B85D38] font-semibold"
+                  className="flex items-center justify-between py-1 text-[#B85D38] font-semibold"
                 >
-                  Offers / Discounts
+                  <span>Offers & Discounts</span>
+                  <span className="text-[10px] bg-[#B85D38]/10 text-[#B85D38] px-2 py-0.5 rounded-full font-bold">
+                    DEALS
+                  </span>
+                </Link>
+                <Link
+                  href="/track-order"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="py-1 hover:text-[#B85D38] transition-colors"
+                >
+                  Track Order
                 </Link>
                 <Link
                   href="/about"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="hover:text-[#B85D38] transition-colors"
+                  className="py-1 hover:text-[#B85D38] transition-colors"
                 >
-                  About us
+                  About Us & Story
                 </Link>
                 <Link
                   href="/careers"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="hover:text-[#B85D38] transition-colors"
+                  className="py-1 hover:text-[#B85D38] transition-colors"
                 >
-                  Career
+                  Careers
                 </Link>
                 <Link
                   href="/contact"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="hover:text-[#B85D38] transition-colors"
+                  className="py-1 hover:text-[#B85D38] transition-colors"
                 >
-                  Contact us
+                  Customer Support / Contact
                 </Link>
                 <Link
                   href="/admin"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-[#143527] font-bold flex items-center justify-between pt-1"
+                  className="flex items-center justify-between py-2 text-[#143527] font-bold border-t border-[#EAE3D5] mt-2 pt-3 hover:text-[#B85D38] transition-colors"
                 >
                   <span>Admin Dashboard</span>
                   <ArrowRight className="h-4 w-4" />
@@ -704,16 +774,28 @@ export function Header() {
               </div>
             </div>
           </div>
+
+          {/* Drawer Footer with Language & Help */}
+          <div className="p-5 border-t border-[#EAE3D5] bg-[#F7F4EE] flex items-center justify-between text-xs text-[#555A54]">
+            <div className="flex items-center gap-2">
+              <span className="font-medium text-[#143527]">Language:</span>
+              <button
+                onClick={() => setLang(lang === "en" ? "bn" : "en")}
+                className="font-medium px-2 py-1 rounded bg-white border border-[#D5CDC0] text-[#143527] cursor-pointer hover:border-[#143527] transition-colors"
+              >
+                {lang === "en" ? "EN (English)" : "বাংলা"}
+              </button>
+            </div>
+            <Link
+              href="/contact"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-[#143527] underline font-medium hover:text-[#B85D38] transition-colors"
+            >
+              Need help?
+            </Link>
+          </div>
         </div>
       </div>
-
-      {/* Dimmed backdrop when mobile menubar is open */}
-      <div
-        className={`lg:hidden fixed inset-0 top-[110px] bg-black/40 backdrop-blur-xs z-30 transition-opacity duration-500 ease-in-out ${
-          isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setIsMobileMenuOpen(false)}
-      />
     </header>
   );
 }
