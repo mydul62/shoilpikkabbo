@@ -16,6 +16,10 @@ import {
   LogOut,
   Package,
   ShieldCheck,
+  Heart,
+  Phone,
+  Mail,
+  Truck,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -63,12 +67,14 @@ export function Header() {
   const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = React.useState(false);
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = React.useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
-  const [lang, setLang] = React.useState<"en" | "bn">("en");
+  const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = React.useState(false);
+  const [lang, setLang] = React.useState<"en" | "bn">("bn");
   const [catalogProducts, setCatalogProducts] = React.useState<any[]>(MOCK_PRODUCTS);
 
   const desktopSearchRef = React.useRef<HTMLDivElement>(null);
   const mobileSearchRef = React.useRef<HTMLDivElement>(null);
   const userMenuRef = React.useRef<HTMLDivElement>(null);
+  const categoriesMenuRef = React.useRef<HTMLDivElement>(null);
 
   // Fetch live products for accurate global search
   React.useEffect(() => {
@@ -116,6 +122,12 @@ export function Header() {
         !userMenuRef.current.contains(e.target as Node)
       ) {
         setIsUserMenuOpen(false);
+      }
+      if (
+        categoriesMenuRef.current &&
+        !categoriesMenuRef.current.contains(e.target as Node)
+      ) {
+        setIsCategoriesMenuOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -381,62 +393,80 @@ export function Header() {
         )}
       </div>
     );
-  };
-
-  return (
-    <header className="w-full bg-[#F7F4EE] z-40 sticky top-0 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+  };  return (
+    <header className="w-full bg-white z-40 sticky top-0 shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
       <React.Suspense fallback={null}>
         <SearchParamsSync onSync={(q) => setSearchQuery(q)} />
       </React.Suspense>
 
-      {/* 1. Top Announcement Bar */}
-      <div className="bg-[#133829] text-[#DCE5DF] py-2 border-b border-[#0F2D21]">
-        <div className="max-w-[1524px] mx-auto px-5 flex items-center justify-between text-[11px] sm:text-[12px] font-normal tracking-wide">
-          {/* Left Text: Delivery • Quality • Reliability */}
-          <div className="text-[#DCE5DF] font-light">
-            Delivery • Quality • Reliability
+      {/* 1. Top Bar (Dark Teal #0D3B37) */}
+      <div className="bg-[#0D3B37] text-white/90 py-1.5 border-b border-[#0A2F2C]">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-[11.5px] sm:text-xs">
+          {/* Left Contact Info */}
+          <div className="flex items-center gap-3 sm:gap-4">
+            <a
+              href="mailto:shoilpikkabbo@gmail.com"
+              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors"
+            >
+              <Mail className="w-3.5 h-3.5 text-orange-400" />
+              <span className="hidden sm:inline">shoilpikkabbo@gmail.com</span>
+              <span className="sm:hidden">Email</span>
+            </a>
+            <span className="text-white/30">|</span>
+            <a
+              href="tel:01731214379"
+              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors"
+            >
+              <Phone className="w-3.5 h-3.5 text-orange-400" />
+              <span>01731214379, 01811909068</span>
+            </a>
           </div>
 
-          {/* Right Links */}
-          <div className="flex items-center gap-2 sm:gap-3 text-[#DCE5DF] font-light shrink-0">
+          {/* Right Links & Language Toggle */}
+          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <Link
               href="/track-order"
-              className="hover:text-white transition-colors hidden sm:inline"
+              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors text-[11.5px] sm:text-xs"
             >
-              Track order
+              <Truck className="w-3.5 h-3.5 text-orange-400" />
+              <span>Track Order</span>
             </Link>
-            <span className="text-[#6D8A7A] select-none hidden sm:inline">·</span>
-            <Link
-              href="/contact"
-              className="hover:text-white transition-colors hidden sm:inline"
-            >
-              Need help?
-            </Link>
-            <span className="text-[#6D8A7A] select-none hidden sm:inline">·</span>
-            <button
-              onClick={() => setLang(lang === "en" ? "bn" : "en")}
-              className="hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1 text-[11px] sm:text-xs"
-              title="Toggle Language"
-            >
-              <span className={lang === "en" ? "text-white font-medium" : "text-[#DCE5DF]/80"}>
-                EN ⌵
-              </span>
-              <span className="text-[#6D8A7A]">|</span>
-              <span className={lang === "bn" ? "text-white font-medium" : "text-[#DCE5DF]/80"}>
+            <span className="text-white/30">|</span>
+            <div className="flex items-center gap-1 bg-[#092926] p-0.5 rounded">
+              <button
+                type="button"
+                onClick={() => setLang("bn")}
+                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+                  lang === "bn"
+                    ? "bg-[#E0592A] text-white shadow-xs"
+                    : "text-white/70 hover:text-white"
+                }`}
+              >
                 বাংলা
-              </span>
-            </button>
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang("en")}
+                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
+                  lang === "en"
+                    ? "bg-[#E0592A] text-white shadow-xs"
+                    : "text-white/70 hover:text-white"
+                }`}
+              >
+                English
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 2. Main Header Row */}
-      <div className="border-b border-[#EAE3D5] bg-[#F7F4EE]">
-        <div className="max-w-[1524px] mx-auto px-5 py-3.5 sm:py-4 lg:py-5 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
-          {/* Mobile & Tablet Menu Button with Smooth Icon Transition */}
+      {/* 2. Main Header Row (Clean White Background) */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
+          {/* Mobile Menu Button with Smooth Icon Transition */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-1.5 -ml-1 text-[#143527] hover:bg-[#EFE8DC] rounded-xs focus:outline-none cursor-pointer transition-colors"
+            className="lg:hidden p-1.5 -ml-1 text-[#0D3B37] hover:bg-gray-100 rounded-md focus:outline-none cursor-pointer transition-colors"
             aria-label="Toggle navigation menu"
           >
             <div className="relative w-6 h-6 flex items-center justify-center">
@@ -457,28 +487,38 @@ export function Header() {
             </div>
           </button>
 
-          {/* Brand Logo / Title */}
+          {/* Brand Logo matching Client Mockup */}
           <div className="shrink-0 flex items-center justify-center flex-1 lg:flex-initial">
-            <Link href="/" className="group flex items-center gap-2">
-              <span className="font-serif text-[18px] sm:text-[22px] lg:text-[24px] font-normal tracking-[0.14em] text-[#143527] uppercase">
-                SHOILPIKKABBO
-              </span>
+            <Link href="/" className="group flex items-center gap-2.5">
+              <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0">
+                <svg className="w-full h-full" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 12C8 10.8954 8.89543 10 10 10H30C31.1046 10 32 10.8954 32 12L34 33C34 34.6569 32.6569 36 31 36H9C7.34315 36 6 34.6569 6 33L8 12Z" fill="#0D3B37" />
+                  <path d="M14 12V9C14 6.79086 15.7909 5 18 5H22C24.2091 5 26 6.79086 26 9V12" stroke="#0D3B37" strokeWidth="2.5" strokeLinecap="round" />
+                  <path d="M14 27C14 20 22 17 26 15C26 21 21 27 15 28" fill="#22C55E" />
+                  <path d="M12 29C14 24 19 22 23 23C20 26 16 30 12 29Z" fill="#E0592A" />
+                </svg>
+              </div>
+              <div className="flex flex-col">
+                <span className="font-extrabold text-[19px] sm:text-[23px] tracking-tight text-[#0D3B37] leading-none group-hover:text-[#E0592A] transition-colors">
+                  SHOILPIKKABBO
+                </span>
+                <span className="text-[8.5px] sm:text-[9.5px] font-bold tracking-[0.2em] text-[#0D3B37]/75 mt-1 uppercase">
+                  DELIVERY • QUALITY • RELIABILITY
+                </span>
+              </div>
             </Link>
           </div>
 
-          {/* Center: Global Search Bar (Desktop only, lg+) */}
+          {/* Center: Global Search Bar with Attached Orange Button (Desktop only, lg+) */}
           <div
             ref={desktopSearchRef}
-            className="hidden lg:flex flex-1 max-w-[540px] mx-auto relative"
+            className="hidden lg:flex flex-1 max-w-[580px] mx-auto relative"
           >
             <form onSubmit={handleSearchSubmit} className="w-full">
-              <div className="relative w-full flex items-center bg-[#F7F4EE] border border-[#D5CDC0] rounded-[2px] transition-all focus-within:border-[#143527] focus-within:bg-white focus-within:shadow-sm">
-                <div className="pl-4 pr-2.5 flex items-center pointer-events-none">
-                  <Search className="w-[18px] h-[18px] text-[#243B2D]" strokeWidth={1.8} />
-                </div>
+              <div className="relative w-full flex items-center bg-[#F9FAFB] border border-[#E5E7EB] rounded-md transition-all focus-within:border-[#E0592A] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#E0592A]/10 overflow-hidden shadow-2xs">
                 <input
                   type="text"
-                  placeholder="Search products, categories & services"
+                  placeholder="Search for products, categories..."
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -487,7 +527,7 @@ export function Header() {
                   onFocus={() => {
                     if (searchQuery.trim().length > 0) setIsDesktopDropdownOpen(true);
                   }}
-                  className="w-full h-11 pr-8 bg-transparent text-[13.5px] text-[#143527] placeholder:text-[#6F7670] placeholder:font-normal focus:outline-none"
+                  className="w-full h-10 pl-4 pr-9 bg-transparent text-[13.5px] text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                 />
                 {searchQuery && (
                   <button
@@ -496,12 +536,19 @@ export function Header() {
                       setSearchQuery("");
                       setIsDesktopDropdownOpen(false);
                     }}
-                    className="absolute right-3 p-1 text-[#869E90] hover:text-[#143527] cursor-pointer"
+                    className="p-1 mr-1 text-[#9CA3AF] hover:text-[#111827] cursor-pointer"
                     title="Clear search"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 )}
+                <button
+                  type="submit"
+                  className="h-10 px-4 bg-[#E0592A] hover:bg-[#C94B20] text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                  aria-label="Search"
+                >
+                  <Search className="w-4 h-4" strokeWidth={2.2} />
+                </button>
               </div>
             </form>
 
@@ -509,53 +556,53 @@ export function Header() {
             {isDesktopDropdownOpen && renderDropdown()}
           </div>
 
-          {/* Right: Actions */}
-          <div className="flex items-center gap-3.5 sm:gap-5 lg:gap-9 shrink-0">
+          {/* Right: Actions (Login/Register, Wishlist, Cart) */}
+          <div className="flex items-center gap-3.5 sm:gap-5 lg:gap-7 shrink-0">
             {isAuthenticated && user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group cursor-pointer"
+                  className="flex items-center gap-2 text-xs sm:text-[13px] text-[#0D3B37] hover:text-[#E0592A] transition-colors font-medium group cursor-pointer"
                   title="My Account"
                   aria-label="My Account"
                 >
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#143527] text-white flex items-center justify-center text-xs font-semibold uppercase">
+                  <div className="w-8 h-8 rounded-full bg-[#0D3B37] text-white flex items-center justify-center text-xs font-semibold uppercase">
                     {user.name ? user.name.charAt(0) : "U"}
                   </div>
                   <div className="hidden lg:flex flex-col items-start leading-tight">
-                    <span className="text-[10.5px] text-[#7A837C] font-normal">Welcome,</span>
-                    <span className="font-medium text-[#143527] max-w-[110px] truncate text-xs sm:text-[13px]">
+                    <span className="text-[10px] text-gray-400 font-normal">Welcome,</span>
+                    <span className="font-semibold text-[#0D3B37] max-w-[110px] truncate">
                       {user.name.split(" ")[0]}
                     </span>
                   </div>
-                  <ChevronDown className={`hidden lg:inline w-3.5 h-3.5 text-[#7A837C] group-hover:text-[#143527] transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown className={`hidden lg:inline w-3.5 h-3.5 text-gray-400 group-hover:text-[#0D3B37] transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
                 </button>
 
                 {/* Account Dropdown Menu */}
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-56 rounded-md bg-white border border-[#EAE3D5] shadow-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                    <div className="px-4 py-2.5 border-b border-[#EAE3D5]">
-                      <p className="text-[11px] text-[#7A837C] font-normal">Signed in as</p>
-                      <p className="text-sm font-semibold text-[#143527] truncate mt-0.5">{user.name}</p>
-                      <p className="text-[11.5px] text-[#7A837C] truncate">{user.phone || user.email}</p>
+                  <div className="absolute right-0 top-full mt-2 w-56 rounded-md bg-white border border-gray-100 shadow-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-4 py-2.5 border-b border-gray-100">
+                      <p className="text-[11px] text-gray-400 font-normal">Signed in as</p>
+                      <p className="text-sm font-semibold text-[#0D3B37] truncate mt-0.5">{user.name}</p>
+                      <p className="text-[11.5px] text-gray-500 truncate">{user.phone || user.email}</p>
                     </div>
 
-                    <div className="py-1 text-xs sm:text-sm text-[#2D3F33]">
+                    <div className="py-1 text-xs sm:text-sm text-gray-700">
                       <Link
                         href="/account"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-[#FAF7F2] hover:text-[#B85D38] transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
                       >
-                        <User className="w-4 h-4 text-[#8C948E]" />
+                        <User className="w-4 h-4 text-gray-400" />
                         <span>My Profile & Orders</span>
                       </Link>
 
                       <Link
                         href="/track-order"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-[#FAF7F2] hover:text-[#B85D38] transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
                       >
-                        <Package className="w-4 h-4 text-[#8C948E]" />
+                        <Package className="w-4 h-4 text-gray-400" />
                         <span>Track My Order</span>
                       </Link>
 
@@ -563,15 +610,15 @@ export function Header() {
                         <Link
                           href="/admin"
                           onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 font-semibold text-[#143527] hover:bg-[#FAF7F2] hover:text-[#B85D38] transition-colors border-t border-[#EAE3D5]/50"
+                          className="flex items-center gap-2 px-4 py-2 font-semibold text-[#0D3B37] hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors border-t border-gray-100"
                         >
-                          <ShieldCheck className="w-4 h-4 text-[#143527]" />
+                          <ShieldCheck className="w-4 h-4 text-[#0D3B37]" />
                           <span>Admin Dashboard</span>
                         </Link>
                       )}
                     </div>
 
-                    <div className="border-t border-[#EAE3D5] pt-1">
+                    <div className="border-t border-gray-100 pt-1">
                       <button
                         onClick={async () => {
                           setIsUserMenuOpen(false);
@@ -590,65 +637,80 @@ export function Header() {
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-2 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group"
-                title="Sign in"
-                aria-label="Sign in"
+                className="flex items-center gap-1.5 text-xs sm:text-[13px] text-gray-700 hover:text-[#E0592A] transition-colors font-medium group"
+                title="Login / Register"
               >
-                <User className="w-[19px] h-[19px] sm:w-[20px] sm:h-[20px] text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
-                <span className="hidden lg:inline">Sign in</span>
+                <User className="w-[18px] h-[18px] text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
+                <span className="hidden lg:inline font-semibold">Login / Register</span>
               </Link>
             )}
 
+            {/* Wishlist Link */}
+            <Link
+              href="/shop"
+              className="hidden sm:flex items-center gap-1.5 text-xs sm:text-[13px] text-gray-700 hover:text-[#E0592A] transition-colors font-medium group"
+              title="Wishlist"
+            >
+              <Heart className="w-[18px] h-[18px] text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
+              <span className="hidden lg:inline font-semibold">Wishlist</span>
+            </Link>
+
+            {/* Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="flex items-center gap-1.5 sm:gap-2.5 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium cursor-pointer group"
+              className="flex items-center gap-2 text-xs sm:text-[13px] text-gray-700 hover:text-[#E0592A] transition-colors font-medium cursor-pointer group"
               aria-label="Open Shopping Bag"
             >
               <div className="relative">
-                <ShoppingBag className="w-5 h-5 text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
-                {totalItemCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 bg-[#B85D38] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                    {totalItemCount}
-                  </span>
-                )}
+                <ShoppingBag className="w-5 h-5 text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
+                <span className="absolute -top-1.5 -right-2 bg-[#E0592A] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                  {totalItemCount}
+                </span>
               </div>
-              <span className="hidden lg:inline">Bag ({totalItemCount})</span>
+              <span className="hidden lg:inline font-semibold">Cart</span>
             </button>
           </div>
         </div>
 
-        {/* 2b. Full-Width Search Bar on Mobile & Tablet (< lg) */}
+        {/* Mobile & Tablet Full-Width Search Bar */}
         <div
           ref={mobileSearchRef}
-          className="lg:hidden px-4 sm:px-8 py-2.5 bg-[#FAF7F2] border-t border-[#EAE3D5]/80 relative"
+          className="lg:hidden px-4 sm:px-6 py-2.5 bg-gray-50 border-t border-gray-100 relative"
         >
-          <form onSubmit={handleSearchSubmit} className="relative max-w-[768px] mx-auto">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6F7670]" strokeWidth={1.8} />
-            <input
-              type="text"
-              placeholder="Search products, categories & services"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setIsMobileDropdownOpen(true);
-              }}
-              onFocus={() => {
-                if (searchQuery.trim().length > 0) setIsMobileDropdownOpen(true);
-              }}
-              className="w-full h-10 pl-10 pr-9 rounded-[2px] border border-[#D5CDC0] bg-white text-[12.5px] sm:text-[13px] text-[#143527] placeholder:text-[#6F7670] focus:outline-none focus:border-[#143527]"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery("");
-                  setIsMobileDropdownOpen(false);
+          <form onSubmit={handleSearchSubmit} className="relative max-w-[768px] mx-auto flex items-center">
+            <div className="relative w-full flex items-center bg-white border border-gray-200 rounded-md overflow-hidden focus-within:border-[#E0592A]">
+              <input
+                type="text"
+                placeholder="Search for products, categories..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setIsMobileDropdownOpen(true);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[#869E90] hover:text-[#143527]"
+                onFocus={() => {
+                  if (searchQuery.trim().length > 0) setIsMobileDropdownOpen(true);
+                }}
+                className="w-full h-10 pl-3.5 pr-8 bg-transparent text-xs sm:text-sm text-[#111827] placeholder:text-gray-400 focus:outline-none"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setIsMobileDropdownOpen(false);
+                  }}
+                  className="p-1 mr-1 text-gray-400 hover:text-gray-700"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+              <button
+                type="submit"
+                className="h-10 px-3.5 bg-[#E0592A] hover:bg-[#C94B20] text-white flex items-center justify-center transition-colors shrink-0"
               >
-                <X className="w-3.5 h-3.5" />
+                <Search className="w-3.5 h-3.5" strokeWidth={2.2} />
               </button>
-            )}
+            </div>
           </form>
 
           {/* Mobile Live Dropdown */}
@@ -660,63 +722,95 @@ export function Header() {
         </div>
       </div>
 
-      {/* 3. Secondary Category Bar */}
-      <nav className="border-b border-[#EAE3D5] bg-[#F7F4EE] overflow-x-auto scrollbar-none">
-        <div className="max-w-[1524px] mx-auto px-5 flex items-center justify-start lg:justify-between gap-5 sm:gap-7 lg:gap-0 py-2.5 sm:py-3 text-[12.5px] sm:text-[13.5px] whitespace-nowrap min-w-max lg:min-w-0">
-          <Link
-            href="/shop"
-            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
-          >
-            Shop all
-          </Link>
-          <Link
-            href="/shop?category=handicraft"
-            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
-          >
-            Handicrafts
-          </Link>
-          <Link
-            href="/shop?category=jute-items"
-            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
-          >
-            Jute Items
-          </Link>
-          <Link
-            href="/shop?category=corporate-gift-items"
-            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
-          >
-            Gifting
-          </Link>
-          <Link
-            href="/services"
-            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
-          >
-            Services
-          </Link>
-          <Link
-            href="/about"
-            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
-          >
-            About us
-          </Link>
-          <Link
-            href="/careers"
-            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
-          >
-            Career
-          </Link>
-          <Link
-            href="/contact"
-            className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"
-          >
-            Contact us
-          </Link>
-          <Link
-            href="/offers"
-            className="text-[#B85D38] font-medium hover:text-[#9E4A28] transition-colors"
-          >
-            Offers / Discounts
-          </Link>
+      {/* 3. Navigation Bar (All Categories Button + Centered Links) */}
+      <nav className="border-b border-gray-100 bg-white">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 py-2">
+          {/* All Categories Dropdown Button */}
+          <div className="relative shrink-0" ref={categoriesMenuRef}>
+            <button
+              type="button"
+              onClick={() => setIsCategoriesMenuOpen(!isCategoriesMenuOpen)}
+              className="flex items-center gap-2 px-4 py-2 bg-[#E0592A] hover:bg-[#C94B20] text-white rounded-md font-bold text-xs sm:text-[13px] tracking-wide transition-colors shadow-2xs cursor-pointer"
+            >
+              <Menu className="w-4 h-4" />
+              <span>All Categories</span>
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isCategoriesMenuOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {/* Dropdown Menu */}
+            {isCategoriesMenuOpen && (
+              <div className="absolute left-0 top-full mt-1.5 w-64 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50">
+                {SEARCH_CATEGORIES.map((cat) => (
+                  <Link
+                    key={cat.slug}
+                    href={cat.href || `/shop?category=${cat.slug}`}
+                    onClick={() => setIsCategoriesMenuOpen(false)}
+                    className="flex items-center justify-between px-4 py-2 text-xs sm:text-[13px] text-gray-700 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
+                  >
+                    <span>{cat.name}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-gray-300" />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Horizontal Menu Links */}
+          <div className="hidden md:flex items-center gap-5 lg:gap-7 text-xs sm:text-[13px] font-semibold text-gray-700">
+            <Link
+              href="/"
+              className="text-[#E0592A] hover:text-[#C94B20] transition-colors font-bold"
+            >
+              Home
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setIsCategoriesMenuOpen(!isCategoriesMenuOpen)}
+              className="flex items-center gap-1 hover:text-[#E0592A] transition-colors cursor-pointer"
+            >
+              <span>Categories</span>
+              <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+            </button>
+
+            <Link
+              href="/offers"
+              className="flex items-center gap-1 hover:text-[#E0592A] transition-colors"
+            >
+              <span>Offers</span>
+              <span className="px-1.5 py-0.2 bg-[#E0592A] text-white text-[9px] font-bold rounded-full uppercase leading-tight animate-pulse">
+                Hot
+              </span>
+            </Link>
+
+            <Link
+              href="/services"
+              className="hover:text-[#E0592A] transition-colors"
+            >
+              Services
+            </Link>
+
+            <Link
+              href="/about"
+              className="hover:text-[#E0592A] transition-colors"
+            >
+              About Us
+            </Link>
+
+            <Link
+              href="/careers"
+              className="hover:text-[#E0592A] transition-colors"
+            >
+              Career
+            </Link>
+
+            <Link
+              href="/contact"
+              className="hover:text-[#E0592A] transition-colors"
+            >
+              Contact Us
+            </Link>
+          </div>
         </div>
       </nav>
 
