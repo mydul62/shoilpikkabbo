@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ArrowUpRight, Plus, Check, X, SlidersHorizontal } from "lucide-react";
+import { ArrowUpRight, Plus, Check, X, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
 import { MOCK_PRODUCTS, MOCK_CATEGORIES, Product } from "@/data/mock-data";
@@ -203,6 +203,28 @@ function ShopContent() {
       return 0; // default featured
     });
   }, [catalogProducts, selectedCategories, searchQuery, appliedMinPrice, appliedMaxPrice, inStockOnly, sortBy]);
+
+  // Pagination: 15 items limit per page, 3 items per row on large devices
+  const ITEMS_PER_PAGE = 15;
+  const [currentPage, setCurrentPage] = React.useState<number>(1);
+
+  // Reset to page 1 whenever filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategories, searchQuery, appliedMinPrice, appliedMaxPrice, inStockOnly, sortBy]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / ITEMS_PER_PAGE));
+
+  const paginatedProducts = React.useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProducts.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredProducts, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    window.scrollTo({ top: 120, behavior: "smooth" });
+  };
 
   // Breadcrumb Category Title
   const activeCategoryTitle =
@@ -426,7 +448,8 @@ function ShopContent() {
             {/* Context & Active Pills Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
               <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light">
-                {filteredProducts.length} products
+                {filteredProducts.length} {filteredProducts.length === 1 ? "product" : "products"}
+                {totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ""}
                 {searchQuery ? ` · Search "${searchQuery}"` : ""}
               </p>
 
@@ -478,8 +501,8 @@ function ShopContent() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 gap-3.5 sm:gap-6 lg:gap-8 mb-12 sm:mb-16">
-                {filteredProducts.map((prod) => (
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8 mb-10 sm:mb-12">
+                {paginatedProducts.map((prod) => (
                   <div key={prod.id} className="group flex flex-col">
                     {/* Visual Card Image with Floating Quick-Add */}
                     <div className="relative w-full aspect-[1.48/1] rounded-xl sm:rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-2.5 sm:mb-3.5">
@@ -491,7 +514,7 @@ function ShopContent() {
                           src={prod.imageUrl}
                           alt={prod.name}
                           fill
-                          sizes="(max-width: 640px) 50vw, 50vw"
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
                           className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
                         />
                       </Link>
@@ -539,10 +562,84 @@ function ShopContent() {
               </div>
             )}
 
-            {/* Bottom Row: Seen count & Explore every category */}
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <nav
+                aria-label="Shop catalog pagination"
+                className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 pb-4 border-t border-[#EAE3D5] mb-8"
+              >
+                {/* Count indicator */}
+                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light">
+                  Showing{" "}
+                  <span className="font-medium text-[#143527]">
+                    {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
+                    {Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}
+                  </span>{" "}
+                  of{" "}
+                  <span className="font-medium text-[#143527]">{filteredProducts.length}</span>{" "}
+                  products
+                </p>
+
+                {/* Page Buttons */}
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`inline-flex items-center gap-1 px-3 sm:px-3.5 py-1.5 sm:py-2 text-[12px] sm:text-[12.5px] font-medium rounded-[2px] transition-colors ${
+                      currentPage === 1
+                        ? "text-[#A8B2AA] border border-[#EAE3D5] cursor-not-allowed bg-transparent opacity-60"
+                        : "text-[#143527] border border-[#D5CDC0] hover:border-[#143527] hover:bg-white bg-transparent cursor-pointer"
+                    }`}
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">Previous</span>
+                  </button>
+
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                      const isActive = pageNum === currentPage;
+                      return (
+                        <button
+                          key={pageNum}
+                          type="button"
+                          onClick={() => handlePageChange(pageNum)}
+                          className={`min-w-8 sm:min-w-9 h-8 sm:h-9 px-2 text-[12px] sm:text-[12.5px] font-medium rounded-[2px] transition-all cursor-pointer ${
+                            isActive
+                              ? "bg-[#143527] text-white shadow-xs"
+                              : "text-[#33423A] bg-white border border-[#D5CDC0] hover:border-[#143527] hover:text-[#143527]"
+                          }`}
+                          aria-current={isActive ? "page" : undefined}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`inline-flex items-center gap-1 px-3 sm:px-3.5 py-1.5 sm:py-2 text-[12px] sm:text-[12.5px] font-medium rounded-[2px] transition-colors ${
+                      currentPage === totalPages
+                        ? "text-[#A8B2AA] border border-[#EAE3D5] cursor-not-allowed bg-transparent opacity-60"
+                        : "text-[#143527] border border-[#D5CDC0] hover:border-[#143527] hover:bg-white bg-transparent cursor-pointer"
+                    }`}
+                  >
+                    <span className="hidden sm:inline">Next</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </nav>
+            )}
+
+            {/* Bottom Row: Summary & Action */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-[#EAE3D5]">
               <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light">
-                You&apos;ve seen all {filteredProducts.length} finds.
+                {filteredProducts.length > 0
+                  ? `Page ${currentPage} of ${totalPages} · ${filteredProducts.length} total products`
+                  : "No products to display."}
               </p>
               <button
                 type="button"
