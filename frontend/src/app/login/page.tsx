@@ -8,7 +8,7 @@ import { ArrowUpRight, Lock, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-re
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useAuth } from "@/context/AuthContext";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect");
@@ -271,3 +271,20 @@ export default function LoginPage() {
     </StorefrontLayout>
   );
 }
+
+export default function LoginPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <StorefrontLayout>
+          <div className="min-h-[500px] flex items-center justify-center bg-[#F7F4EE]">
+            <Loader2 className="w-8 h-8 text-[#143527] animate-spin" />
+          </div>
+        </StorefrontLayout>
+      }
+    >
+      <LoginContent />
+    </React.Suspense>
+  );
+}
+
