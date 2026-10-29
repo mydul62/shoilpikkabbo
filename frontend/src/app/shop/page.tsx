@@ -35,7 +35,6 @@ function ShopContent() {
     initialCat ? [initialCat] : []
   );
   const [searchQuery, setSearchQuery] = React.useState<string>(initialQ || "");
-  const [searchInput, setSearchInput] = React.useState<string>(initialQ || "");
   const [sortBy, setSortBy] = React.useState<string>("featured");
   const [minPriceInput, setMinPriceInput] = React.useState<string>("0");
   const [maxPriceInput, setMaxPriceInput] = React.useState<string>("10000");
@@ -55,15 +54,8 @@ function ShopContent() {
     const q = searchParams.get("q");
     if (q !== null) {
       setSearchQuery(q);
-      setSearchInput(q);
     }
   }, [searchParams]);
-
-  // Handle Search Submission
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSearchQuery(searchInput);
-  };
 
   // Toggle Category Checkbox
   const toggleCategory = (slug: string) => {
@@ -91,7 +83,6 @@ function ShopContent() {
   const handleResetFilters = () => {
     setSelectedCategories([]);
     setSearchQuery("");
-    setSearchInput("");
     setMinPriceInput("0");
     setMaxPriceInput("5000");
     setAppliedMinPrice(0);
@@ -258,63 +249,57 @@ function ShopContent() {
           </p>
         </div>
 
-        {/* 3. Search and Sort Toolbar */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end mb-10 pb-8 border-b border-[#EAE3D5]">
-          {/* Search the collection */}
-          <div className="md:col-span-8 lg:col-span-9">
-            <label className="text-[11.5px] text-[#556059] font-medium mb-1.5 block tracking-tight">
-              Search the collection
+        {/* 3. Catalog Controls Toolbar: Filters Summary, Active Global Search Tag, and Sort */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#EAE3D5]">
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Mobile Filter Toggle */}
+            <button
+              onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
+              className="lg:hidden inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-[#D5CDC0] text-[#143527] text-[12.5px] font-medium rounded-[2px] shadow-2xs hover:border-[#143527] transition-colors cursor-pointer"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span>Filters ({selectedCategories.length + (inStockOnly ? 1 : 0) + (appliedMaxPrice < 10000 ? 1 : 0)})</span>
+            </button>
+
+            {/* Results Count */}
+            <p className="text-[13px] text-[#6A736C] font-light">
+              Showing <span className="font-medium text-[#143527]">{filteredProducts.length}</span> {filteredProducts.length === 1 ? "product" : "products"}
+            </p>
+
+            {/* Active Global Search Tag (if searched via Header) */}
+            {searchQuery && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#143527] text-white rounded-[2px] text-[12px] font-medium shadow-2xs">
+                <span>Search: &ldquo;{searchQuery}&rdquo;</span>
+                <button
+                  onClick={() => {
+                    setSearchQuery("");
+                    router.push("/shop");
+                  }}
+                  className="hover:text-[#D4AF37] p-0.5 cursor-pointer transition-colors"
+                  title="Clear search"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Sort By Dropdown */}
+          <div className="flex items-center gap-2.5 self-end sm:self-auto">
+            <label className="text-[12px] text-[#556059] font-medium tracking-tight whitespace-nowrap">
+              Sort by:
             </label>
-            <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 max-w-xl">
-              <input
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search products, materials..."
-                className="w-full h-11 px-3.5 sm:px-4 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] placeholder:text-[#9EA8A1] focus:outline-none focus:border-[#143527] transition-colors"
-              />
-              <button
-                type="submit"
-                className="h-11 px-4 sm:px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[2px] inline-flex items-center gap-1.5 sm:gap-2 shrink-0 transition-colors cursor-pointer"
-              >
-                <span>Search</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
-            </form>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="h-10 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[12.5px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors cursor-pointer shadow-2xs"
+            >
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="newest">Newest Arrivals</option>
+            </select>
           </div>
-
-          {/* Sort By */}
-          <div className="md:col-span-4 lg:col-span-3 flex flex-col md:items-end">
-            <div className="w-full sm:w-auto">
-              <label className="text-[11.5px] text-[#556059] font-medium mb-1.5 block tracking-tight">
-                Sort by
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full sm:w-[190px] h-11 px-4 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors cursor-pointer"
-              >
-                <option value="featured">Featured</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="newest">Newest Arrivals</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Filter Toggle */}
-        <div className="lg:hidden mb-6 flex justify-between items-center">
-          <button
-            onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-[#D5CDC0] text-[#143527] text-[13px] font-medium rounded-[2px]"
-          >
-            <SlidersHorizontal className="w-4 h-4 text-[#143527]" />
-            <span>{isMobileFilterOpen ? "Hide filters" : "Filter your finds"}</span>
-          </button>
-          <span className="text-[12.5px] text-[#6A736C]">
-            {filteredProducts.length} finds
-          </span>
         </div>
 
         {/* 4. Two-Column Layout (Sidebar + Catalog) */}
