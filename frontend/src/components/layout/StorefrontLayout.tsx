@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
+import { FloatingWidgets } from "@/components/layout/FloatingWidgets";
 
 export function StorefrontLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,6 +15,7 @@ export function StorefrontLayout({ children }: { children: React.ReactNode }) {
       <Footer />
       <CartDrawer />
       <MobileBottomNav />
+      <FloatingWidgets />
     </div>
   );
 }
