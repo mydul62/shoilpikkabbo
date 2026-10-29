@@ -509,29 +509,32 @@ export function ClientMockupHome() {
             </span>
           </Link>
 
-          {/* Quality Products Better Life Banner (Spans 2 columns) */}
-          <div className="col-span-2 relative bg-gradient-to-r from-[#0D3B37] to-[#124B46] rounded-2xl p-5 sm:p-6 flex items-center justify-between overflow-hidden shadow-sm">
-            <div className="space-y-2.5 z-10">
-              <p className="text-white font-extrabold text-base sm:text-lg leading-snug">
+          {/* Quality Products Better Life Banner (Spans 2 columns matching client design) */}
+          <div className="col-span-2 relative rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] transition-all duration-300 min-h-[145px] sm:min-h-[155px] md:min-h-[165px] flex items-center group">
+            {/* High-Res Background Image with Nature Vegetables Basket & Curved Arc */}
+            <Image
+              src="/images/client-mockup/quality-products-bg.png"
+              alt="Quality Products Better Life - SHOILPIKKABBO"
+              fill
+              priority
+              className="object-cover object-right sm:object-fill transition-transform duration-500 group-hover:scale-102"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
+            />
+
+            {/* Left Content Overlay: Quality Products Better Life + Explore Categories CTA */}
+            <div className="relative z-10 pl-5 sm:pl-6 md:pl-7 pr-4 py-4 max-w-[58%] sm:max-w-[55%] flex flex-col justify-center space-y-2.5 sm:space-y-3.5">
+              <h3 className="text-white font-extrabold text-base sm:text-lg md:text-xl lg:text-[22px] leading-tight tracking-tight drop-shadow-xs">
                 Quality Products
                 <br />
-                <span className="text-emerald-300 font-bold">Better Life</span>
-              </p>
+                Better Life
+              </h3>
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#E0592A] hover:bg-[#C94B20] text-white text-xs font-bold rounded-xl transition-all shadow-xs"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-[#E0592A] hover:bg-[#C8481C] text-white text-xs sm:text-[13px] font-bold rounded-full transition-all duration-200 shadow-sm hover:scale-105 cursor-pointer w-fit group/btn"
               >
                 <span>Explore Categories</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span className="text-sm transition-transform duration-200 group-hover/btn:translate-x-1">→</span>
               </Link>
-            </div>
-            <div className="relative w-28 h-20 sm:w-32 sm:h-22 shrink-0">
-              <Image
-                src="/images/client-mockup/cat-promo-banner.png"
-                alt="Quality Products Better Life"
-                fill
-                className="object-contain"
-              />
             </div>
           </div>
         </div>
