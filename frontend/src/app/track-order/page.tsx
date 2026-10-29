@@ -205,11 +205,11 @@ function TrackOrderContent() {
                   return (
                     <div
                       key={idx}
-                      className="flex items-start justify-between gap-4 py-1"
+                      className="flex flex-col sm:flex-row sm:items-start justify-between gap-1.5 sm:gap-4 py-1"
                     >
-                      <div className="flex items-start gap-4">
+                      <div className="flex items-start gap-3.5 sm:gap-4">
                         <div
-                          className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                          className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
                             step.active
                               ? "bg-[#E5ECE7] text-[#143527]"
                               : "bg-[#EFECE6] text-[#A0A8A2]"
@@ -227,7 +227,7 @@ function TrackOrderContent() {
                         </div>
                       </div>
 
-                      <span className="text-[11.5px] text-[#8C948E] font-light shrink-0 text-right pt-0.5">
+                      <span className="text-[11px] sm:text-[11.5px] text-[#8C948E] font-light shrink-0 text-left sm:text-right pl-11.5 sm:pl-0 pt-0.5">
                         {step.time}
                       </span>
                     </div>

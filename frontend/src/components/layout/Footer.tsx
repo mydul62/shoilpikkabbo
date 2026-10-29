@@ -7,12 +7,19 @@ import { CLIENT_INFO } from "@/data/mock-data";
 
 export function Footer() {
   return (
-    <div className="mt-auto">
+    <div className="mt-auto pb-14 md:pb-0">
       {/* 1. Value Proposition 3-Step Process & Help Bar */}
-      <div className="bg-[#F7F4EE] border-t border-[#EAE3D5]">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16">
+      <div className="bg-[#EBF0EC] border-t border-[#D8DFD9]">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-16 py-8 sm:py-16">
+          {/* Header on mobile & desktop */}
+          <div className="mb-6 sm:mb-10">
+            <h3 className="font-serif text-2xl sm:text-3xl lg:text-[34px] font-normal text-[#143527] leading-snug">
+              Simple, from find to doorstep.
+            </h3>
+          </div>
+
           {/* 3-Step Ordering Process */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12 lg:gap-16 py-12 sm:py-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-12 lg:gap-16 pb-6 sm:pb-12">
             {/* Step 1 */}
             <div className="flex items-start gap-4">
               <span className="font-serif text-2xl sm:text-[28px] font-normal text-[#B85D38] leading-none shrink-0 pt-0.5">
@@ -22,7 +29,7 @@ export function Footer() {
                 <h4 className="text-[14px] sm:text-[15px] font-medium text-[#143527] leading-snug">
                   Find something you love
                 </h4>
-                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1.5 leading-relaxed">
+                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1 leading-relaxed">
                   Browse by category or search the collection.
                 </p>
               </div>
@@ -35,9 +42,9 @@ export function Footer() {
               </span>
               <div>
                 <h4 className="text-[14px] sm:text-[15px] font-medium text-[#143527] leading-snug">
-                  Choose how to pay
+                  Pay through your chosen provider
                 </h4>
-                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1.5 leading-relaxed">
+                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1 leading-relaxed">
                   bKash, Nagad, BRAC Bank transfer or card.
                 </p>
               </div>
@@ -52,7 +59,7 @@ export function Footer() {
                 <h4 className="text-[14px] sm:text-[15px] font-medium text-[#143527] leading-snug">
                   Follow your delivery
                 </h4>
-                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1.5 leading-relaxed">
+                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light mt-1 leading-relaxed">
                   View order updates and delivery details.
                 </p>
               </div>
@@ -60,19 +67,19 @@ export function Footer() {
           </div>
 
           {/* Divider Line */}
-          <div className="border-t border-[#EAE3D5]" />
+          <div className="border-t border-[#D5DDD6]" />
 
           {/* Customer Pre-Purchase Consultation Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 py-8 sm:py-10">
-            <p className="text-[13.5px] sm:text-[14.5px] text-[#556059] font-light">
-              A question before you choose? We&apos;re here to help.
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-5 sm:pt-8">
+            <p className="text-[13px] sm:text-[14.5px] text-[#556059] font-light">
+              A question before you choose?
             </p>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="grid grid-cols-2 sm:flex items-center gap-3 w-full sm:w-auto">
               <a
                 href={`https://wa.me/88${CLIENT_INFO.phonePrimary}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/70 hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group shadow-2xs"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/80 hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group shadow-2xs"
               >
                 <span>WhatsApp</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -81,9 +88,9 @@ export function Footer() {
                 href="https://m.me/shoilpikkabbo"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/70 hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group shadow-2xs"
+                className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/80 hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group shadow-2xs"
               >
-                <span>Facebook Messenger</span>
+                <span>Messenger</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </a>
             </div>
@@ -93,17 +100,17 @@ export function Footer() {
 
       {/* 2. Main Deep Green Footer */}
       <footer className="bg-[#133829] text-white overflow-hidden">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 pt-16 sm:pt-20 pb-12 sm:pb-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-14 sm:pb-16">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-16 pt-8 sm:pt-20 pb-8 sm:pb-16">
+          <div className="space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-8 pb-6 sm:pb-16">
             {/* Column 1: Brand Info */}
-            <div className="lg:col-span-5">
-              <h3 className="font-serif text-2xl sm:text-[28px] font-normal tracking-[0.08em] text-white uppercase mb-2">
+            <div className="sm:col-span-2 lg:col-span-5">
+              <h3 className="font-serif text-2xl sm:text-[28px] font-normal tracking-[0.08em] text-white uppercase mb-1.5 sm:mb-2">
                 SHOILPIKKABBO
               </h3>
-              <p className="text-[12px] sm:text-[12.5px] text-[#A8BDB2] font-light mb-6 tracking-wide">
+              <p className="text-[12px] sm:text-[12.5px] text-[#A8BDB2] font-light mb-4 sm:mb-6 tracking-wide">
                 Delivery • Quality • Reliability
               </p>
-              <div className="space-y-1.5 text-[13px] text-[#A8BDB2] font-light">
+              <div className="space-y-1 text-[12.5px] sm:text-[13px] text-[#A8BDB2] font-light">
                 <a
                   href={`mailto:${CLIENT_INFO.email}`}
                   className="hover:text-white transition-colors block"
@@ -111,20 +118,20 @@ export function Footer() {
                   {CLIENT_INFO.email}
                 </a>
                 <p className="text-[#A8BDB2]">
-                  {CLIENT_INFO.phonePrimary} · {CLIENT_INFO.phoneSecondary}
+                  {CLIENT_INFO.phonePrimary} - {CLIENT_INFO.phoneSecondary}
                 </p>
               </div>
             </div>
 
-            {/* Column 2: Explore */}
-            <div className="lg:col-span-2">
-              <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-4 sm:mb-5">
+            {/* Desktop Link Columns (Visible on md+) */}
+            <div className="hidden md:block col-span-1 lg:col-span-2">
+              <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-3.5 sm:mb-5">
                 Explore
               </h4>
-              <ul className="space-y-2.5 text-[12.5px] sm:text-[13px] text-[#A8BDB2] font-light">
+              <ul className="space-y-2 text-[12px] sm:text-[13px] text-[#A8BDB2] font-light">
                 <li>
                   <Link href="/shop" className="hover:text-white transition-colors">
-                    Shop all products
+                    Shop all
                   </Link>
                 </li>
                 <li>
@@ -144,18 +151,17 @@ export function Footer() {
                 </li>
                 <li>
                   <Link href="/offers" className="hover:text-white transition-colors">
-                    Offers / Discounts
+                    Offers
                   </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Column 3: Here to help */}
-            <div className="lg:col-span-2">
-              <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-4 sm:mb-5">
+            <div className="hidden md:block col-span-1 lg:col-span-2">
+              <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-3.5 sm:mb-5">
                 Here to help
               </h4>
-              <ul className="space-y-2.5 text-[12.5px] sm:text-[13px] text-[#A8BDB2] font-light">
+              <ul className="space-y-2 text-[12px] sm:text-[13px] text-[#A8BDB2] font-light">
                 <li>
                   <Link href="/track-order" className="hover:text-white transition-colors">
                     Track an order
@@ -183,21 +189,20 @@ export function Footer() {
                     rel="noopener noreferrer"
                     className="hover:text-white transition-colors"
                   >
-                    Facebook Messenger
+                    Messenger
                   </a>
                 </li>
               </ul>
             </div>
 
-            {/* Column 4: Pay your way */}
-            <div className="lg:col-span-3">
-              <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-4 sm:mb-5">
+            <div className="hidden md:block sm:col-span-2 lg:col-span-3">
+              <h4 className="text-[13.5px] sm:text-[14px] font-medium text-white mb-3 sm:mb-5">
                 Pay your way
               </h4>
-              <div className="space-y-1.5 text-[12.5px] sm:text-[13px] text-[#D0DFD7] font-light">
+              <div className="space-y-1.5 text-[12px] sm:text-[13px] text-[#D0DFD7] font-light">
                 <p>bKash · Nagad · Card</p>
                 <p>Bank transfer · BRAC Bank</p>
-                <p className="text-[11.5px] sm:text-[12px] text-[#869E90] pt-2 leading-relaxed max-w-[260px]">
+                <p className="text-[11px] sm:text-[12px] text-[#869E90] pt-1.5 leading-relaxed max-w-[280px]">
                   Online payments continue through a secure payment gateway.
                 </p>
               </div>
@@ -205,8 +210,8 @@ export function Footer() {
           </div>
 
           {/* Bottom Hairline Divider & Legal / Language */}
-          <div className="border-t border-[#1C4936] pt-8 sm:pt-10 flex flex-col gap-4">
-            <div className="flex flex-wrap items-center gap-x-2 text-[12px] text-[#869E90] font-light">
+          <div className="border-t border-[#1C4936] pt-6 sm:pt-8 flex flex-col gap-3">
+            <div className="flex flex-wrap items-center gap-x-2 text-[11.5px] sm:text-[12px] text-[#869E90] font-light">
               <Link href="/privacy" className="hover:text-white transition-colors">
                 Privacy
               </Link>

@@ -179,7 +179,7 @@ export default function CartPage() {
                         </div>
 
                         {/* Stepper & Line Total */}
-                        <div className="flex items-center justify-between sm:justify-end gap-5 sm:gap-8 shrink-0 pl-24 sm:pl-0">
+                        <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-8 shrink-0 pt-2 sm:pt-0">
                           {/* Stepper */}
                           <div className="inline-flex items-center border border-[#D5CDC0] rounded-[2px] bg-white h-9 px-1">
                             <button

@@ -233,9 +233,9 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Quantity Stepper & Add to Bag Row */}
-              <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-2.5 sm:gap-3 mb-3">
                 {/* Quantity Stepper */}
-                <div className="flex items-center justify-between border border-[#D5CDC0] bg-white rounded-[2px] h-12 w-28 px-3 shrink-0">
+                <div className="flex items-center justify-between border border-[#D5CDC0] bg-white rounded-[2px] h-11 sm:h-12 w-24 sm:w-28 px-2.5 sm:px-3 shrink-0">
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -261,7 +261,7 @@ export default function ProductDetailPage() {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="flex-1 h-12 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[2px] inline-flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-sm"
+                  className="flex-1 h-11 sm:h-12 bg-[#143527] hover:bg-[#1B4332] text-white text-[12.5px] sm:text-[13px] font-medium rounded-[2px] inline-flex items-center justify-center gap-1.5 sm:gap-2 transition-colors cursor-pointer shadow-sm px-2"
                 >
                   {isAdded ? (
                     <>
@@ -281,7 +281,7 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 onClick={handleBuyNow}
-                className="w-full h-12 bg-transparent hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] inline-flex items-center justify-center gap-2 transition-colors cursor-pointer mb-6"
+                className="w-full h-11 sm:h-12 bg-transparent hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[12.5px] sm:text-[13px] font-medium rounded-[2px] inline-flex items-center justify-center gap-2 transition-colors cursor-pointer mb-6"
               >
                 <span>Buy now</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -383,18 +383,18 @@ export default function ProductDetailPage() {
               </Link>
             </div>
 
-            {/* 3 Cross-sell Product Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            {/* 3 Cross-sell Product Cards (2 on mobile, 3 on tablet/desktop) */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8">
               {crossSellProducts.map((item) => (
                 <div key={item.id} className="group flex flex-col">
                   {/* Card Visual with Floating Quick-Add */}
-                  <div className="relative w-full aspect-[1.48/1] rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-3.5">
+                  <div className="relative w-full aspect-[1.48/1] rounded-xl sm:rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-2.5 sm:mb-3.5">
                     <Link href={`/products/${item.slug}`} className="block relative w-full h-full">
                       <Image
                         src={item.imageUrl}
                         alt={item.name}
                         fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
                       />
                     </Link>
@@ -402,33 +402,33 @@ export default function ProductDetailPage() {
                     {/* Floating Add to Bag Button */}
                     <button
                       onClick={() => handleCrossSellAdd(item)}
-                      className="absolute bottom-3 right-3 h-9 w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
+                      className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
                       title="Add to bag"
                       aria-label={`Add ${item.name} to bag`}
                     >
                       {addedCrossSellId === item.id ? (
-                        <Check className="w-4 h-4 text-[#143527]" />
+                        <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#143527]" />
                       ) : (
-                        <Plus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
+                        <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
                       )}
                     </button>
                   </div>
 
                   {/* Category Label */}
-                  <span className="text-[11px] sm:text-[11.5px] text-[#6A736C] font-light">
+                  <span className="text-[10px] sm:text-[11.5px] text-[#6A736C] font-light">
                     {item.categoryName}
                   </span>
 
                   {/* Product Title */}
                   <Link href={`/products/${item.slug}`}>
-                    <h3 className="text-[15px] sm:text-[15.5px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug">
+                    <h3 className="text-[13px] sm:text-[15.5px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug line-clamp-1">
                       {item.name}
                     </h3>
                   </Link>
 
                   {/* Price */}
-                  <div className="flex items-center gap-2 mt-1.5">
-                    <span className="text-[14px] sm:text-[14.5px] font-semibold text-[#143527]">
+                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5">
+                    <span className="text-[13px] sm:text-[14.5px] font-semibold text-[#143527]">
                       ৳{item.price.toLocaleString()}
                     </span>
                   </div>

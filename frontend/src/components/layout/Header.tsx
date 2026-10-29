@@ -19,6 +19,7 @@ export function Header() {
   const { totalItemCount, setIsCartOpen } = useCart();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = React.useState(false);
   const [lang, setLang] = React.useState<"en" | "bn">("en");
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -26,44 +27,45 @@ export function Header() {
     if (searchQuery.trim()) {
       router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
       setIsMobileMenuOpen(false);
+      setIsMobileSearchOpen(false);
     }
   };
 
   return (
     <header className="w-full bg-[#F7F4EE] z-40 sticky top-0 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
       {/* 1. Top Announcement Bar */}
-      <div className="bg-[#133829] text-[#DCE5DF] py-2 px-6 sm:px-10 lg:px-16 border-b border-[#0F2D21]">
-        <div className="max-w-[1440px] mx-auto flex items-center justify-between text-[11.5px] sm:text-[12px] font-normal tracking-wide">
-          {/* Left Text */}
+      <div className="bg-[#133829] text-[#DCE5DF] py-2 px-4 sm:px-8 lg:px-16 border-b border-[#0F2D21]">
+        <div className="max-w-[1440px] mx-auto flex items-center justify-between text-[11px] sm:text-[12px] font-normal tracking-wide">
+          {/* Left Text: Delivery • Quality • Reliability */}
           <div className="text-[#DCE5DF] font-light">
-            Thoughtful finds. Everyday possibilities.
+            Delivery • Quality • Reliability
           </div>
 
           {/* Right Links */}
-          <div className="flex items-center gap-2.5 sm:gap-3 text-[#DCE5DF] font-light">
+          <div className="flex items-center gap-2 sm:gap-3 text-[#DCE5DF] font-light shrink-0">
             <Link
               href="/track-order"
-              className="hover:text-white transition-colors"
+              className="hover:text-white transition-colors hidden sm:inline"
             >
-              Track your order
+              Track order
             </Link>
-            <span className="text-[#6D8A7A] select-none">·</span>
+            <span className="text-[#6D8A7A] select-none hidden sm:inline">·</span>
             <Link
               href="/contact"
-              className="hover:text-white transition-colors"
+              className="hover:text-white transition-colors hidden sm:inline"
             >
               Need help?
             </Link>
-            <span className="text-[#6D8A7A] select-none">·</span>
+            <span className="text-[#6D8A7A] select-none hidden sm:inline">·</span>
             <button
               onClick={() => setLang(lang === "en" ? "bn" : "en")}
-              className="hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1"
+              className="hover:text-white transition-colors cursor-pointer inline-flex items-center gap-1 text-[11px] sm:text-xs"
               title="Toggle Language"
             >
               <span className={lang === "en" ? "text-white font-medium" : "text-[#DCE5DF]/80"}>
-                EN
+                EN ⌵
               </span>
-              <span className="text-[#6D8A7A]">/</span>
+              <span className="text-[#6D8A7A]">|</span>
               <span className={lang === "bn" ? "text-white font-medium" : "text-[#DCE5DF]/80"}>
                 বাংলা
               </span>
@@ -72,13 +74,13 @@ export function Header() {
         </div>
       </div>
 
-      {/* 2. Main Header Row (Logo, Centered Search Bar, Actions) */}
+      {/* 2. Main Header Row */}
       <div className="border-b border-[#EAE3D5] bg-[#F7F4EE]">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-4 sm:py-5 flex items-center justify-between gap-6 lg:gap-10">
-          {/* Mobile Menu Button */}
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-3.5 sm:py-5 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
+          {/* Mobile Menu Button (Left) */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-1.5 -ml-2 text-[#143527] hover:bg-[#EFE8DC] rounded-xs focus:outline-none cursor-pointer"
+            className="md:hidden p-1.5 -ml-1 text-[#143527] hover:bg-[#EFE8DC] rounded-xs focus:outline-none cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {isMobileMenuOpen ? (
@@ -88,12 +90,16 @@ export function Header() {
             )}
           </button>
 
-          {/* Left: Brand Logo */}
-          <div className="shrink-0">
-            <Logo variant="storefront" />
+          {/* Brand Logo / Title: Centered on Mobile, Left on Desktop */}
+          <div className="shrink-0 flex items-center justify-center flex-1 md:flex-initial">
+            <Link href="/" className="group flex items-center gap-2">
+              <span className="font-serif text-[18px] sm:text-[22px] lg:text-[24px] font-normal tracking-[0.14em] text-[#143527] uppercase">
+                SHOILPIKKABBO
+              </span>
+            </Link>
           </div>
 
-          {/* Center: Search Bar */}
+          {/* Center: Search Bar (Desktop & Tablet) */}
           <form
             onSubmit={handleSearchSubmit}
             className="hidden md:flex flex-1 max-w-[540px] mx-auto"
@@ -112,31 +118,52 @@ export function Header() {
             </div>
           </form>
 
-          {/* Right: Actions (Sign in & Bag) */}
-          <div className="flex items-center gap-7 sm:gap-9 shrink-0">
+          {/* Right: Actions (Sign in & Bag on Desktop; Bag Icon on Mobile) */}
+          <div className="flex items-center gap-4 sm:gap-7 lg:gap-9 shrink-0">
             <Link
               href="/login"
-              className="flex items-center gap-2.5 text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group"
+              className="hidden sm:flex items-center gap-2 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group"
             >
-              <User className="w-[20px] h-[20px] text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
-              <span className="hidden sm:inline">Sign in</span>
+              <User className="w-[19px] h-[19px] sm:w-[20px] sm:h-[20px] text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
+              <span>Sign in</span>
             </Link>
 
             <button
               onClick={() => setIsCartOpen(true)}
-              className="flex items-center gap-2.5 text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium cursor-pointer group"
+              className="flex items-center gap-1.5 sm:gap-2.5 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium cursor-pointer group"
               aria-label="Open Shopping Bag"
             >
-              <ShoppingBag className="w-[20px] h-[20px] text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
-              <span>Bag ({totalItemCount})</span>
+              <div className="relative">
+                <ShoppingBag className="w-5 h-5 text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
+                {totalItemCount > 0 && (
+                  <span className="absolute -top-1.5 -right-2 bg-[#B85D38] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                    {totalItemCount}
+                  </span>
+                )}
+              </div>
+              <span className="hidden sm:inline">Bag ({totalItemCount})</span>
             </button>
           </div>
         </div>
+
+        {/* 2b. Always Visible Prominent Mobile Search Bar Matching Screenshot 1 */}
+        <div className="md:hidden px-4 py-2.5 bg-[#FAF7F2] border-t border-[#EAE3D5]/80">
+          <form onSubmit={handleSearchSubmit} className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6F7670]" strokeWidth={1.8} />
+            <input
+              type="text"
+              placeholder="Search products & services"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-10 pl-10 pr-3.5 rounded-[2px] border border-[#D5CDC0] bg-white text-[12.5px] text-[#143527] placeholder:text-[#6F7670] focus:outline-none focus:border-[#143527]"
+            />
+          </form>
+        </div>
       </div>
 
-      {/* 3. Secondary Category Bar (Evenly Distributed Nav Menu) */}
-      <nav className="hidden lg:block border-b border-[#EAE3D5] bg-[#F7F4EE]">
-        <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 flex items-center justify-between w-full py-3 text-[13.5px]">
+      {/* 3. Secondary Category Bar (Horizontal swipeable on Mobile/Tablet, Distributed on Desktop) */}
+      <nav className="border-b border-[#EAE3D5] bg-[#F7F4EE] overflow-x-auto scrollbar-none">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 flex items-center justify-start lg:justify-between gap-5 sm:gap-7 lg:gap-0 py-2.5 sm:py-3 text-[12.5px] sm:text-[13.5px] whitespace-nowrap min-w-max lg:min-w-0">
           <Link
             href="/shop"
             className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"

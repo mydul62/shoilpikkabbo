@@ -143,17 +143,17 @@ export default function OffersPage() {
               </span>
             </div>
 
-            {/* 3 Column Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* 3 Column Grid (2 Columns on mobile, 3 on tablet/desktop) */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6">
               {/* Product 1: Everyday jute basket */}
-              <div className="group">
-                <div className="relative aspect-square rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
+              <div className="group flex flex-col">
+                <div className="relative aspect-square rounded-xl sm:rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
                   <Link href="/products/everyday-jute-basket">
                     <Image
                       src="/images/product-jute-basket.png"
                       alt="Everyday jute basket"
                       fill
-                      sizes="(max-width: 768px) 100vw, 320px"
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 320px"
                       className="object-cover transition-transform duration-300 group-hover:scale-102"
                     />
                   </Link>
@@ -163,29 +163,29 @@ export default function OffersPage() {
                     onClick={() =>
                       handleAddProduct("prod-jute-basket", "Everyday jute basket")
                     }
-                    className="w-7 h-7 rounded-full bg-white hover:bg-[#F3EFE7] text-[#143527] shadow-sm flex items-center justify-center absolute bottom-3 right-3 cursor-pointer transition-transform hover:scale-110"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white hover:bg-[#F3EFE7] text-[#143527] shadow-sm flex items-center justify-center absolute bottom-2 right-2 sm:bottom-3 sm:right-3 cursor-pointer transition-transform hover:scale-110"
                     title="Add to bag"
                     aria-label="Add Everyday jute basket to bag"
                   >
-                    <Plus className="w-4 h-4 stroke-[2]" />
+                    <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2]" />
                   </button>
                 </div>
 
-                <div className="pt-3">
-                  <span className="text-[11px] text-[#7A837C] font-light block mb-0.5">
+                <div className="pt-2 sm:pt-3">
+                  <span className="text-[10px] sm:text-[11px] text-[#7A837C] font-light block mb-0.5">
                     Jute items
                   </span>
                   <Link
                     href="/products/everyday-jute-basket"
-                    className="text-[13.5px] font-medium text-[#143527] hover:text-[#B85D38] transition-colors block"
+                    className="text-[13px] sm:text-[13.5px] font-medium text-[#143527] hover:text-[#B85D38] transition-colors block line-clamp-1"
                   >
                     Everyday jute basket
                   </Link>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
                     <span className="text-[13px] font-medium text-[#143527]">
                       ৳1,450
                     </span>
-                    <span className="text-[12px] text-[#8C948E] line-through font-light">
+                    <span className="text-[11px] sm:text-[12px] text-[#8C948E] line-through font-light">
                       ৳1,650
                     </span>
                   </div>
@@ -193,14 +193,14 @@ export default function OffersPage() {
               </div>
 
               {/* Product 2: The everyday jute tote */}
-              <div className="group">
-                <div className="relative aspect-square rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
+              <div className="group flex flex-col">
+                <div className="relative aspect-square rounded-xl sm:rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
                   <Link href="/products/everyday-jute-tote">
                     <Image
                       src="/images/product-jute-tote.png"
                       alt="The everyday jute tote"
                       fill
-                      sizes="(max-width: 768px) 100vw, 320px"
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 320px"
                       className="object-cover transition-transform duration-300 group-hover:scale-102"
                     />
                   </Link>
@@ -210,29 +210,29 @@ export default function OffersPage() {
                     onClick={() =>
                       handleAddProduct("prod-jute-tote", "The everyday jute tote")
                     }
-                    className="w-7 h-7 rounded-full bg-white hover:bg-[#F3EFE7] text-[#143527] shadow-sm flex items-center justify-center absolute bottom-3 right-3 cursor-pointer transition-transform hover:scale-110"
+                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white hover:bg-[#F3EFE7] text-[#143527] shadow-sm flex items-center justify-center absolute bottom-2 right-2 sm:bottom-3 sm:right-3 cursor-pointer transition-transform hover:scale-110"
                     title="Add to bag"
                     aria-label="Add The everyday jute tote to bag"
                   >
-                    <Plus className="w-4 h-4 stroke-[2]" />
+                    <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2]" />
                   </button>
                 </div>
 
-                <div className="pt-3">
-                  <span className="text-[11px] text-[#7A837C] font-light block mb-0.5">
+                <div className="pt-2 sm:pt-3">
+                  <span className="text-[10px] sm:text-[11px] text-[#7A837C] font-light block mb-0.5">
                     Jute items
                   </span>
                   <Link
                     href="/products/everyday-jute-tote"
-                    className="text-[13.5px] font-medium text-[#143527] hover:text-[#B85D38] transition-colors block"
+                    className="text-[13px] sm:text-[13.5px] font-medium text-[#143527] hover:text-[#B85D38] transition-colors block line-clamp-1"
                   >
                     The everyday jute tote
                   </Link>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
                     <span className="text-[13px] font-medium text-[#143527]">
                       ৳850
                     </span>
-                    <span className="text-[12px] text-[#8C948E] line-through font-light">
+                    <span className="text-[11px] sm:text-[12px] text-[#8C948E] line-through font-light">
                       ৳950
                     </span>
                   </div>
@@ -240,7 +240,7 @@ export default function OffersPage() {
               </div>
 
               {/* Column 3: Information Card (Keep the small print simple.) */}
-              <div className="bg-[#EFF4EF] rounded-[4px] p-6 sm:p-7 flex flex-col justify-between border border-[#E0E8E1]">
+              <div className="col-span-2 md:col-span-1 bg-[#EFF4EF] rounded-[4px] p-5 sm:p-7 flex flex-col justify-between border border-[#E0E8E1] mt-2 sm:mt-0">
                 <div>
                   <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2.5">
                     BEFORE YOU CHECK OUT

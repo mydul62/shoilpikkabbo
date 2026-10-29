@@ -201,11 +201,11 @@ function ShopContent() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search products, materials..."
-                className="w-full h-11 px-4 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] placeholder:text-[#9EA8A1] focus:outline-none focus:border-[#143527] transition-colors"
+                className="w-full h-11 px-3.5 sm:px-4 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] placeholder:text-[#9EA8A1] focus:outline-none focus:border-[#143527] transition-colors"
               />
               <button
                 type="submit"
-                className="h-11 px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[2px] inline-flex items-center gap-2 shrink-0 transition-colors cursor-pointer"
+                className="h-11 px-4 sm:px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[2px] inline-flex items-center gap-1.5 sm:gap-2 shrink-0 transition-colors cursor-pointer"
               >
                 <span>Search</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
@@ -251,13 +251,26 @@ function ShopContent() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* Left Column: Filter your finds Sidebar */}
           <aside
-            className={`lg:col-span-3 space-y-8 ${
-              isMobileFilterOpen ? "block" : "hidden lg:block"
+            className={`lg:col-span-3 space-y-7 ${
+              isMobileFilterOpen
+                ? "block bg-white p-5 sm:p-6 rounded-lg border border-[#D5CDC0] shadow-sm mb-6 lg:mb-0"
+                : "hidden lg:block"
             }`}
           >
-            <h2 className="font-serif text-2xl sm:text-[25px] font-normal text-[#143527] tracking-tight">
-              Filter your finds
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-serif text-2xl sm:text-[25px] font-normal text-[#143527] tracking-tight">
+                Filter your finds
+              </h2>
+              {isMobileFilterOpen && (
+                <button
+                  type="button"
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="lg:hidden text-xs text-[#6A736C] hover:text-[#143527] p-1"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
 
             {/* Block 1: Categories */}
             <div>
@@ -417,11 +430,11 @@ function ShopContent() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 mb-12 sm:mb-16">
+              <div className="grid grid-cols-2 sm:grid-cols-2 gap-3.5 sm:gap-6 lg:gap-8 mb-12 sm:mb-16">
                 {filteredProducts.map((prod) => (
                   <div key={prod.id} className="group flex flex-col">
                     {/* Visual Card Image with Floating Quick-Add */}
-                    <div className="relative w-full aspect-[1.48/1] rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-3.5">
+                    <div className="relative w-full aspect-[1.48/1] rounded-xl sm:rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-2.5 sm:mb-3.5">
                       <Link
                         href={`/products/${prod.slug}`}
                         className="block relative w-full h-full"
@@ -430,7 +443,7 @@ function ShopContent() {
                           src={prod.imageUrl}
                           alt={prod.name}
                           fill
-                          sizes="(max-width: 640px) 100vw, 50vw"
+                          sizes="(max-width: 640px) 50vw, 50vw"
                           className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
                         />
                       </Link>
@@ -438,37 +451,37 @@ function ShopContent() {
                       {/* Floating Add to Bag Button */}
                       <button
                         onClick={() => handleQuickAdd(prod)}
-                        className="absolute bottom-3 right-3 h-9 w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
+                        className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
                         title="Add to bag"
                         aria-label={`Add ${prod.name} to bag`}
                       >
                         {addedProductId === prod.id ? (
-                          <Check className="w-4 h-4 text-[#143527]" />
+                          <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#143527]" />
                         ) : (
-                          <Plus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
+                          <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
                         )}
                       </button>
                     </div>
 
                     {/* Category Label */}
-                    <span className="text-[11px] sm:text-[11.5px] text-[#6A736C] font-light">
+                    <span className="text-[10px] sm:text-[11.5px] text-[#6A736C] font-light">
                       {prod.categoryName}
                     </span>
 
                     {/* Product Name */}
                     <Link href={`/products/${prod.slug}`}>
-                      <h3 className="text-[15px] sm:text-[15.5px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug">
+                      <h3 className="text-[13px] sm:text-[15.5px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug line-clamp-1 sm:line-clamp-none">
                         {prod.name}
                       </h3>
                     </Link>
 
                     {/* Price Row */}
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-[14px] sm:text-[14.5px] font-semibold text-[#143527]">
+                    <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5">
+                      <span className="text-[13px] sm:text-[14.5px] font-semibold text-[#143527]">
                         ৳{prod.price.toLocaleString()}
                       </span>
                       {prod.salePrice && prod.salePrice > prod.price && (
-                        <span className="text-[12px] text-[#8C948E] line-through font-light">
+                        <span className="text-[11px] sm:text-[12px] text-[#8C948E] line-through font-light">
                           ৳{prod.salePrice.toLocaleString()}
                         </span>
                       )}

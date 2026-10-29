@@ -49,8 +49,8 @@ export default function RegisterPage() {
         <div className="max-w-[1040px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             {/* Left Column: Lifestyle photo & copy (6 cols) */}
-            <div className="lg:col-span-6">
-              <div className="relative aspect-[4/3] rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
+            <div className="lg:col-span-6 order-2 lg:order-1">
+              <div className="relative aspect-[16/9] sm:aspect-[4/3] rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
                 <Image
                   src="/images/auth-lifestyle.png"
                   alt="Woven jute baskets with fresh foliage on sunlit stone ledge"
@@ -61,7 +61,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <div className="mt-6">
+              <div className="mt-5 sm:mt-6">
                 <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2">
                   YOUR EVERYDAY, A LITTLE MORE PERSONAL
                 </span>
@@ -76,7 +76,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Right Column: Register Form & Tabs (6 cols) */}
-            <div className="lg:col-span-6">
+            <div className="lg:col-span-6 order-1 lg:order-2">
               {/* Header Tabs */}
               <div className="flex items-center gap-8 mb-8 text-[13.5px]">
                 <Link
