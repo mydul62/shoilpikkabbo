@@ -10,6 +10,11 @@ import {
   Sprout,
   Info,
   Check,
+  MessageSquare,
+  Sparkles,
+  ChevronRight,
+  Send,
+  Loader2,
 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { CLIENT_INFO } from "@/data/mock-data";
@@ -32,7 +37,7 @@ export default function ServicesPage() {
     {
       id: "corporate-gifts",
       title: "Corporate Gift Items",
-      description: "Occasion, quantity, budget and packaging preferences.",
+      description: "Customized handcrafted packages, corporate branding, packaging preferences & bulk volumes.",
       icon: Gift,
       areaValue: "Corporate Gift Items",
     },
@@ -40,7 +45,7 @@ export default function ServicesPage() {
       id: "industrial-solutions",
       title: "Industrial Solutions",
       description:
-        "Product specifications, sourcing requirements and intended use.",
+        "B2B raw supplies, artisan-grade materials, sourcing requirements and customized production.",
       icon: Building2,
       areaValue: "Industrial Solutions",
     },
@@ -48,14 +53,14 @@ export default function ServicesPage() {
       id: "special-e-sheba",
       title: "Special E-Sheba / Services",
       description:
-        "The assistance you need and your preferred way to be contacted.",
+        "Direct personalized support, custom bespoke orders, and dedicated account advisory.",
       icon: Headphones,
       areaValue: "Special E-Sheba / Services",
     },
     {
       id: "agriculture",
-      title: "Agriculture",
-      description: "Product or supply needs, quantities and delivery area.",
+      title: "Agriculture & Agro Supplies",
+      description: "Direct-from-source organic produce, seasonal farm harvests, and regional distribution.",
       icon: Sprout,
       areaValue: "Agriculture",
     },
@@ -103,52 +108,58 @@ export default function ServicesPage() {
 
   return (
     <StorefrontLayout>
-      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16">
-        <div className="max-w-[1524px] mx-auto px-5">
+      <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-14">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6">
           {/* Breadcrumb */}
-          <nav className="text-[12px] text-[#7A837C] font-light mb-4">
-            <Link href="/" className="hover:text-[#143527] transition-colors">
+          <nav className="flex items-center gap-1.5 text-xs text-gray-500 font-medium mb-6">
+            <Link href="/" className="hover:text-[#E0592A] transition-colors">
               Home
             </Link>
-            <span className="mx-1.5">/</span>
-            <span className="text-[#143527]">Services</span>
+            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+            <span className="text-[#0D3B37] font-semibold">Services & E-Sheba</span>
           </nav>
 
           {/* Page Headline & Subtitle */}
-          <h1 className="font-serif text-3xl sm:text-[42px] text-[#143527] font-normal tracking-tight leading-tight">
-            A brief today. Possibilities tomorrow.
-          </h1>
-          <p className="text-[13.5px] sm:text-[14px] text-[#556059] font-light mt-2 mb-8">
-            Tell us what you need. We'll review the request before confirming scope,
-            availability or pricing.
-          </p>
+          <div className="max-w-3xl mb-8 sm:mb-12">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#0D3B37] text-xs font-bold mb-3 border border-emerald-100">
+              <Sparkles className="w-3.5 h-3.5 text-[#E0592A]" />
+              <span>Tailored Solutions & Institutional Services</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl text-[#0D3B37] font-extrabold tracking-tight leading-tight">
+              A brief today. Possibilities tomorrow.
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
+              Tell us what you need. Our dedicated team will review your requirements and provide verified scope, timeline, and competitive institutional pricing.
+            </p>
+          </div>
 
           {/* Advisory Notice Banner */}
-          <div className="p-4 bg-[#EFECE6] border border-[#E5DFD3] rounded-[4px] flex items-center gap-3 text-[12px] text-[#556059] mb-10 font-light">
-            <Info className="w-4 h-4 text-[#143527] shrink-0" />
-            <span>
-              Proposed service areas · Final offerings and service terms are awaiting
-              client confirmation. An enquiry is not a booking.
+          <div className="p-4 sm:p-5 bg-white border border-emerald-100 rounded-2xl flex items-start sm:items-center gap-3.5 text-xs sm:text-sm text-gray-700 mb-10 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+              <Info className="w-4 h-4 stroke-[2]" />
+            </div>
+            <span className="font-normal leading-relaxed">
+              <strong className="font-semibold text-[#0D3B37]">Verified Inquiries:</strong> Final offerings, bulk volumes, and customized terms are confirmed directly with our corporate team. Submitting an inquiry creates no immediate payment obligation.
             </span>
           </div>
 
           {/* 4 Service Offerings Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 mb-16">
             {serviceCards.map((card) => {
               const IconComp = card.icon;
               return (
                 <div
                   key={card.id}
-                  className="bg-white border border-[#E8E2D8] rounded-[4px] p-6 flex flex-col justify-between shadow-xs transition-shadow hover:shadow-sm"
+                  className="bg-white rounded-3xl p-6 sm:p-7 shadow-[0_2px_14px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 border border-gray-100 flex flex-col justify-between group"
                 >
                   <div>
-                    <div className="w-8 h-8 rounded-[3px] flex items-center justify-center text-[#143527] mb-4">
-                      <IconComp className="w-6 h-6 stroke-[1.6]" />
+                    <div className="w-13 h-13 rounded-2xl bg-emerald-50 text-[#0D3B37] group-hover:bg-[#E0592A] group-hover:text-white transition-colors duration-300 flex items-center justify-center mb-5 shadow-xs">
+                      <IconComp className="w-6 h-6 stroke-[1.8]" />
                     </div>
-                    <h3 className="font-serif text-[18px] text-[#143527] font-normal mb-2 leading-snug">
+                    <h3 className="text-lg sm:text-xl font-bold text-[#0D3B37] mb-2 leading-snug">
                       {card.title}
                     </h3>
-                    <p className="text-[12px] text-[#6F7771] font-light leading-relaxed mb-6">
+                    <p className="text-xs sm:text-sm text-gray-500 font-normal leading-relaxed mb-6">
                       {card.description}
                     </p>
                   </div>
@@ -156,10 +167,10 @@ export default function ServicesPage() {
                   <button
                     type="button"
                     onClick={() => handleSelectService(card.areaValue)}
-                    className="text-[12px] font-medium text-[#143527] hover:text-[#B85D38] inline-flex items-center gap-1 transition-colors cursor-pointer text-left w-fit"
+                    className="text-xs sm:text-sm font-bold text-[#0D3B37] group-hover:text-[#E0592A] inline-flex items-center gap-1.5 transition-colors cursor-pointer text-left w-fit"
                   >
                     <span>Discuss your brief</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </button>
                 </div>
               );
@@ -169,67 +180,90 @@ export default function ServicesPage() {
           {/* Split Section: Process Explanation (Left) & Inquiry Form (Right) */}
           <div
             ref={formRef}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 pt-4"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 pt-4 items-start"
           >
             {/* Left Column: Process (5 cols) */}
-            <div className="lg:col-span-5">
-              <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2.5">
-                CLEAR FROM THE BEGINNING
-              </span>
-              <h2 className="font-serif text-2xl sm:text-[34px] text-[#143527] font-normal leading-snug mb-8">
-                Every useful solution starts with listening.
-              </h2>
+            <div className="lg:col-span-5 space-y-6">
+              <div>
+                <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block mb-2">
+                  CLEAR FROM THE BEGINNING
+                </span>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0D3B37] leading-tight mb-4">
+                  Every useful solution starts with listening.
+                </h2>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  We believe in complete transparency, precise artisan craftsmanship, and structured timelines tailored to your organizational goals.
+                </p>
+              </div>
 
-              <div className="space-y-4 text-[13px] text-[#333E35] font-light">
-                <div className="flex items-baseline gap-3 py-2 border-b border-[#F0EBE1]">
-                  <span className="font-serif text-[15px] text-[#8C948E]">01</span>
-                  <span>Share your requirements</span>
+              <div className="bg-white rounded-3xl p-6 sm:p-7 border border-gray-100 shadow-[0_2px_14px_rgba(0,0,0,0.03)] space-y-4">
+                <div className="flex items-center gap-4 py-2 border-b border-gray-100">
+                  <span className="w-8 h-8 rounded-xl bg-emerald-50 text-[#0D3B37] text-xs font-bold flex items-center justify-center shrink-0">
+                    01
+                  </span>
+                  <div>
+                    <h4 className="text-sm font-bold text-[#0D3B37]">Share your requirements</h4>
+                    <p className="text-xs text-gray-500">Provide details on desired quantities, timeline, and aesthetic preferences.</p>
+                  </div>
                 </div>
-                <div className="flex items-baseline gap-3 py-2 border-b border-[#F0EBE1]">
-                  <span className="font-serif text-[15px] text-[#8C948E]">02</span>
-                  <span>Confirm scope and availability</span>
+
+                <div className="flex items-center gap-4 py-2 border-b border-gray-100">
+                  <span className="w-8 h-8 rounded-xl bg-emerald-50 text-[#0D3B37] text-xs font-bold flex items-center justify-center shrink-0">
+                    02
+                  </span>
+                  <div>
+                    <h4 className="text-sm font-bold text-[#0D3B37]">Confirm scope & feasibility</h4>
+                    <p className="text-xs text-gray-500">Our specialized production team reviews material sourcing and availability.</p>
+                  </div>
                 </div>
-                <div className="flex items-baseline gap-3 py-2 border-b border-[#F0EBE1]">
-                  <span className="font-serif text-[15px] text-[#8C948E]">03</span>
-                  <span>Review a written quote</span>
+
+                <div className="flex items-center gap-4 py-2">
+                  <span className="w-8 h-8 rounded-xl bg-emerald-50 text-[#0D3B37] text-xs font-bold flex items-center justify-center shrink-0">
+                    03
+                  </span>
+                  <div>
+                    <h4 className="text-sm font-bold text-[#0D3B37]">Review a transparent quotation</h4>
+                    <p className="text-xs text-gray-500">Receive an itemized quote with confirmed delivery milestones before moving forward.</p>
+                  </div>
                 </div>
               </div>
 
-              <p className="text-[11.5px] text-[#8C948E] font-light mt-4 mb-6 leading-relaxed">
-                No payment is requested before scope and terms are agreed.
-              </p>
-
-              <div>
+              <div className="pt-2">
                 <a
                   href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}?text=Hello%20Shoilpikkabbo%2C%20I%20have%20an%20inquiry%20regarding%20services.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-10 px-5 bg-white hover:bg-[#F3EFE7] border border-[#D5CDC0] text-[#143527] text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+                  className="h-12 px-6 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-2xl inline-flex items-center gap-2.5 transition-all shadow-md shadow-emerald-600/20 hover:shadow-lg cursor-pointer"
                 >
-                  <span>Ask on WhatsApp</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Ask instantly on WhatsApp</span>
+                  <ArrowUpRight className="w-4 h-4" />
                 </a>
               </div>
             </div>
 
             {/* Right Column: "Tell us what you have in mind." Form Card (7 cols) */}
             <div className="lg:col-span-7">
-              <div className="bg-white border border-[#E8E2D8] rounded-xl p-6 sm:p-8 shadow-xs">
-                <h3 className="font-serif text-[22px] sm:text-[24px] text-[#143527] font-normal mb-6">
-                  Tell us what you have in mind.
-                </h3>
+              <div className="bg-white border border-gray-100 rounded-3xl p-7 sm:p-10 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+                <div className="mb-6">
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0D3B37] tracking-tight">
+                    Tell us what you have in mind
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Fill in the form below and an account specialist will respond within 24 hours.
+                  </p>
+                </div>
 
                 {isSubmitted ? (
-                  <div className="p-8 text-center bg-[#F7F4EE] rounded-[4px] border border-[#E8E2D8] space-y-3">
-                    <div className="w-10 h-10 rounded-full bg-[#E5ECE7] text-[#143527] flex items-center justify-center mx-auto">
-                      <Check className="w-5 h-5 stroke-[2.2]" />
+                  <div className="p-8 sm:p-12 text-center bg-emerald-50/50 rounded-2xl border border-emerald-100 space-y-4">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md shadow-emerald-600/20">
+                      <Check className="w-7 h-7 stroke-[2.5]" />
                     </div>
-                    <h4 className="font-serif text-[20px] text-[#143527] font-normal">
-                      Enquiry received.
+                    <h4 className="text-2xl font-bold text-[#0D3B37]">
+                      Enquiry received successfully!
                     </h4>
-                    <p className="text-[12.5px] text-[#556059] font-light max-w-sm mx-auto leading-relaxed">
-                      Thank you, {formData.name}. Our specialized team will review
-                      your brief and reach out via {formData.contact} shortly.
+                    <p className="text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
+                      Thank you, <strong className="text-[#0D3B37]">{formData.name}</strong>. Our specialized team will review your brief and reach out via <strong className="text-[#0D3B37]">{formData.contact}</strong> promptly.
                     </p>
                     <button
                       type="button"
@@ -245,7 +279,7 @@ export default function ServicesPage() {
                           agreedToPrivacy: false,
                         });
                       }}
-                      className="mt-4 text-[12px] font-medium text-[#143527] underline hover:text-[#B85D38] cursor-pointer"
+                      className="mt-4 px-6 py-2.5 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-xs font-bold rounded-xl transition-all shadow-sm cursor-pointer"
                     >
                       Submit another enquiry
                     </button>
@@ -255,8 +289,8 @@ export default function ServicesPage() {
                     {/* Row 1: Name & Phone/Email (2 cols) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                          Your name *
+                        <label className="text-xs font-bold text-[#0D3B37] block mb-1.5">
+                          Your Name <span className="text-rose-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -265,13 +299,13 @@ export default function ServicesPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, name: e.target.value })
                           }
-                          placeholder="Full name"
-                          className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
+                          placeholder="e.g. Tanvir Ahmed"
+                          className="w-full h-12 px-4 bg-gray-50/70 border border-gray-200 rounded-xl text-sm text-gray-900 focus:bg-white focus:outline-none focus:border-[#0D3B37] focus:ring-2 focus:ring-[#0D3B37]/10 transition-all"
                         />
                       </div>
                       <div>
-                        <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                          Phone or email *
+                        <label className="text-xs font-bold text-[#0D3B37] block mb-1.5">
+                          Phone or Email <span className="text-rose-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -280,16 +314,16 @@ export default function ServicesPage() {
                           onChange={(e) =>
                             setFormData({ ...formData, contact: e.target.value })
                           }
-                          placeholder="How we can reach you"
-                          className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
+                          placeholder="017... or email@company.com"
+                          className="w-full h-12 px-4 bg-gray-50/70 border border-gray-200 rounded-xl text-sm text-gray-900 focus:bg-white focus:outline-none focus:border-[#0D3B37] focus:ring-2 focus:ring-[#0D3B37]/10 transition-all"
                         />
                       </div>
                     </div>
 
                     {/* Row 2: Service Area */}
                     <div>
-                      <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                        Service area *
+                      <label className="text-xs font-bold text-[#0D3B37] block mb-1.5">
+                        Service Area <span className="text-rose-500">*</span>
                       </label>
                       <select
                         required
@@ -297,9 +331,9 @@ export default function ServicesPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, serviceArea: e.target.value })
                         }
-                        className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors appearance-none cursor-pointer"
+                        className="w-full h-12 px-4 bg-gray-50/70 border border-gray-200 rounded-xl text-sm text-gray-900 focus:bg-white focus:outline-none focus:border-[#0D3B37] focus:ring-2 focus:ring-[#0D3B37]/10 transition-all cursor-pointer"
                       >
-                        <option value="">Choose an area ⌄</option>
+                        <option value="">Select a service category</option>
                         <option value="Corporate Gift Items">
                           Corporate Gift Items
                         </option>
@@ -309,15 +343,15 @@ export default function ServicesPage() {
                         <option value="Special E-Sheba / Services">
                           Special E-Sheba / Services
                         </option>
-                        <option value="Agriculture">Agriculture</option>
+                        <option value="Agriculture">Agriculture & Agro Supplies</option>
                       </select>
                     </div>
 
                     {/* Row 3: Quantity / Budget & Preferred Date (2 cols) */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                          Quantity / budget (optional)
+                        <label className="text-xs font-bold text-[#0D3B37] block mb-1.5">
+                          Estimated Quantity / Budget (Optional)
                         </label>
                         <input
                           type="text"
@@ -328,13 +362,13 @@ export default function ServicesPage() {
                               quantityBudget: e.target.value,
                             })
                           }
-                          placeholder="A helpful starting point"
-                          className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
+                          placeholder="e.g. 500 units or ৳50,000"
+                          className="w-full h-12 px-4 bg-gray-50/70 border border-gray-200 rounded-xl text-sm text-gray-900 focus:bg-white focus:outline-none focus:border-[#0D3B37] focus:ring-2 focus:ring-[#0D3B37]/10 transition-all"
                         />
                       </div>
                       <div>
-                        <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                          Preferred date (optional)
+                        <label className="text-xs font-bold text-[#0D3B37] block mb-1.5">
+                          Target Delivery Date (Optional)
                         </label>
                         <input
                           type="text"
@@ -345,16 +379,16 @@ export default function ServicesPage() {
                               preferredDate: e.target.value,
                             })
                           }
-                          placeholder="Day / Month / Year"
-                          className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
+                          placeholder="DD / MM / YYYY"
+                          className="w-full h-12 px-4 bg-gray-50/70 border border-gray-200 rounded-xl text-sm text-gray-900 focus:bg-white focus:outline-none focus:border-[#0D3B37] focus:ring-2 focus:ring-[#0D3B37]/10 transition-all"
                         />
                       </div>
                     </div>
 
                     {/* Row 4: Your requirements (Textarea) */}
                     <div>
-                      <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                        Your requirements *
+                      <label className="text-xs font-bold text-[#0D3B37] block mb-1.5">
+                        Specific Requirements <span className="text-rose-500">*</span>
                       </label>
                       <textarea
                         required
@@ -366,13 +400,13 @@ export default function ServicesPage() {
                             requirements: e.target.value,
                           })
                         }
-                        placeholder="What do you need help with? Include your location if relevant."
-                        className="w-full p-3 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors resize-y leading-relaxed"
+                        placeholder="Please describe your customization requirements, dimensions, branding preferences, or delivery location..."
+                        className="w-full p-4 bg-gray-50/70 border border-gray-200 rounded-xl text-sm text-gray-900 focus:bg-white focus:outline-none focus:border-[#0D3B37] focus:ring-2 focus:ring-[#0D3B37]/10 transition-all resize-y leading-relaxed"
                       />
                     </div>
 
                     {/* Row 5: Policy Consent Checkbox */}
-                    <label className="flex items-start gap-2.5 pt-1 text-[12px] text-[#6F7771] cursor-pointer">
+                    <label className="flex items-start gap-3 pt-1 text-xs text-gray-600 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={formData.agreedToPrivacy}
@@ -382,11 +416,10 @@ export default function ServicesPage() {
                             agreedToPrivacy: e.target.checked,
                           })
                         }
-                        className="mt-0.5 w-4 h-4 text-[#143527] rounded-[2px] focus:ring-[#143527]"
+                        className="mt-0.5 w-4 h-4 rounded text-[#0D3B37] focus:ring-[#0D3B37] cursor-pointer"
                       />
                       <span>
-                        I agree to be contacted about this enquiry and have read the
-                        Privacy policy.
+                        I agree to be contacted regarding this brief and acknowledge the Privacy & Terms of Service.
                       </span>
                     </label>
 
@@ -394,10 +427,20 @@ export default function ServicesPage() {
                     <div className="pt-2">
                       <button
                         type="submit"
-                        className="h-11 px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+                        disabled={isSubmitting}
+                        className="h-12 px-8 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-xl inline-flex items-center gap-2 transition-all shadow-md shadow-[#0D3B37]/15 hover:shadow-orange-500/25 cursor-pointer disabled:opacity-50"
                       >
-                        <span>Send an enquiry</span>
-                        <ArrowUpRight className="w-3.5 h-3.5" />
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <span>Sending inquiry...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Send inquiry</span>
+                            <Send className="w-4 h-4" />
+                          </>
+                        )}
                       </button>
                     </div>
                   </form>

@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ArrowUpRight, Plus, Check, X, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight, Plus, Check, X, SlidersHorizontal, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
 import { MOCK_PRODUCTS, MOCK_CATEGORIES, Product } from "@/data/mock-data";
@@ -224,29 +224,39 @@ function ShopContent() {
       : "Natural textures";
 
   return (
-    <div className="bg-[#F7F4EE] min-h-screen">
-      <div className="max-w-[1524px] mx-auto px-5 py-8 sm:py-12">
+    <div className="bg-[#FAF8F5] min-h-screen pb-16">
+      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         {/* 1. Breadcrumbs */}
-        <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] text-[#7E8881] font-light mb-3">
-          <Link href="/" className="hover:text-[#143527] transition-colors">
+        <nav aria-label="Breadcrumbs" className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-4">
+          <Link href="/" className="hover:text-[#E0592A] transition-colors">
             Home
           </Link>
-          <span className="select-none text-[#A8B2AA]">/</span>
-          <Link href="/shop" className="hover:text-[#143527] transition-colors">
+          <span className="select-none text-gray-300">/</span>
+          <Link href="/shop" className="hover:text-[#E0592A] transition-colors">
             Shop
           </Link>
-          <span className="select-none text-[#A8B2AA]">/</span>
-          <span className="text-[#143527] font-normal">{activeCategoryTitle}</span>
+          <span className="select-none text-gray-300">/</span>
+          <span className="text-[#0D3B37] font-bold">{activeCategoryTitle}</span>
         </nav>
 
-        {/* 2. Page Header */}
-        <div className="mb-8 sm:mb-10">
-          <h1 className="font-serif text-3xl sm:text-4xl lg:text-[46px] font-normal text-[#143527] leading-[1.12] tracking-tight mb-2.5">
-            Everyday, thoughtfully chosen.
-          </h1>
-          <p className="text-[13px] sm:text-[14px] text-[#6A736C] font-light leading-relaxed max-w-2xl">
-            Discover natural textures, useful objects and little details for your home.
-          </p>
+        {/* 2. Page Header Banner matching Home Theme */}
+        <div className="relative bg-gradient-to-r from-[#0D3B37] to-[#124B46] rounded-3xl p-8 sm:p-10 lg:p-12 text-white mb-8 sm:mb-10 shadow-[0_4px_24px_rgba(13,59,55,0.1)] overflow-hidden">
+          <div className="relative z-10 max-w-2xl space-y-2">
+            <span className="inline-block text-[11px] font-bold uppercase tracking-widest text-[#F59E0B] bg-white/10 px-3 py-1 rounded-full border border-white/10">
+              AUTHENTIC BANGLADESHI HANDICRAFTS & ESSENTIALS
+            </span>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+              Explore Our Collection
+            </h1>
+            <p className="text-sm sm:text-base text-white/85 font-normal leading-relaxed pt-1">
+              Handcrafted jute treasures, traditional pottery, natural foods, and curated lifestyle essentials delivered with care.
+            </p>
+          </div>
+          {/* Subtle Decorative Circle */}
+          <div className="absolute -right-16 -bottom-16 w-72 h-72 rounded-full bg-white/5 pointer-events-none" />
+          <div className="absolute right-12 top-1/2 -translate-y-1/2 opacity-15 hidden md:block pointer-events-none">
+            <Sparkles className="w-48 h-48 text-white" />
+          </div>
         </div>
 
         {/* 3. Catalog Controls Toolbar: Filters Summary, Active Global Search Tag, and Sort */}
@@ -539,13 +549,18 @@ function ShopContent() {
                     </div>
 
                     {/* Price Row */}
-                    <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-gray-50">
+                    <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-gray-50 flex-wrap">
                       <span className="text-base sm:text-lg font-bold text-[#0D3B37]">
-                        ৳{prod.price.toLocaleString()}
+                        ৳ {prod.price.toLocaleString()}
                       </span>
                       {prod.salePrice && prod.salePrice > prod.price && (
                         <span className="text-xs sm:text-sm text-gray-400 line-through font-light">
-                          ৳{prod.salePrice.toLocaleString()}
+                          ৳ {prod.salePrice.toLocaleString()}
+                        </span>
+                      )}
+                      {prod.salePrice && prod.salePrice > prod.price && (
+                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md ml-auto">
+                          {Math.round(((prod.salePrice - prod.price) / prod.salePrice) * 100)}% OFF
                         </span>
                       )}
                     </div>

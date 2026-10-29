@@ -30,91 +30,90 @@ export default function OffersPage() {
 
   return (
     <StorefrontLayout>
-      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16">
-        <div className="max-w-[1524px] mx-auto px-5">
+      <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-12 pb-16">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
-          <nav className="text-[12px] text-[#7A837C] font-light mb-4">
-            <Link href="/" className="hover:text-[#143527] transition-colors">
+          <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-4">
+            <Link href="/" className="hover:text-[#E0592A] transition-colors">
               Home
             </Link>
-            <span className="mx-1.5">/</span>
-            <span className="text-[#143527]">Offers / Discounts</span>
+            <span className="text-gray-300">/</span>
+            <span className="text-[#0D3B37] font-bold">Offers & Discounts</span>
           </nav>
 
           {/* Headline & Subtitle */}
-          <h1 className="font-serif text-3xl sm:text-[42px] text-[#143527] font-normal tracking-tight leading-tight">
-            A little extra delight.
-          </h1>
-          <p className="text-[13.5px] sm:text-[14px] text-[#556059] font-light mt-2 mb-10">
-            Considered finds, with a little something taken off.
-          </p>
+          <div className="mb-8 sm:mb-10">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0D3B37] tracking-tight leading-tight">
+              Exclusive Offers & Discounts
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 font-normal mt-2">
+              Enjoy verified discount coupons, seasonal reductions, and artisanal gift packages.
+            </p>
+          </div>
 
-          {/* Hero Promo Card (Forest Green #143527) */}
-          <div className="bg-[#143527] text-white rounded-[4px] overflow-hidden mb-16 shadow-xs">
+          {/* Hero Promo Card */}
+          <div className="bg-gradient-to-r from-[#0D3B37] to-[#124B46] text-white rounded-3xl overflow-hidden mb-14 shadow-[0_4px_24px_rgba(13,59,55,0.12)]">
             <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
               {/* Left Column: Coupon Info (7 cols) */}
-              <div className="lg:col-span-7 p-7 sm:p-10 flex flex-col justify-center">
-                <span className="text-[10px] font-semibold text-[#A3B8AA] uppercase tracking-widest block mb-3.5">
-                  YOUR FIRST ORDER
+              <div className="lg:col-span-7 p-7 sm:p-10 lg:p-12 flex flex-col justify-center">
+                <span className="text-xs font-bold text-[#F59E0B] uppercase tracking-widest block mb-2.5">
+                  WELCOME VOUCHER · NEW CUSTOMERS
                 </span>
 
-                <h2 className="font-serif text-3xl sm:text-[40px] text-white font-normal leading-tight mb-3">
-                  Make yourself at home.
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight mb-2">
+                  Enjoy Instant Savings
                 </h2>
 
-                <p className="text-[15px] sm:text-[16px] text-[#D8E2DA] font-light mb-6">
-                  ৳150 off orders of ৳1,500 or more.
+                <p className="text-sm sm:text-base text-emerald-100 font-normal mb-6">
+                  ৳150 off on all orders of ৳1,500 or more with promo voucher.
                 </p>
 
                 {/* Dashed Code Box */}
-                <div className="mb-4">
+                <div className="mb-5">
                   <button
                     type="button"
                     onClick={() => handleCopyCode("WELCOME150")}
-                    className="border border-dashed border-[#5C7565] hover:border-white px-4 py-2 rounded-[2px] bg-white/5 inline-flex items-center gap-3 transition-colors cursor-pointer group"
+                    className="border border-dashed border-emerald-400/60 hover:border-white px-5 py-3 rounded-2xl bg-white/10 inline-flex items-center gap-3.5 transition-all cursor-pointer group shadow-xs"
                     title="Click to copy code"
                   >
-                    <span className="font-mono text-[14px] text-white tracking-widest font-medium">
+                    <span className="font-mono text-base text-white tracking-widest font-bold">
                       WELCOME150
                     </span>
                     {copied ? (
-                      <span className="text-[11px] text-[#A3B8AA] flex items-center gap-1 font-sans">
-                        <Check className="w-3.5 h-3.5 text-white" />
-                        Copied
+                      <span className="text-xs text-emerald-300 flex items-center gap-1 font-sans font-bold">
+                        <Check className="w-4 h-4 text-emerald-300" />
+                        Copied!
                       </span>
                     ) : (
-                      <span className="text-[11px] text-[#A3B8AA] group-hover:text-white flex items-center gap-1 font-sans">
-                        <Copy className="w-3.5 h-3.5" />
-                        Copy
+                      <span className="text-xs text-white/80 group-hover:text-white flex items-center gap-1 font-sans font-semibold">
+                        <Copy className="w-4 h-4" />
+                        Copy Code
                       </span>
                     )}
                   </button>
                 </div>
 
-                <div className="text-[11px] text-[#8EA295] font-light leading-relaxed mb-6 space-y-0.5">
-                  <p>One use per customer · Until 30 Nov 2026</p>
-                  <p>
-                    Cannot be combined with another order-level code. Delivery
-                    excluded.
-                  </p>
+                <div className="text-xs text-emerald-200/80 font-normal leading-relaxed mb-6 space-y-1">
+                  <p>Valid for all registered clients across Bangladesh · Expires 30 Nov 2026</p>
+                  <p>Applicable during checkout on any handcrafted or packaged essentials.</p>
                 </div>
 
                 <div>
                   <Link
                     href="/shop"
-                    className="bg-white hover:bg-[#F3EFE7] text-[#143527] text-[13px] font-medium px-5 py-2.5 rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer w-fit shadow-xs"
+                    className="bg-[#E0592A] hover:bg-[#c94b20] text-white text-sm font-bold px-6 py-3 rounded-xl inline-flex items-center gap-2 transition-all cursor-pointer w-fit shadow-md hover:shadow-lg"
                   >
-                    <span>Find your first favourite</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <span>Explore Products to Redeem</span>
+                    <ArrowUpRight className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
 
               {/* Right Column: Gift Image (5 cols) */}
-              <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-full bg-[#1B4332]">
+              <div className="lg:col-span-5 relative min-h-[260px] lg:min-h-full bg-[#18534C]">
                 <Image
                   src="/images/corporate-gifting-feature.png"
-                  alt="Gift box wrapped in forest green ribbon with a warm cup of tea"
+                  alt="Special gift package"
                   fill
                   sizes="(max-width: 1024px) 100vw, 440px"
                   className="object-cover"
@@ -135,139 +134,138 @@ export default function OffersPage() {
           {/* Bottom Section: Good finds. Better prices. */}
           <div>
             <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-8">
-              <h2 className="font-serif text-2xl sm:text-[34px] text-[#143527] font-normal leading-tight">
-                Good finds. Better prices.
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B37] tracking-tight">
+                Special Marked Reductions
               </h2>
-              <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest">
+              <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider">
                 PRICES AS MARKED
               </span>
             </div>
 
-            {/* 3 Column Grid (2 Columns on mobile, 3 on tablet/desktop) */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6">
-              {/* Product 1: Everyday jute basket */}
-              <div className="group flex flex-col">
-                <div className="relative aspect-square rounded-xl sm:rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
-                  <Link href="/products/everyday-jute-basket">
-                    <Image
-                      src="/images/product-jute-basket.png"
-                      alt="Everyday jute basket"
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 320px"
-                      className="object-cover transition-transform duration-300 group-hover:scale-102"
-                    />
-                  </Link>
+            {/* 3 Column Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+              {/* Product 1 */}
+              <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 group relative">
+                <div>
+                  <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] p-3 mb-3 group-hover:bg-[#F5F1E9] transition-colors">
+                    <Link href="/products/everyday-jute-basket">
+                      <Image
+                        src="/images/product-jute-basket.png"
+                        alt="Everyday jute basket"
+                        fill
+                        sizes="(max-width: 640px) 50vw, 320px"
+                        className="object-contain p-2 group-hover:scale-106 transition-transform duration-300"
+                      />
+                    </Link>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleAddProduct("prod-jute-basket", "Everyday jute basket")
-                    }
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white hover:bg-[#F3EFE7] text-[#143527] shadow-sm flex items-center justify-center absolute bottom-2 right-2 sm:bottom-3 sm:right-3 cursor-pointer transition-transform hover:scale-110"
-                    title="Add to bag"
-                    aria-label="Add Everyday jute basket to bag"
-                  >
-                    <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2]" />
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => handleAddProduct("prod-jute-basket", "Everyday jute basket")}
+                      className="w-8 h-8 rounded-xl bg-[#0D3B37] hover:bg-[#E0592A] text-white shadow-md flex items-center justify-center absolute bottom-2.5 right-2.5 cursor-pointer transition-all hover:scale-105"
+                      title="Add to cart"
+                    >
+                      <Plus className="w-4 h-4 stroke-[2]" />
+                    </button>
+                  </div>
 
-                <div className="pt-2 sm:pt-3">
-                  <span className="text-[10px] sm:text-[11px] text-[#7A837C] font-light block mb-0.5">
+                  <span className="text-xs text-gray-400 font-medium block mb-1">
                     Jute items
                   </span>
                   <Link
                     href="/products/everyday-jute-basket"
-                    className="text-[13px] sm:text-[13.5px] font-medium text-[#143527] hover:text-[#B85D38] transition-colors block line-clamp-1"
+                    className="text-sm sm:text-[15px] font-semibold text-gray-900 group-hover:text-[#E0592A] transition-colors block line-clamp-1"
                   >
                     Everyday jute basket
                   </Link>
-                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
-                    <span className="text-[13px] font-medium text-[#143527]">
-                      ৳1,450
-                    </span>
-                    <span className="text-[11px] sm:text-[12px] text-[#8C948E] line-through font-light">
-                      ৳1,650
-                    </span>
-                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-3 border-t border-gray-50 mt-3">
+                  <span className="text-base sm:text-lg font-bold text-[#0D3B37]">
+                    ৳ 1,450
+                  </span>
+                  <span className="text-xs text-gray-400 line-through">
+                    ৳ 1,650
+                  </span>
+                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md ml-auto">
+                    12% OFF
+                  </span>
                 </div>
               </div>
 
-              {/* Product 2: The everyday jute tote */}
-              <div className="group flex flex-col">
-                <div className="relative aspect-square rounded-xl sm:rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
-                  <Link href="/products/everyday-jute-tote">
-                    <Image
-                      src="/images/product-jute-tote.png"
-                      alt="The everyday jute tote"
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 50vw, 320px"
-                      className="object-cover transition-transform duration-300 group-hover:scale-102"
-                    />
-                  </Link>
+              {/* Product 2 */}
+              <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 group relative">
+                <div>
+                  <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] p-3 mb-3 group-hover:bg-[#F5F1E9] transition-colors">
+                    <Link href="/products/everyday-jute-tote">
+                      <Image
+                        src="/images/product-jute-tote.png"
+                        alt="The everyday jute tote"
+                        fill
+                        sizes="(max-width: 640px) 50vw, 320px"
+                        className="object-contain p-2 group-hover:scale-106 transition-transform duration-300"
+                      />
+                    </Link>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleAddProduct("prod-jute-tote", "The everyday jute tote")
-                    }
-                    className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white hover:bg-[#F3EFE7] text-[#143527] shadow-sm flex items-center justify-center absolute bottom-2 right-2 sm:bottom-3 sm:right-3 cursor-pointer transition-transform hover:scale-110"
-                    title="Add to bag"
-                    aria-label="Add The everyday jute tote to bag"
-                  >
-                    <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2]" />
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={() => handleAddProduct("prod-jute-tote", "The everyday jute tote")}
+                      className="w-8 h-8 rounded-xl bg-[#0D3B37] hover:bg-[#E0592A] text-white shadow-md flex items-center justify-center absolute bottom-2.5 right-2.5 cursor-pointer transition-all hover:scale-105"
+                      title="Add to cart"
+                    >
+                      <Plus className="w-4 h-4 stroke-[2]" />
+                    </button>
+                  </div>
 
-                <div className="pt-2 sm:pt-3">
-                  <span className="text-[10px] sm:text-[11px] text-[#7A837C] font-light block mb-0.5">
+                  <span className="text-xs text-gray-400 font-medium block mb-1">
                     Jute items
                   </span>
                   <Link
                     href="/products/everyday-jute-tote"
-                    className="text-[13px] sm:text-[13.5px] font-medium text-[#143527] hover:text-[#B85D38] transition-colors block line-clamp-1"
+                    className="text-sm sm:text-[15px] font-semibold text-gray-900 group-hover:text-[#E0592A] transition-colors block line-clamp-1"
                   >
                     The everyday jute tote
                   </Link>
-                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1">
-                    <span className="text-[13px] font-medium text-[#143527]">
-                      ৳850
-                    </span>
-                    <span className="text-[11px] sm:text-[12px] text-[#8C948E] line-through font-light">
-                      ৳950
-                    </span>
-                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-3 border-t border-gray-50 mt-3">
+                  <span className="text-base sm:text-lg font-bold text-[#0D3B37]">
+                    ৳ 850
+                  </span>
+                  <span className="text-xs text-gray-400 line-through">
+                    ৳ 950
+                  </span>
+                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md ml-auto">
+                    11% OFF
+                  </span>
                 </div>
               </div>
 
-              {/* Column 3: Information Card (Keep the small print simple.) */}
-              <div className="col-span-2 md:col-span-1 bg-[#EFF4EF] rounded-[4px] p-5 sm:p-7 flex flex-col justify-between border border-[#E0E8E1] mt-2 sm:mt-0">
+              {/* Column 3: Information Card */}
+              <div className="col-span-2 md:col-span-1 bg-white rounded-2xl p-6 sm:p-7 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-emerald-100">
                 <div>
-                  <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2.5">
-                    BEFORE YOU CHECK OUT
+                  <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block mb-2">
+                    HELPFUL PROMO TIPS
                   </span>
-                  <h3 className="font-serif text-[22px] sm:text-[24px] text-[#143527] font-normal leading-snug mb-4">
-                    Keep the small print simple.
+                  <h3 className="text-xl font-bold text-[#0D3B37] mb-3">
+                    Easy Code Redemption
                   </h3>
-                  <p className="text-[12.5px] text-[#556059] font-light leading-relaxed mb-4">
-                    Enter your code in the bag. Your discount appears before you
-                    pay. Product-level reductions are already included in the
-                    displayed price.
+                  <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                    Enter your coupon code in the shopping bag. Reductions are reflected in your subtotal before confirming your order.
                   </p>
-                  <p className="text-[11.5px] text-[#7A837C] font-light leading-relaxed mb-6">
-                    A code not working? Check the minimum spend, expiry and
-                    eligibility, or ask our team.
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Have any questions regarding eligible order amounts or bulk discounts? Chat directly with our customer concierge.
                   </p>
                 </div>
 
-                <div>
+                <div className="pt-6">
                   <a
-                    href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}?text=Hello%20Shoilpikkabbo%2C%20I%20have%20a%20question%20about%20offers%20and%20discounts.`}
+                    href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}?text=Hello%20Shoilpikkabbo%2C%20I%20have%20a%20question%20about%20offers.`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-white hover:bg-[#F3EFE7] border border-[#D5CDC0] text-[#143527] text-[12.5px] font-medium px-4 py-2 rounded-[3px] inline-flex items-center gap-1.5 transition-colors cursor-pointer w-fit shadow-xs"
+                    className="bg-[#0D3B37] hover:bg-[#E0592A] text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl inline-flex items-center gap-2 transition-all cursor-pointer w-fit shadow-xs"
                   >
-                    <span>Ask about an offer</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <span>Ask on WhatsApp</span>
+                    <ArrowUpRight className="w-4 h-4" />
                   </a>
                 </div>
               </div>

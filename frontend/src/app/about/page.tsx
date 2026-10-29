@@ -1,7 +1,7 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ChevronRight, Sparkles, Truck, ShieldCheck, HeartHandshake } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 
 export const metadata = {
@@ -13,119 +13,158 @@ export const metadata = {
 export default function AboutPage() {
   return (
     <StorefrontLayout>
-      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16">
-        <div className="max-w-[1524px] mx-auto px-5">
+      <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-14">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6">
           {/* Breadcrumb */}
-          <nav className="text-[12px] text-[#7A837C] font-light mb-4">
-            <Link href="/" className="hover:text-[#143527] transition-colors">
+          <nav className="flex items-center gap-1.5 text-xs text-gray-500 font-medium mb-6">
+            <Link href="/" className="hover:text-[#E0592A] transition-colors">
               Home
             </Link>
-            <span className="mx-1.5">/</span>
-            <span className="text-[#143527]">About us</span>
+            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+            <span className="text-[#0D3B37] font-semibold">About Us</span>
           </nav>
 
           {/* Page Title & Subtitle */}
-          <h1 className="font-serif text-3xl sm:text-[42px] text-[#143527] font-normal tracking-tight leading-tight">
-            Thoughtfully brought together.
-          </h1>
-          <p className="text-[13px] text-[#7A837C] font-light mt-2 mb-10 sm:mb-12">
-            SHOILPIKKABBO · Delivery • Quality • Reliability
-          </p>
+          <div className="max-w-3xl mb-10 sm:mb-14">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#0D3B37] text-xs font-bold mb-3 border border-emerald-100">
+              <Sparkles className="w-3.5 h-3.5 text-[#E0592A]" />
+              <span>Heritage Craft & Everyday Commerce</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl text-[#0D3B37] font-extrabold tracking-tight leading-tight">
+              Thoughtfully brought together.
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
+              SHOILPIKKABBO is built upon three foundational tenets: Delivery, Quality, and Reliability. Bridging traditional artisans with modern lifestyle needs across Bangladesh.
+            </p>
+          </div>
 
           {/* Hero Story: 2 Column Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center mb-16">
             {/* Left Column: Artisan weaving image (6 cols) */}
             <div className="lg:col-span-6">
-              <div className="relative aspect-[4/3] rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-gray-100">
                 <Image
                   src="/images/story-artisan.png"
                   alt="Artisan hands hand-weaving a natural golden jute basket"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 520px"
-                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 600px"
+                  className="object-cover hover:scale-105 transition-transform duration-700"
                   priority
                 />
               </div>
             </div>
 
             {/* Right Column: Introduction Narrative (6 cols) */}
-            <div className="lg:col-span-6 flex flex-col justify-center">
-              <span className="text-[10.5px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2.5">
+            <div className="lg:col-span-6 flex flex-col justify-center space-y-4">
+              <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block">
                 OUR HERITAGE & MISSION
               </span>
-              <h2 className="font-serif text-2xl sm:text-[34px] text-[#143527] font-normal leading-snug mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0D3B37] leading-tight">
                 A place for products, people and possibilities.
               </h2>
-              <p className="text-[13.5px] sm:text-[14px] text-[#556059] font-light leading-relaxed mb-6">
-                SHOILPIKKABBO is a premier Bangladeshi destination connecting
-                artisanal craft, sustainable lifestyle goods, and practical institutional services.
-                We bridge multigenerational artisans across Bengal with discerning homes and enterprises,
-                delivering timeless craftsmanship with modern convenience.
+              <p className="text-sm sm:text-base text-gray-600 font-normal leading-relaxed">
+                SHOILPIKKABBO is a premier Bangladeshi destination celebrating indigenous artisanal craft, sustainable lifestyle goods, and institutional enterprise solutions.
               </p>
-              <div>
+              <p className="text-sm sm:text-base text-gray-600 font-normal leading-relaxed">
+                We bridge multigenerational artisans across Bengal with discerning homes and enterprises, empowering craftspeople with fair compensation while delivering authentic craftsmanship with seamless digital convenience.
+              </p>
+              <div className="pt-2">
                 <Link
                   href="/shop"
-                  className="h-11 px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer shadow-xs"
+                  className="h-12 px-7 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-xl inline-flex items-center gap-2 transition-all shadow-md shadow-[#0D3B37]/15 hover:shadow-orange-500/25 cursor-pointer"
                 >
                   <span>Explore our collection</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <ArrowUpRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
           </div>
 
           {/* Mission & Vision Cards: 2 Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-14 sm:mt-16 mb-14 sm:mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-16">
             {/* Mission Card */}
-            <div className="bg-[#EFECE6] border border-[#E5DFD3] rounded-[4px] p-6 sm:p-8">
-              <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2">
+            <div className="bg-white rounded-3xl p-7 sm:p-9 shadow-[0_2px_14px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.06)] transition-all duration-300 border border-gray-100">
+              <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block mb-2">
                 01 / COMMITMENT
               </span>
-              <h3 className="font-serif text-[24px] text-[#143527] font-normal mb-3">
+              <h3 className="text-2xl font-bold text-[#0D3B37] mb-3">
                 Our mission
               </h3>
-              <p className="text-[13px] text-[#556059] font-light leading-relaxed">
-                To preserve traditional artisan livelihoods by making thoughtfully handcrafted
-                creations and customized institutional services effortless to discover, customize,
-                and receive nationwide.
+              <p className="text-sm sm:text-base text-gray-600 font-normal leading-relaxed">
+                To preserve traditional artisan livelihoods by making thoughtfully handcrafted creations and customized institutional services effortless to discover, customize, and receive nationwide with uncompromised quality.
               </p>
             </div>
 
             {/* Vision Card */}
-            <div className="bg-[#EFECE6] border border-[#E5DFD3] rounded-[4px] p-6 sm:p-8">
-              <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2">
+            <div className="bg-white rounded-3xl p-7 sm:p-9 shadow-[0_2px_14px_rgba(0,0,0,0.03)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.06)] transition-all duration-300 border border-gray-100">
+              <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block mb-2">
                 02 / HORIZON
               </span>
-              <h3 className="font-serif text-[24px] text-[#143527] font-normal mb-3">
+              <h3 className="text-2xl font-bold text-[#0D3B37] mb-3">
                 Our vision
               </h3>
-              <p className="text-[13px] text-[#556059] font-light leading-relaxed">
-                To be Bengal's foremost heritage lifestyle label, celebrated globally for ethical sourcing,
-                uncompromising quality, and uplifting our local crafting communities.
+              <p className="text-sm sm:text-base text-gray-600 font-normal leading-relaxed">
+                To be Bengal's foremost heritage lifestyle label, celebrated globally for ethical sourcing, uncompromising quality, and elevating local crafting communities through sustainable economic dignity.
               </p>
             </div>
           </div>
 
           {/* Bottom Pillar Row: Delivery. Quality. Reliability. */}
-          <div className="border-t border-[#E8E2D8] pt-12 pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-6">
-              <h2 className="font-serif text-3xl sm:text-[38px] text-[#143527] font-normal tracking-tight leading-tight">
-                Delivery. Quality. Reliability.
-              </h2>
+          <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-[0_2px_14px_rgba(0,0,0,0.03)] border border-gray-100">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-8">
+              <div className="lg:col-span-6">
+                <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block mb-2">
+                  OUR BRAND PROMISE
+                </span>
+                <h2 className="text-3xl sm:text-4xl text-[#0D3B37] font-extrabold tracking-tight leading-tight">
+                  Delivery. Quality. Reliability.
+                </h2>
+              </div>
+              <div className="lg:col-span-6">
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-5">
+                  Three core principles define every customer touchpoint: prompt, secure door-to-door delivery across all 64 districts, authentic artisan grading, and customer-first support you can always count on.
+                </p>
+                <div>
+                  <Link
+                    href="/contact"
+                    className="h-12 px-7 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-xl inline-flex items-center gap-2 transition-all shadow-md shadow-[#0D3B37]/15 hover:shadow-orange-500/25 cursor-pointer"
+                  >
+                    <span>Talk to us</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
             </div>
-            <div className="lg:col-span-6">
-              <p className="text-[13px] text-[#556059] font-light leading-relaxed mb-5 max-w-lg">
-                Three words that define everything we do: prompt, secure door-to-door delivery across all 64 districts,
-                authentic artisan grading, and customer-first support you can always count on.
-              </p>
-              <div>
-                <Link
-                  href="/contact"
-                  className="h-10 px-5 bg-transparent hover:bg-black/[0.03] border border-[#D5CDC0] text-[#143527] text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
-                >
-                  <span>Talk to us</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </Link>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-gray-100">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0D3B37] flex items-center justify-center shrink-0">
+                  <Truck className="w-6 h-6 stroke-[1.8]" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-[#0D3B37]">Fast Delivery</h4>
+                  <p className="text-xs text-gray-500 mt-1">Reliable nationwide doorstep dispatch across all 64 districts.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0D3B37] flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-6 h-6 stroke-[1.8]" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-[#0D3B37]">Guaranteed Quality</h4>
+                  <p className="text-xs text-gray-500 mt-1">100% genuine handcrafted materials & rigorous quality checks.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#0D3B37] flex items-center justify-center shrink-0">
+                  <HeartHandshake className="w-6 h-6 stroke-[1.8]" />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-[#0D3B37]">Trusted Reliability</h4>
+                  <p className="text-xs text-gray-500 mt-1">Dedicated customer care with live order tracking & instant support.</p>
+                </div>
               </div>
             </div>
           </div>

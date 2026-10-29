@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Briefcase, MapPin, Calendar, Check, Loader2 } from "lucide-react";
+import { ArrowUpRight, Briefcase, MapPin, Calendar, Check, Loader2, ChevronRight, Sparkles } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { CLIENT_INFO } from "@/data/mock-data";
 
@@ -30,71 +30,81 @@ export default function CareersPage() {
 
   return (
     <StorefrontLayout>
-      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16">
-        <div className="max-w-[1524px] mx-auto px-5">
+      <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-14">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6">
           {/* Breadcrumb */}
-          <nav className="text-[12px] text-[#7A837C] font-light mb-4">
-            <Link href="/" className="hover:text-[#143527] transition-colors">
+          <nav className="flex items-center gap-1.5 text-xs text-gray-500 font-medium mb-6">
+            <Link href="/" className="hover:text-[#E0592A] transition-colors">
               Home
             </Link>
-            <span className="mx-1.5">/</span>
-            <span className="text-[#143527]">Career</span>
+            <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+            <span className="text-[#0D3B37] font-semibold">Careers</span>
           </nav>
 
           {/* Headline */}
-          <h1 className="font-serif text-3xl sm:text-[42px] text-[#143527] font-normal tracking-tight leading-tight mb-12 sm:mb-14">
-            Good work begins with good people.
-          </h1>
+          <div className="max-w-3xl mb-10 sm:mb-14">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#0D3B37] text-xs font-bold mb-3 border border-emerald-100">
+              <Sparkles className="w-3.5 h-3.5 text-[#E0592A]" />
+              <span>Join Our Mission</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl text-[#0D3B37] font-extrabold tracking-tight leading-tight">
+              Good work begins with good people.
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
+              We empower Bangladeshi artisans and forward-thinking professionals. Explore collaborative opportunities across supply chain, digital commerce, design, and operations.
+            </p>
+          </div>
 
           {/* Hero Two Column Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center mb-16">
             {/* Left Column: Narrative (6 cols) */}
-            <div className="lg:col-span-6 flex flex-col justify-center">
-              <span className="text-[10.5px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2.5">
-                FUTURE OPPORTUNITIES
+            <div className="lg:col-span-6 flex flex-col justify-center space-y-4">
+              <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block">
+                CAREER OPPORTUNITIES
               </span>
-              <h2 className="font-serif text-2xl sm:text-[34px] text-[#143527] font-normal leading-snug mb-4">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#0D3B37] leading-tight">
                 Bring your curiosity. Keep in touch.
               </h2>
-              <p className="text-[13px] text-[#556059] font-light leading-relaxed mb-4 max-w-lg">
-                Interested in working with SHOILPIKKABBO? We share verified roles, responsibilities, and artisan craft opportunities here.
+              <p className="text-sm sm:text-base text-gray-600 font-normal leading-relaxed">
+                Interested in working with SHOILPIKKABBO? We share verified roles, operations responsibilities, and artisan craft development opportunities here.
               </p>
 
               {/* Status Badge */}
-              <div className="mb-4">
-                <span className="inline-block px-3 py-1 rounded-full text-[11px] font-medium bg-[#E5ECE6] text-[#143527] border border-[#D5DDD6]">
+              <div className="pt-1">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   {vacancies.length > 0
                     ? `${vacancies.length} Active Positions Open`
-                    : "No confirmed vacancies published"}
+                    : "No confirmed vacancies published currently"}
                 </span>
               </div>
 
               {/* Advisory Text */}
-              <p className="text-[11.5px] text-[#8C948E] font-light leading-relaxed mb-6 max-w-md">
+              <p className="text-xs text-gray-500 font-normal leading-relaxed max-w-md">
                 We value integrity, transparent compensation, and artisan dignity. Please do not send application fees or unauthorized deposits.
               </p>
 
               {/* Action Button */}
-              <div>
+              <div className="pt-2">
                 <a
                   href={`mailto:${CLIENT_INFO.email}?subject=Career%20enquiry`}
-                  className="h-10 px-5 bg-transparent hover:bg-black/[0.03] border border-[#D5CDC0] text-[#143527] text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer w-fit"
+                  className="h-12 px-7 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-xl inline-flex items-center gap-2 transition-all shadow-md shadow-[#0D3B37]/15 hover:shadow-orange-500/25 cursor-pointer w-fit"
                 >
                   <span>Contact us about careers</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <ArrowUpRight className="w-4 h-4" />
                 </a>
               </div>
             </div>
 
             {/* Right Column: Artisan Image (6 cols) */}
             <div className="lg:col-span-6">
-              <div className="relative aspect-[4/3] rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-gray-100 shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-gray-100">
                 <Image
                   src="/images/story-artisan.png"
                   alt="Artisan hands carefully crafting a woven jute basket"
                   fill
-                  sizes="(max-width: 1024px) 100vw, 520px"
-                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 600px"
+                  className="object-cover hover:scale-105 transition-transform duration-700"
                   priority
                 />
               </div>
@@ -103,43 +113,50 @@ export default function CareersPage() {
 
           {/* Active Vacancies Section */}
           {vacancies.length > 0 && (
-            <div className="mt-16 pt-12 border-t border-[#E8E2D8] space-y-6">
-              <h2 className="font-serif text-2xl sm:text-3xl text-[#143527] font-normal tracking-tight">
-                Current Open Positions
-              </h2>
+            <div className="mb-16 space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block mb-1">
+                    OPENINGS
+                  </span>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D3B37] tracking-tight">
+                    Current Open Positions
+                  </h2>
+                </div>
+              </div>
               <div className="grid grid-cols-1 gap-4">
                 {vacancies.map((vac) => (
                   <div
                     key={vac.id}
-                    className="p-6 rounded-xl border border-[#E0D9CD] bg-white/70 shadow-xs space-y-3"
+                    className="p-6 sm:p-7 rounded-3xl border border-gray-100 bg-white shadow-[0_2px_14px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] transition-all space-y-4"
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#EAE3D6] pb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
                       <div>
-                        <h3 className="font-serif text-xl font-normal text-[#143527]">
+                        <h3 className="text-xl font-bold text-[#0D3B37]">
                           {vac.title}
                         </h3>
-                        <p className="text-xs text-[#556059] mt-0.5">
-                          {vac.department} • {vac.type} • Exp: {vac.experience}
+                        <p className="text-xs font-medium text-gray-500 mt-1">
+                          {vac.department} • {vac.type} • Experience: {vac.experience}
                         </p>
                       </div>
                       <a
                         href={`mailto:${CLIENT_INFO.email}?subject=Application%20for%20${encodeURIComponent(vac.title)}`}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#143527] text-white text-xs font-medium rounded hover:bg-[#0F261B] transition-colors self-start sm:self-auto"
+                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0D3B37] text-white text-xs font-bold rounded-xl hover:bg-[#E0592A] transition-all shadow-sm self-start sm:self-auto cursor-pointer"
                       >
                         <span>Apply via Email</span>
                         <ArrowUpRight className="w-3.5 h-3.5" />
                       </a>
                     </div>
-                    <p className="text-xs text-[#556059] leading-relaxed">
+                    <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
                       {vac.description}
                     </p>
-                    <div className="flex items-center justify-between text-[11px] text-[#7A837C] pt-1">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-[#143527]" />
+                    <div className="flex flex-wrap items-center justify-between text-xs text-gray-500 pt-1 gap-2">
+                      <span className="flex items-center gap-1.5 font-medium text-gray-700">
+                        <MapPin className="h-3.5 w-3.5 text-[#0D3B37]" />
                         {vac.location}
                       </span>
                       <span>
-                        Application Deadline: {new Date(vac.deadline).toLocaleDateString()}
+                        Application Deadline: <strong className="text-[#0D3B37]">{new Date(vac.deadline).toLocaleDateString()}</strong>
                       </span>
                     </div>
                   </div>
@@ -149,29 +166,34 @@ export default function CareersPage() {
           )}
 
           {/* Bottom Section: When a role is available. */}
-          <div className="border-t border-[#E8E2D8] mt-16 pt-12 pb-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-6">
-              <h2 className="font-serif text-3xl sm:text-[36px] text-[#143527] font-normal tracking-tight leading-tight">
-                When a role is available.
-              </h2>
-            </div>
-            <div className="lg:col-span-6">
-              <p className="text-[13px] text-[#556059] font-light leading-relaxed mb-4 max-w-lg">
-                Each listing includes a clear role description, location, employment type, selection process and closing date.
-              </p>
-              <div className="text-[12px] text-[#6F7771] font-light leading-relaxed mb-4 space-y-0.5">
-                <p>
-                  Career enquiries:{" "}
-                  <a
-                    href={`mailto:${CLIENT_INFO.email}`}
-                    className="text-[#143527] underline hover:text-[#B85D38]"
-                  >
-                    {CLIENT_INFO.email}
-                  </a>
+          <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-[0_2px_14px_rgba(0,0,0,0.03)] border border-gray-100">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              <div className="lg:col-span-6">
+                <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block mb-2">
+                  OUR HIRING ETHOS
+                </span>
+                <h2 className="text-3xl sm:text-4xl text-[#0D3B37] font-extrabold tracking-tight leading-tight">
+                  When a role is available.
+                </h2>
+              </div>
+              <div className="lg:col-span-6">
+                <p className="text-sm sm:text-base text-gray-600 font-normal leading-relaxed mb-4">
+                  Each role listing includes a clear job description, department scope, required competencies, selection process, and closing date.
                 </p>
-                <p>
-                  Use the subject "Career enquiry" and tell us the area of work that interests you.
-                </p>
+                <div className="text-xs sm:text-sm text-gray-500 font-normal leading-relaxed space-y-1">
+                  <p>
+                    Direct career enquiries:{" "}
+                    <a
+                      href={`mailto:${CLIENT_INFO.email}`}
+                      className="text-[#0D3B37] font-bold underline hover:text-[#E0592A] transition-colors"
+                    >
+                      {CLIENT_INFO.email}
+                    </a>
+                  </p>
+                  <p>
+                    Use the subject line "Career enquiry - [Your Discipline]" and tell us how you would like to contribute.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

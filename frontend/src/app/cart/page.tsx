@@ -79,25 +79,25 @@ export default function CartPage() {
 
   return (
     <StorefrontLayout>
-      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-8 sm:py-12 border-b border-[#EAE3D5]">
-        <div className="max-w-[1524px] mx-auto px-5">
+      <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-12">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
-          <nav className="flex items-center gap-1.5 text-[12px] text-[#7A837C] mb-6">
-            <Link href="/" className="hover:text-[#143527] transition-colors">
+          <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-6">
+            <Link href="/" className="hover:text-[#E0592A] transition-colors">
               Home
             </Link>
-            <span className="text-[#B3ACA0]">/</span>
-            <span className="text-[#143527] font-medium">Shopping bag</span>
+            <span className="text-gray-300">/</span>
+            <span className="text-[#0D3B37] font-bold">Shopping Bag</span>
           </nav>
 
           {/* Heading */}
           <div className="mb-8 sm:mb-10">
-            <h1 className="font-serif text-3xl sm:text-[40px] text-[#143527] font-normal tracking-tight leading-tight">
-              Your thoughtful finds.
+            <h1 className="text-3xl sm:text-4xl text-[#0D3B37] font-black tracking-tight leading-tight">
+              Your Shopping Bag
             </h1>
-            <p className="text-[14px] sm:text-[14.5px] text-[#6A736C] font-light mt-2">
+            <p className="text-sm sm:text-base text-gray-600 font-normal mt-2">
               {items.length === 0
-                ? "Your bag is currently empty. Explore our handcrafted pieces."
+                ? "Your bag is currently empty. Explore our authentic handcrafted creations."
                 : getSubtitle()}
             </p>
           </div>

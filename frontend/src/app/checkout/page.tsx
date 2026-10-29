@@ -169,71 +169,71 @@ export default function CheckoutPage() {
     const firstName = completedOrder.fullName.split(" ")[0] || "Nusrat";
     return (
       <StorefrontLayout>
-        <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16 border-b border-[#EAE3D5]">
-          <div className="max-w-[1524px] mx-auto px-5">
+        <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-10 sm:py-16">
+          <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
             {/* Top Tag & Checkmark */}
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#E5ECE7] text-[#143527] flex items-center justify-center shrink-0 mt-1">
-                <Check className="w-5 h-5 stroke-[2.2]" />
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-1 shadow-xs">
+                <Check className="w-6 h-6 stroke-[2.4]" />
               </div>
               <div>
-                <span className="text-[11px] font-semibold text-[#B85D38] uppercase tracking-wider block">
-                  A GOOD CHOICE, ON ITS WAY
+                <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block">
+                  ORDER PLACED SUCCESSFULLY
                 </span>
-                <h1 className="font-serif text-3xl sm:text-[42px] text-[#143527] font-normal tracking-tight mt-1 leading-tight">
-                  Thank you, {firstName}.
+                <h1 className="text-3xl sm:text-4xl text-[#0D3B37] font-black tracking-tight mt-1 leading-tight">
+                  Thank you, {firstName}!
                 </h1>
-                <p className="text-[14px] text-[#6A736C] font-light mt-1.5">
-                  Your payment is verified and your order is confirmed.
+                <p className="text-sm sm:text-base text-gray-600 font-normal mt-1.5">
+                  Your order is received and our Dhaka artisan hub is preparing your package.
                 </p>
               </div>
             </div>
 
             {/* Dark Green Summary Bar */}
-            <div className="mt-8 bg-[#143527] text-white rounded-[4px] p-5 sm:p-7 grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="mt-8 bg-[#0D3B37] text-white rounded-3xl p-6 sm:p-8 grid grid-cols-2 md:grid-cols-4 gap-6 shadow-[0_4px_20px_rgba(13,59,55,0.12)]">
               <div>
-                <span className="text-[10px] text-[#9EA8A1] uppercase tracking-wider block mb-1">
-                  ORDER
+                <span className="text-[11px] text-white/70 uppercase tracking-wider block mb-1 font-semibold">
+                  ORDER NO.
                 </span>
-                <span className="font-serif text-[17px] text-white font-normal">
+                <span className="text-lg sm:text-xl text-white font-extrabold tracking-tight">
                   {completedOrder.orderNumber}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-[#9EA8A1] uppercase tracking-wider block mb-1">
-                  PLACED
+                <span className="text-[11px] text-white/70 uppercase tracking-wider block mb-1 font-semibold">
+                  PLACED DATE
                 </span>
-                <span className="text-[14px] text-white font-light">
+                <span className="text-sm sm:text-base text-white font-medium">
                   {completedOrder.placedDate}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-[#9EA8A1] uppercase tracking-wider block mb-1">
-                  TOTAL PAID
+                <span className="text-[11px] text-white/70 uppercase tracking-wider block mb-1 font-semibold">
+                  TOTAL AMOUNT
                 </span>
-                <span className="font-serif text-[17px] text-white font-normal">
+                <span className="text-lg sm:text-xl text-[#F59E0B] font-black">
                   ৳{completedOrder.total.toLocaleString()}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] text-[#9EA8A1] uppercase tracking-wider block mb-1">
-                  PAYMENT
+                <span className="text-[11px] text-white/70 uppercase tracking-wider block mb-1 font-semibold">
+                  PAYMENT METHOD
                 </span>
-                <span className="text-[14px] text-white font-light">
-                  {completedOrder.paymentMethod} · Verified
+                <span className="text-sm sm:text-base text-emerald-300 font-bold">
+                  {completedOrder.paymentMethod}
                 </span>
               </div>
             </div>
 
             {/* Two Column Content */}
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-14 pt-2">
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 pt-2">
               {/* Left Column: Delivery destination details */}
-              <div className="md:col-span-6 space-y-4">
-                <h2 className="font-serif text-[22px] text-[#143527] font-normal">
-                  A place to arrive.
+              <div className="md:col-span-6 bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.03)] space-y-4">
+                <h2 className="text-xl sm:text-2xl text-[#0D3B37] font-bold">
+                  Shipping Destination
                 </h2>
-                <div className="text-[13.5px] text-[#333E35] leading-relaxed font-light">
-                  <p className="font-medium text-[#143527]">{completedOrder.fullName}</p>
+                <div className="text-sm text-gray-700 leading-relaxed">
+                  <p className="font-bold text-gray-900">{completedOrder.fullName}</p>
                   <p>{completedOrder.address}</p>
                   <p>
                     {completedOrder.district} {completedOrder.postcode} · {completedOrder.phone}
@@ -241,39 +241,39 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="pt-2">
-                  <span className="inline-block bg-[#EFECE6] text-[#143527] px-3.5 py-1.5 rounded-full text-[12px] font-medium border border-[#E5E0D5]">
-                    Estimated delivery · 3–5 Nov 2026
+                  <span className="inline-block bg-emerald-50 text-emerald-800 px-4 py-2 rounded-xl text-xs font-bold border border-emerald-200">
+                    Estimated Delivery · 3–5 Business Days
                   </span>
                 </div>
 
-                <p className="text-[12.5px] text-[#6A736C] font-light pt-2 leading-relaxed">
-                  Order updates will be sent to {completedOrder.email}. Keep your order number for tracking.
+                <p className="text-xs text-gray-500 font-normal pt-2 leading-relaxed">
+                  Order notifications and tracking links will be delivered to {completedOrder.email}.
                 </p>
 
-                {/* Buttons - Stacked vertically matching mockup */}
-                <div className="pt-3 flex flex-col items-start gap-2.5">
+                {/* Buttons */}
+                <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                   <Link
                     href={`/track-order?order=${completedOrder.orderNumber}`}
-                    className="h-10 px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
+                    className="h-11 px-6 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-xs sm:text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md"
                   >
                     <span>Track my order</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <ArrowUpRight className="w-4 h-4" />
                   </Link>
 
                   <Link
                     href="/shop"
-                    className="h-10 px-6 bg-white hover:bg-[#F3EFE7] border border-[#D5CDC0] text-[#143527] text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
+                    className="h-11 px-6 bg-[#FAF8F5] hover:bg-[#F3EFE7] text-[#0D3B37] text-xs sm:text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 transition-colors cursor-pointer"
                   >
                     <span>Continue shopping</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
+                    <ArrowUpRight className="w-4 h-4" />
                   </Link>
                 </div>
               </div>
 
-              {/* Right Column: Your finds */}
-              <div className="md:col-span-6">
-                <h2 className="font-serif text-[24px] text-[#143527] font-normal mb-5">
-                  Your finds
+              {/* Right Column: Your Order Items */}
+              <div className="md:col-span-6 bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.03)]">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#0D3B37] mb-5">
+                  Your Order Items
                 </h2>
 
                 <div className="space-y-4">
@@ -282,57 +282,57 @@ export default function CheckoutPage() {
                       key={item.product.id}
                       className="flex items-center gap-4 py-1"
                     >
-                      <div className="relative w-16 h-16 rounded-[3px] overflow-hidden bg-[#EBE7DF] shrink-0 border border-[#E0D9CD]">
+                      <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0 p-2 border border-gray-100">
                         <Image
                           src={item.product.imageUrl}
                           alt={item.product.name}
                           fill
                           sizes="64px"
-                          className="object-cover"
+                          className="object-contain p-1"
                         />
                       </div>
                       <div>
-                        <h4 className="text-[13.5px] font-medium text-[#143527]">
+                        <h4 className="text-sm font-semibold text-gray-900">
                           {item.product.name}
                         </h4>
-                        <p className="text-[12px] text-[#6F7771] font-light mt-0.5">
-                          Quantity {item.quantity} · ৳{item.product.price.toLocaleString()}
+                        <p className="text-xs text-gray-500 font-normal mt-0.5">
+                          Quantity: {item.quantity} · ৳{item.product.price.toLocaleString()} each
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
 
-                <div className="border-t border-[#E8E2D8] mt-6 pt-3 text-[12px] text-[#6F7771] font-light">
+                <div className="border-t border-gray-100 mt-6 pt-3 text-xs text-gray-500 font-normal">
                   <p>
                     Subtotal ৳{completedOrder.subtotal.toLocaleString()} · Discount -৳{completedOrder.discount.toLocaleString()} · Delivery ৳{completedOrder.deliveryCharge.toLocaleString()}
                   </p>
-                  <p className="mt-2 text-[#8C948E] text-[11.5px]">
-                    Need to make a change? Contact support with your order number as soon as possible.
+                  <p className="mt-2 text-gray-400 text-[11.5px]">
+                    Need to make a change? Contact our client support team with your order number.
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Bottom Support Bar */}
-            <div className="border-t border-[#E8E2D8] mt-16 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[12px] text-[#6F7771] font-light">
-              <span>We're here for the next step.</span>
-              <div className="flex items-center gap-4 text-[12px]">
+            <div className="border-t border-gray-200/60 mt-16 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-gray-500 font-medium">
+              <span>Have a question about your order? We're here to help.</span>
+              <div className="flex items-center gap-4 text-xs">
                 <a
                   href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#143527] hover:text-[#B85D38] font-medium inline-flex items-center gap-1 transition-colors"
+                  className="text-[#0D3B37] hover:text-[#E0592A] font-bold inline-flex items-center gap-1 transition-colors"
                 >
                   <span>WhatsApp</span>
                   <ArrowUpRight className="w-3 h-3" />
                 </a>
-                <span className="text-[#B0AAA0]">·</span>
+                <span className="text-gray-300">·</span>
                 <a
                   href={CLIENT_INFO.messengerUrl || "https://m.me/shoilpikkabbo"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#143527] hover:text-[#B85D38] font-medium inline-flex items-center gap-1 transition-colors"
+                  className="text-[#0D3B37] hover:text-[#E0592A] font-bold inline-flex items-center gap-1 transition-colors"
                 >
                   <span>Facebook Messenger</span>
                   <ArrowUpRight className="w-3 h-3" />
@@ -348,24 +348,27 @@ export default function CheckoutPage() {
   // Pre-order Checkout Form matching media_1793202314442.png
   return (
     <StorefrontLayout>
-      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-8 sm:py-12 border-b border-[#EAE3D5]">
-        <div className="max-w-[1524px] mx-auto px-5">
+      <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-12">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb Steps */}
-          <nav className="flex items-center gap-2 text-[12px] text-[#7A837C] mb-6">
-            <Link href="/cart" className="hover:text-[#143527] transition-colors">
-              Bag
+          <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-6">
+            <Link href="/cart" className="hover:text-[#E0592A] transition-colors">
+              Shopping Bag
             </Link>
-            <span className="text-[#B3ACA0]">→</span>
-            <span className="text-[#143527] font-medium">Delivery & payment</span>
-            <span className="text-[#B3ACA0]">→</span>
-            <span className="text-[#9EA8A1]">Confirmation</span>
+            <span className="text-gray-300">→</span>
+            <span className="text-[#0D3B37] font-bold">Delivery & Payment</span>
+            <span className="text-gray-300">→</span>
+            <span className="text-gray-400">Confirmation</span>
           </nav>
 
           {/* Headline */}
           <div className="mb-8 sm:mb-10">
-            <h1 className="font-serif text-3xl sm:text-[40px] text-[#143527] font-normal tracking-tight leading-tight">
-              One step closer to home.
+            <h1 className="text-3xl sm:text-4xl text-[#0D3B37] font-black tracking-tight leading-tight">
+              Checkout & Order Placement
             </h1>
+            <p className="text-sm text-gray-600 font-normal mt-1">
+              Please provide your recipient details to ensure prompt delivery across Bangladesh.
+            </p>
           </div>
 
           <form

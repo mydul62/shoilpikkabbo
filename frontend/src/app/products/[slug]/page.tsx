@@ -123,25 +123,25 @@ export default function ProductDetailPage() {
 
   return (
     <StorefrontLayout>
-      <div className="bg-[#F7F4EE] min-h-screen">
-        <div className="max-w-[1524px] mx-auto px-5 py-8 sm:py-12">
+      <div className="bg-[#FAF8F5] min-h-screen pb-16">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
           {/* 1. Breadcrumbs */}
           <nav
             aria-label="Breadcrumbs"
-            className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] text-[#7E8881] font-light mb-6"
+            className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-6"
           >
-            <Link href="/" className="hover:text-[#143527] transition-colors">
+            <Link href="/" className="hover:text-[#E0592A] transition-colors">
               Home
             </Link>
-            <span className="select-none text-[#A8B2AA]">/</span>
+            <span className="select-none text-gray-300">/</span>
             <Link
               href={`/shop?category=${product.categoryName.toLowerCase().replace(/ /g, "-")}`}
-              className="hover:text-[#143527] transition-colors"
+              className="hover:text-[#E0592A] transition-colors"
             >
               {product.categoryName}
             </Link>
-            <span className="select-none text-[#A8B2AA]">/</span>
-            <span className="text-[#143527] font-normal">{product.name}</span>
+            <span className="select-none text-gray-300">/</span>
+            <span className="text-[#0D3B37] font-bold">{product.name}</span>
           </nav>
 
           {/* 2. Main Product Presentation: Two Columns */}
@@ -311,7 +311,7 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 onClick={handleBuyNow}
-                className="w-full h-12 bg-white hover:bg-gray-50 border border-gray-200 text-[#0D3B37] text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 transition-colors cursor-pointer mb-6 shadow-2xs"
+                className="w-full h-12 bg-[#E0592A] hover:bg-[#c94b20] text-white text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 transition-all cursor-pointer mb-6 shadow-md hover:shadow-lg"
               >
                 <span>Buy now</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -352,114 +352,119 @@ export default function ProductDetailPage() {
           </div>
 
           {/* 3. Narrative Story & Specifications: Two Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 pt-12 sm:pt-16 border-t border-[#EAE3D5] mb-16 sm:mb-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 pt-12 sm:pt-16 border-t border-gray-200/60 mb-16 sm:mb-20">
             {/* Left Column: Narrative Story */}
-            <div>
-              <h2 className="font-serif text-2xl sm:text-[28px] font-normal text-[#143527] mb-3 leading-snug">
-                A natural home for everyday things.
+            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.03)]">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#0D3B37] mb-3 leading-snug tracking-tight">
+                Crafted with Care & Heritage
               </h2>
-              <p className="text-[13.5px] sm:text-[14px] text-[#556059] font-light leading-relaxed max-w-lg">
-                Use it for folded throws, toys or the essentials you like to keep close. The loop handles make it easy to move from room to room. Designed for dry indoor storage.
+              <p className="text-sm text-gray-600 font-normal leading-relaxed">
+                Authentic handcrafted creations representing the finest natural materials and sustainable artisanal techniques of Bengal. Designed for beauty, durability and practical utility in modern homes.
               </p>
             </div>
 
             {/* Right Column: The Details */}
-            <div>
-              <h2 className="font-serif text-2xl sm:text-[28px] font-normal text-[#143527] mb-4 leading-snug">
-                The details
+            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.03)]">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#0D3B37] mb-4 leading-snug tracking-tight">
+                Specifications & Details
               </h2>
-              <div className="space-y-2.5 text-[13px]">
-                <div className="grid grid-cols-3 py-1.5 border-b border-[#EAE3D5]/70">
-                  <span className="font-medium text-[#143527]">Material</span>
-                  <span className="col-span-2 text-[#556059] font-light">
-                    {product.specifications?.Material || "Natural jute"}
+              <div className="space-y-3 text-sm">
+                <div className="grid grid-cols-3 py-2 border-b border-gray-100">
+                  <span className="font-bold text-[#0D3B37]">Material</span>
+                  <span className="col-span-2 text-gray-600 font-normal">
+                    {product.specifications?.Material || "Natural Golden Jute / Organic Clay"}
                   </span>
                 </div>
-                <div className="grid grid-cols-3 py-1.5 border-b border-[#EAE3D5]/70">
-                  <span className="font-medium text-[#143527]">Dimensions</span>
-                  <span className="col-span-2 text-[#556059] font-light">
-                    {product.specifications?.Dimensions || "28 cm diameter × 25 cm height"}
+                <div className="grid grid-cols-3 py-2 border-b border-gray-100">
+                  <span className="font-bold text-[#0D3B37]">Dimensions</span>
+                  <span className="col-span-2 text-gray-600 font-normal">
+                    {product.specifications?.Dimensions || "Standard Handcrafted Dimension"}
                   </span>
                 </div>
-                <div className="grid grid-cols-3 py-1.5 border-b border-[#EAE3D5]/70">
-                  <span className="font-medium text-[#143527]">Care</span>
-                  <span className="col-span-2 text-[#556059] font-light">
-                    {product.specifications?.Care || "Spot clean; air dry; avoid soaking"}
+                <div className="grid grid-cols-3 py-2 border-b border-gray-100">
+                  <span className="font-bold text-[#0D3B37]">Origin</span>
+                  <span className="col-span-2 text-gray-600 font-normal">
+                    {product.specifications?.Origin || "Dhaka & Faridpur, Bangladesh"}
                   </span>
                 </div>
-                <div className="grid grid-cols-3 py-1.5 border-b border-[#EAE3D5]/70">
-                  <span className="font-medium text-[#143527]">Product code</span>
-                  <span className="col-span-2 text-[#556059] font-light">
-                    {product.sku || "SK-JB-020"}
+                <div className="grid grid-cols-3 py-2 border-b border-gray-100">
+                  <span className="font-bold text-[#0D3B37]">Product SKU</span>
+                  <span className="col-span-2 text-gray-600 font-normal">
+                    {product.sku || `SK-${product.slug}`}
                   </span>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 4. Cross-sell Showcase: Good company for your basket */}
-          <div className="pt-8 sm:pt-10">
+          {/* 4. Cross-sell Showcase */}
+          <div className="pt-4">
             {/* Header Row */}
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="font-serif text-2xl sm:text-3xl lg:text-[34px] font-normal text-[#143527] tracking-tight">
-                Good company for your basket.
+            <div className="flex items-center justify-between mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B37] tracking-tight">
+                Recommended For You
               </h2>
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#143527] hover:text-[#B85D38] transition-colors group"
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group"
               >
-                <span>More to discover</span>
-                <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <span>View All</span>
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </div>
 
-            {/* 3 Cross-sell Product Cards (2 on mobile, 3 on tablet/desktop) */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8">
+            {/* 3 Cross-sell Product Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {crossSellProducts.map((item) => (
-                <div key={item.id} className="group flex flex-col">
-                  {/* Card Visual with Floating Quick-Add */}
-                  <div className="relative w-full aspect-[1.48/1] rounded-xl sm:rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-2.5 sm:mb-3.5">
-                    <Link href={`/products/${item.slug}`} className="block relative w-full h-full">
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.name}
-                        fill
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
-                      />
-                    </Link>
+                <div
+                  key={item.id}
+                  className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 group relative"
+                >
+                  <div>
+                    {/* Card Visual with Floating Quick-Add */}
+                    <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] p-3 mb-3 group-hover:bg-[#F5F1E9] transition-colors">
+                      <Link href={`/products/${item.slug}`} className="block relative w-full h-full">
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.name}
+                          fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-contain p-2 group-hover:scale-106 transition-transform duration-300"
+                        />
+                      </Link>
 
-                    {/* Floating Add to Bag Button */}
-                    <button
-                      onClick={() => handleCrossSellAdd(item)}
-                      className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
-                      title="Add to bag"
-                      aria-label={`Add ${item.name} to bag`}
-                    >
-                      {addedCrossSellId === item.id ? (
-                        <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#143527]" />
-                      ) : (
-                        <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
-                      )}
-                    </button>
+                      {/* Floating Add to Bag Button */}
+                      <button
+                        onClick={() => handleCrossSellAdd(item)}
+                        className="absolute bottom-2.5 right-2.5 h-8 w-8 rounded-xl bg-[#0D3B37] hover:bg-[#E0592A] text-white shadow-md flex items-center justify-center transition-all cursor-pointer group/btn"
+                        title="Add to cart"
+                        aria-label={`Add ${item.name} to cart`}
+                      >
+                        {addedCrossSellId === item.id ? (
+                          <Check className="w-4 h-4 text-white" />
+                        ) : (
+                          <Plus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Category Label */}
+                    <p className="text-xs text-gray-400 font-medium truncate mb-1">
+                      {item.categoryName}
+                    </p>
+
+                    {/* Product Title */}
+                    <Link href={`/products/${item.slug}`}>
+                      <h3 className="text-sm sm:text-[15px] font-semibold text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 leading-snug">
+                        {item.name}
+                      </h3>
+                    </Link>
                   </div>
 
-                  {/* Category Label */}
-                  <span className="text-[10px] sm:text-[11.5px] text-[#6A736C] font-light">
-                    {item.categoryName}
-                  </span>
-
-                  {/* Product Title */}
-                  <Link href={`/products/${item.slug}`}>
-                    <h3 className="text-[13px] sm:text-[15.5px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug line-clamp-1">
-                      {item.name}
-                    </h3>
-                  </Link>
-
                   {/* Price */}
-                  <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5">
-                    <span className="text-[13px] sm:text-[14.5px] font-semibold text-[#143527]">
-                      ৳{item.price.toLocaleString()}
+                  <div className="flex items-center gap-2 pt-3 border-t border-gray-50 mt-3">
+                    <span className="text-base sm:text-lg font-bold text-[#0D3B37]">
+                      ৳ {item.price.toLocaleString()}
                     </span>
                   </div>
                 </div>

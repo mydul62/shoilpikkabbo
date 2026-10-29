@@ -40,15 +40,15 @@
   --color-charcoal-300: #d1d5db;
   --color-charcoal-200: #e5e7eb;
 
-  --color-terracotta: #b85d38;
-  --color-terracotta-dark: #9e4a28;
-  --color-terracotta-light: #f7ebe6;
+  --color-terracotta: #E0592A;
+  --color-terracotta-dark: #C94C20;
+  --color-terracotta-light: #FFF0EB;
 
   --font-serif: var(--font-serif), "Playfair Display", Georgia, serif;
 }
 
 :root {
-  --background: #f7f4ee;
+  --background: #FAF8F5;
   --foreground: #141414;
 }
 
@@ -76,12 +76,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1b4332;
+  background: #0D3B37;
 }
 
 /* Smooth transitions */
 * {
-  border-color: #e7dfd5;
+  border-color: #f0ebe1;
 }
 
 /* Standard site container for large desktop (1484px content + 20px padding each side = 1524px max-width) */
