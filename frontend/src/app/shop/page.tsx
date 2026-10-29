@@ -107,9 +107,45 @@ function ShopContent() {
     setIsCartOpen(true);
   };
 
+  const [liveProducts, setLiveProducts] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const fetchCatalog = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/v1/products?limit=100");
+        const json = await res.json();
+        if (json.success && json.data && json.data.length > 0) {
+          const mapped = json.data.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            categoryId: p.categoryId,
+            categoryName: p.category?.name || "Handicraft",
+            price: Number(p.price),
+            salePrice: p.salePrice ? Number(p.salePrice) : undefined,
+            stock: p.stock ?? 25,
+            sku: p.sku || `SK-${p.slug}`,
+            rating: 5,
+            reviewCount: 12,
+            imageUrl: p.images?.[0]?.url || "/images/product-jute-basket.png",
+            galleryUrls: p.images?.map((img: any) => img.url) || [],
+            description: p.description || p.name,
+            specifications: p.specifications || {},
+          }));
+          setLiveProducts(mapped);
+        }
+      } catch (e) {
+        // Fallback to MOCK_PRODUCTS
+      }
+    };
+    fetchCatalog();
+  }, []);
+
+  const catalogProducts = liveProducts.length > 0 ? liveProducts : MOCK_PRODUCTS;
+
   // Filter & Sort Products
   const filteredProducts = React.useMemo(() => {
-    return MOCK_PRODUCTS.filter((prod) => {
+    return catalogProducts.filter((prod) => {
       // Category filter
       if (selectedCategories.length > 0) {
         const matchesCategory = selectedCategories.some((slug) => {
@@ -154,7 +190,7 @@ function ShopContent() {
       if (sortBy === "newest") return b.id.localeCompare(a.id);
       return 0; // default featured
     });
-  }, [selectedCategories, searchQuery, appliedMinPrice, appliedMaxPrice, inStockOnly, sortBy]);
+  }, [catalogProducts, selectedCategories, searchQuery, appliedMinPrice, appliedMaxPrice, inStockOnly, sortBy]);
 
   // Breadcrumb Category Title
   const activeCategoryTitle =

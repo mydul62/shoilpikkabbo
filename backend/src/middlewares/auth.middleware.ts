@@ -24,28 +24,35 @@ export const authenticate = (
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return next(new ApiError(401, "Authentication token missing or invalid"));
+  let token: string | undefined;
+
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.split(" ")[1];
+  } else if (req.cookies && req.cookies.token) {
+    token = req.cookies.token;
   }
 
-  const token = authHeader.split(" ")[1];
+  if (!token) {
+    return next(new ApiError(401, "Authentication required. Please sign in."));
+  }
+
   try {
     const decoded = jwt.verify(token, ENV.JWT_SECRET) as AuthUser;
     req.user = decoded;
     return next();
   } catch (err) {
-    return next(new ApiError(401, "Invalid or expired token"));
+    return next(new ApiError(401, "Invalid or expired session. Please sign in again."));
   }
 };
 
 export const authorize = (...allowedRoles: Role[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return next(new ApiError(401, "Unauthorized access"));
+      return next(new ApiError(401, "Authentication required."));
     }
     if (!allowedRoles.includes(req.user.role)) {
       return next(
-        new ApiError(403, "Forbidden: insufficient permissions for this action")
+        new ApiError(403, "Forbidden: insufficient permissions for this operation.")
       );
     }
     return next();

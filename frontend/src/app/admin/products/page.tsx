@@ -8,79 +8,161 @@ import {
   Search,
   Edit2,
   Trash2,
-  AlertTriangle,
   CheckCircle2,
+  Loader2,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
 import { AdminLayoutShell } from "@/components/admin/AdminLayoutShell";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
-import { MOCK_PRODUCTS, MOCK_CATEGORIES, Product } from "@/data/mock-data";
 import { formatPrice } from "@/lib/utils";
+import { productsApi, categoriesApi } from "@/lib/api";
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = React.useState<Product[]>(MOCK_PRODUCTS);
+  const [products, setProducts] = React.useState<any[]>([]);
+  const [categories, setCategories] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [actionLoading, setActionLoading] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [categoryFilter, setCategoryFilter] = React.useState("all");
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
+  const [editingProduct, setEditingProduct] = React.useState<any | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
-  const [newProduct, setNewProduct] = React.useState({
+  const [formData, setFormData] = React.useState({
     name: "",
-    categoryName: "Handicraft",
+    categoryId: "",
     price: "",
     salePrice: "",
     stock: "25",
     sku: "",
     description: "",
+    imageUrl: "",
   });
 
-  const filtered = products.filter((p) => {
-    const matchCat =
-      categoryFilter === "all" || p.categoryName === categoryFilter;
-    const matchQuery =
-      !search.trim() ||
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.sku.toLowerCase().includes(search.toLowerCase());
-    return matchCat && matchQuery;
-  });
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const [prodRes, catRes] = await Promise.all([
+        productsApi.getAll({ limit: 100 }),
+        categoriesApi.getAll(),
+      ]);
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this product?")) {
-      setProducts((prev) => prev.filter((p) => p.id !== id));
+      if (prodRes.success) {
+        setProducts((prodRes.data as any)?.products || (prodRes.data as any) || []);
+      }
+      if (catRes.success) {
+        const cats = (catRes.data as any[]) || [];
+        setCategories(cats);
+        if (cats.length > 0 && !formData.categoryId) {
+          setFormData((prev) => ({ ...prev, categoryId: cats[0].id }));
+        }
+      }
+    } catch (err: any) {
+      console.error("Failed to load products:", err);
+      setError(err?.message || "Failed to load product catalog.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleAddProduct = (e: React.FormEvent) => {
-    e.preventDefault();
-    const created: Product = {
-      id: `prod-${Date.now()}`,
-      name: newProduct.name,
-      slug: newProduct.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      categoryId: "cat-1",
-      categoryName: newProduct.categoryName,
-      price: Number(newProduct.price) || 1000,
-      salePrice: newProduct.salePrice ? Number(newProduct.salePrice) : undefined,
-      stock: Number(newProduct.stock) || 10,
-      sku: newProduct.sku || `SK-${Math.floor(100 + Math.random() * 900)}`,
-      rating: 5.0,
-      reviewCount: 1,
-      imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80",
-      galleryUrls: [],
-      description: newProduct.description,
-      specifications: { Material: "Handcrafted Authentic" },
-    };
-    setProducts([created, ...products]);
-    setIsAddModalOpen(false);
-    setNewProduct({
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  const filtered = products.filter((p) => {
+    const pCategoryName = p.category?.name || p.categoryName || "";
+    const matchCat = categoryFilter === "all" || pCategoryName === categoryFilter;
+    const matchQuery =
+      !search.trim() ||
+      p.name?.toLowerCase().includes(search.toLowerCase()) ||
+      p.sku?.toLowerCase().includes(search.toLowerCase());
+    return matchCat && matchQuery;
+  });
+
+  const handleDelete = async (id: string, name: string) => {
+    if (confirm(`Are you sure you want to delete "${name}"?`)) {
+      try {
+        setActionLoading(true);
+        const res = await productsApi.delete(id);
+        if (res.success) {
+          setProducts((prev) => prev.filter((p) => p.id !== id));
+        }
+      } catch (err: any) {
+        alert("Failed to delete product: " + (err?.message || "Server error"));
+      } finally {
+        setActionLoading(false);
+      }
+    }
+  };
+
+  const handleOpenAdd = () => {
+    setEditingProduct(null);
+    setFormData({
       name: "",
-      categoryName: "Handicraft",
+      categoryId: categories[0]?.id || "",
       price: "",
       salePrice: "",
       stock: "25",
-      sku: "",
+      sku: `SK-${Math.floor(100 + Math.random() * 900)}`,
       description: "",
+      imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80",
     });
+    setIsAddModalOpen(true);
+  };
+
+  const handleOpenEdit = (prod: any) => {
+    setEditingProduct(prod);
+    setFormData({
+      name: prod.name || "",
+      categoryId: prod.categoryId || prod.category?.id || categories[0]?.id || "",
+      price: String(prod.price || ""),
+      salePrice: prod.salePrice ? String(prod.salePrice) : "",
+      stock: String(prod.stock ?? 25),
+      sku: prod.sku || "",
+      description: prod.description || "",
+      imageUrl: prod.images?.[0]?.url || prod.imageUrl || "",
+    });
+    setIsAddModalOpen(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setActionLoading(true);
+      const payload: any = {
+        name: formData.name,
+        categoryId: formData.categoryId,
+        price: Number(formData.price) || 0,
+        salePrice: formData.salePrice ? Number(formData.salePrice) : undefined,
+        stock: Number(formData.stock) || 0,
+        sku: formData.sku,
+        description: formData.description,
+        imageUrl: formData.imageUrl,
+      };
+
+      if (editingProduct) {
+        const res = await productsApi.update(editingProduct.id, payload);
+        if (res.success) {
+          await fetchData();
+          setIsAddModalOpen(false);
+        }
+      } else {
+        const res = await productsApi.create(payload);
+        if (res.success) {
+          await fetchData();
+          setIsAddModalOpen(false);
+        }
+      }
+    } catch (err: any) {
+      alert("Error saving product: " + (err?.message || "Validation failed"));
+    } finally {
+      setActionLoading(false);
+    }
   };
 
   return (
@@ -93,18 +175,42 @@ export default function AdminProductsPage() {
               Product Catalog Management
             </h1>
             <p className="text-xs text-charcoal-500 mt-0.5">
-              Manage inventory, pricing, SKU codes, and product categories.
+              Live inventory management connected directly to the store database.
             </p>
           </div>
-          <Button
-            onClick={() => setIsAddModalOpen(true)}
-            variant="primary"
-            size="md"
-          >
-            <Plus className="h-4 w-4 mr-1.5" />
-            Add New Product
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="md"
+              onClick={fetchData}
+              disabled={loading}
+              className="border-brand-border text-charcoal-700 hover:bg-sand"
+            >
+              <RefreshCw className={`h-4 w-4 mr-1.5 ${loading ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+            <Button
+              onClick={handleOpenAdd}
+              variant="primary"
+              size="md"
+            >
+              <Plus className="h-4 w-4 mr-1.5" />
+              Add New Product
+            </Button>
+          </div>
         </div>
+
+        {error && (
+          <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <span>{error}</span>
+            </div>
+            <Button size="sm" variant="outline" onClick={fetchData}>
+              Retry
+            </Button>
+          </div>
+        )}
 
         {/* Search & Filter Bar */}
         <div className="p-4 rounded-2xl border border-brand-border bg-white shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -124,8 +230,8 @@ export default function AdminProductsPage() {
               onChange={(e) => setCategoryFilter(e.target.value)}
               className="h-10 px-3 rounded-lg border border-brand-border bg-white text-xs text-charcoal-800 font-medium focus:outline-none focus:ring-2 focus:ring-forest-800/20"
             >
-              <option value="all">All Categories</option>
-              {MOCK_CATEGORIES.filter((c) => !c.isService).map((cat) => (
+              <option value="all">All Categories ({products.length})</option>
+              {categories.map((cat) => (
                 <option key={cat.id} value={cat.name}>
                   {cat.name}
                 </option>
@@ -150,93 +256,114 @@ export default function AdminProductsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-sand">
-                {filtered.map((prod) => (
-                  <tr key={prod.id} className="hover:bg-sand/20 transition-colors">
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-3">
-                        <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-sand shrink-0 border border-brand-border">
-                          <Image
-                            src={prod.imageUrl}
-                            alt={prod.name}
-                            fill
-                            className="object-cover"
-                            sizes="48px"
-                          />
-                        </div>
-                        <div>
-                          <p className="font-bold text-charcoal-900 line-clamp-1">
-                            {prod.name}
-                          </p>
-                          <p className="text-[10px] text-charcoal-400">
-                            Rating: {prod.rating} ({prod.reviewCount} reviews)
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 font-semibold text-charcoal-700">
-                      {prod.categoryName}
-                    </td>
-                    <td className="py-3 px-4 font-mono text-charcoal-600">
-                      {prod.sku}
-                    </td>
-                    <td className="py-3 px-4 font-black text-forest-900">
-                      {formatPrice(prod.salePrice ?? prod.price)}
-                      {prod.salePrice && (
-                        <span className="block text-[10px] text-charcoal-400 line-through">
-                          {formatPrice(prod.price)}
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-3 px-4">
-                      <span
-                        className={`font-bold ${
-                          prod.stock <= 20 ? "text-amber-700" : "text-charcoal-800"
-                        }`}
-                      >
-                        {prod.stock} units
-                      </span>
-                    </td>
-                    <td className="py-3 px-4">
-                      {prod.stock > 0 ? (
-                        <Badge variant="success">In Stock</Badge>
-                      ) : (
-                        <Badge variant="danger">Out of Stock</Badge>
-                      )}
-                    </td>
-                    <td className="py-3 px-4 text-right space-x-1">
-                      <button
-                        onClick={() =>
-                          alert(`Edit modal for ${prod.name} will open.`)
-                        }
-                        className="p-1.5 rounded-lg text-charcoal-500 hover:text-forest-800 hover:bg-sand transition-colors cursor-pointer"
-                        title="Edit product"
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(prod.id)}
-                        className="p-1.5 rounded-lg text-charcoal-400 hover:text-rose-600 hover:bg-sand transition-colors cursor-pointer"
-                        title="Delete product"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                {loading ? (
+                  <tr>
+                    <td colSpan={7} className="py-12 text-center">
+                      <Loader2 className="h-6 w-6 text-forest-800 animate-spin mx-auto mb-2" />
+                      <p className="text-charcoal-500 text-xs">Loading product records...</p>
                     </td>
                   </tr>
-                ))}
+                ) : filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-charcoal-500">
+                      No products found matching your filter criteria.
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((prod) => {
+                    const primaryImg =
+                      prod.images?.[0]?.url ||
+                      prod.imageUrl ||
+                      "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=600&q=80";
+                    const catName = prod.category?.name || prod.categoryName || "Artisanal";
+
+                    return (
+                      <tr key={prod.id} className="hover:bg-sand/20 transition-colors">
+                        <td className="py-3 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-sand shrink-0 border border-brand-border">
+                              <Image
+                                src={primaryImg}
+                                alt={prod.name}
+                                fill
+                                className="object-cover"
+                                sizes="48px"
+                              />
+                            </div>
+                            <div>
+                              <p className="font-bold text-charcoal-900 line-clamp-1">
+                                {prod.name}
+                              </p>
+                              <p className="text-[10px] text-charcoal-400">
+                                Slug: /{prod.slug}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-3 px-4 font-semibold text-charcoal-700">
+                          {catName}
+                        </td>
+                        <td className="py-3 px-4 font-mono text-charcoal-600">
+                          {prod.sku || "—"}
+                        </td>
+                        <td className="py-3 px-4 font-black text-forest-900">
+                          {formatPrice(Number(prod.salePrice ?? prod.price))}
+                          {prod.salePrice && (
+                            <span className="block text-[10px] text-charcoal-400 line-through">
+                              {formatPrice(Number(prod.price))}
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          <span
+                            className={`font-bold ${
+                              prod.stock <= 20 ? "text-amber-700" : "text-charcoal-800"
+                            }`}
+                          >
+                            {prod.stock} units
+                          </span>
+                        </td>
+                        <td className="py-3 px-4">
+                          {prod.stock > 0 ? (
+                            <Badge variant="success">In Stock</Badge>
+                          ) : (
+                            <Badge variant="danger">Out of Stock</Badge>
+                          )}
+                        </td>
+                        <td className="py-3 px-4 text-right space-x-1">
+                          <button
+                            onClick={() => handleOpenEdit(prod)}
+                            className="p-1.5 rounded-lg text-charcoal-500 hover:text-forest-800 hover:bg-sand transition-colors cursor-pointer"
+                            title="Edit product"
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(prod.id, prod.name)}
+                            className="p-1.5 rounded-lg text-charcoal-400 hover:text-rose-600 hover:bg-sand transition-colors cursor-pointer"
+                            title="Delete product"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
         </div>
 
-        {/* Add Product Modal */}
+        {/* Add / Edit Product Modal */}
         <Modal
           isOpen={isAddModalOpen}
           onClose={() => setIsAddModalOpen(false)}
-          title="Add New Catalog Product"
-          description="Create a product listing under SHOILPIKKABBO categories."
+          title={editingProduct ? "Edit Catalog Product" : "Add New Catalog Product"}
+          description="Create or modify product listings in the SHOILPIKKABBO database."
           maxWidth="xl"
         >
-          <form onSubmit={handleAddProduct} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1">
               <label className="text-xs font-bold text-charcoal-800">
                 Product Title *
@@ -244,9 +371,9 @@ export default function AdminProductsPage() {
               <Input
                 required
                 placeholder="e.g. Handmade Terracotta Lamp Holder"
-                value={newProduct.name}
+                value={formData.name}
                 onChange={(e) =>
-                  setNewProduct({ ...newProduct, name: e.target.value })
+                  setFormData({ ...formData, name: e.target.value })
                 }
               />
             </div>
@@ -257,14 +384,14 @@ export default function AdminProductsPage() {
                   Category *
                 </label>
                 <select
-                  value={newProduct.categoryName}
+                  value={formData.categoryId}
                   onChange={(e) =>
-                    setNewProduct({ ...newProduct, categoryName: e.target.value })
+                    setFormData({ ...formData, categoryId: e.target.value })
                   }
                   className="w-full h-10 px-3 rounded-lg border border-brand-border bg-white text-xs text-charcoal-800 focus:outline-none focus:ring-2 focus:ring-forest-800/20"
                 >
-                  {MOCK_CATEGORIES.filter((c) => !c.isService).map((cat) => (
-                    <option key={cat.id} value={cat.name}>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
                       {cat.name}
                     </option>
                   ))}
@@ -277,9 +404,9 @@ export default function AdminProductsPage() {
                 </label>
                 <Input
                   placeholder="e.g. HC-LP-012"
-                  value={newProduct.sku}
+                  value={formData.sku}
                   onChange={(e) =>
-                    setNewProduct({ ...newProduct, sku: e.target.value })
+                    setFormData({ ...formData, sku: e.target.value })
                   }
                 />
               </div>
@@ -294,9 +421,9 @@ export default function AdminProductsPage() {
                   required
                   type="number"
                   placeholder="1500"
-                  value={newProduct.price}
+                  value={formData.price}
                   onChange={(e) =>
-                    setNewProduct({ ...newProduct, price: e.target.value })
+                    setFormData({ ...formData, price: e.target.value })
                   }
                 />
               </div>
@@ -307,25 +434,38 @@ export default function AdminProductsPage() {
                 <Input
                   type="number"
                   placeholder="1250"
-                  value={newProduct.salePrice}
+                  value={formData.salePrice}
                   onChange={(e) =>
-                    setNewProduct({ ...newProduct, salePrice: e.target.value })
+                    setFormData({ ...formData, salePrice: e.target.value })
                   }
                 />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-charcoal-800">
-                  Initial Stock
+                  Stock Quantity
                 </label>
                 <Input
                   type="number"
                   placeholder="25"
-                  value={newProduct.stock}
+                  value={formData.stock}
                   onChange={(e) =>
-                    setNewProduct({ ...newProduct, stock: e.target.value })
+                    setFormData({ ...formData, stock: e.target.value })
                   }
                 />
               </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-charcoal-800">
+                Primary Image URL
+              </label>
+              <Input
+                placeholder="https://images.unsplash.com/..."
+                value={formData.imageUrl}
+                onChange={(e) =>
+                  setFormData({ ...formData, imageUrl: e.target.value })
+                }
+              />
             </div>
 
             <div className="space-y-1">
@@ -335,9 +475,9 @@ export default function AdminProductsPage() {
               <Textarea
                 rows={3}
                 placeholder="Describe material origin, dimensions, care instructions..."
-                value={newProduct.description}
+                value={formData.description}
                 onChange={(e) =>
-                  setNewProduct({ ...newProduct, description: e.target.value })
+                  setFormData({ ...formData, description: e.target.value })
                 }
               />
             </div>
@@ -351,8 +491,19 @@ export default function AdminProductsPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit" variant="primary" size="md">
-                Save Product
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                disabled={actionLoading}
+              >
+                {actionLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : editingProduct ? (
+                  "Update Product"
+                ) : (
+                  "Save Product"
+                )}
               </Button>
             </div>
           </form>

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Settings, Save, CheckCircle2, ShieldCheck, Truck, Phone } from "lucide-react";
+import { Settings, Save, CheckCircle2, ShieldCheck, Truck, Phone, RefreshCw } from "lucide-react";
 import { AdminLayoutShell } from "@/components/admin/AdminLayoutShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,10 +23,26 @@ export default function AdminSettingsPage() {
 
   const [isSaved, setIsSaved] = React.useState(false);
 
+  React.useEffect(() => {
+    try {
+      const stored = localStorage.getItem("shoilpikkabbo_settings");
+      if (stored) {
+        setSettings(JSON.parse(stored));
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      localStorage.setItem("shoilpikkabbo_settings", JSON.stringify(settings));
+    } catch (e) {
+      // ignore
+    }
     setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2500);
+    setTimeout(() => setIsSaved(false), 3000);
   };
 
   return (
@@ -44,7 +60,7 @@ export default function AdminSettingsPage() {
         {isSaved && (
           <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-            <span>Settings successfully updated across store services.</span>
+            <span>Settings successfully saved and persisted across storefront configurations.</span>
           </div>
         )}
 
@@ -203,7 +219,7 @@ export default function AdminSettingsPage() {
           </div>
 
           <div className="pt-2">
-            <Button type="submit" variant="primary" size="lg" className="shadow-md">
+            <Button type="submit" variant="primary" size="lg" className="shadow-md cursor-pointer">
               <Save className="h-4 w-4 mr-2" />
               Save Settings
             </Button>

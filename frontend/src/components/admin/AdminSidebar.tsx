@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
@@ -21,10 +21,11 @@ import {
   ChevronRight,
   LogOut,
   X,
+  Palette,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/shared/Logo";
-import { MOCK_PAYMENTS, MOCK_INQUIRIES, MOCK_ORDERS } from "@/data/mock-data";
+import { useAuth } from "@/context/AuthContext";
 
 interface AdminSidebarProps {
   isCollapsed: boolean;
@@ -40,11 +41,13 @@ export function AdminSidebar({
   setIsMobileOpen,
 }: AdminSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { logout } = useAuth();
 
-  // Badges for pending items
-  const pendingPaymentsCount = MOCK_PAYMENTS.filter((p) => p.status === "PENDING").length;
-  const pendingOrdersCount = MOCK_ORDERS.filter((o) => o.orderStatus === "PENDING").length;
-  const newInquiriesCount = MOCK_INQUIRIES.filter((i) => i.status === "NEW").length;
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
+  };
 
   const navItems = [
     {
@@ -72,20 +75,38 @@ export function AdminSidebar({
           label: "Orders",
           href: "/admin/orders",
           icon: ShoppingCart,
-          badge: pendingOrdersCount > 0 ? pendingOrdersCount : null,
+          badge: null,
           badgeVariant: "warning",
         },
         {
           label: "Payments",
           href: "/admin/payments",
           icon: CreditCard,
-          badge: pendingPaymentsCount > 0 ? pendingPaymentsCount : null,
+          badge: null,
           badgeVariant: "danger",
         },
         {
           label: "Customers",
           href: "/admin/customers",
           icon: Users,
+          badge: null,
+        },
+      ],
+    },
+    {
+      group: "Visual Builder & CMS",
+      items: [
+        {
+          label: "Home Page Editor",
+          href: "/admin/home-editor",
+          icon: Palette,
+          badge: "Elementor",
+          badgeVariant: "gold",
+        },
+        {
+          label: "Banners & Promos",
+          href: "/admin/banners",
+          icon: ImageIcon,
           badge: null,
         },
       ],
@@ -100,16 +121,10 @@ export function AdminSidebar({
           badge: null,
         },
         {
-          label: "Banners & Promos",
-          href: "/admin/banners",
-          icon: ImageIcon,
-          badge: null,
-        },
-        {
           label: "Service Inquiries",
           href: "/admin/inquiries",
           icon: MessageSquare,
-          badge: newInquiriesCount > 0 ? newInquiriesCount : null,
+          badge: null,
           badgeVariant: "gold",
         },
         {
@@ -251,17 +266,17 @@ export function AdminSidebar({
           <Store className="h-4 w-4 shrink-0" />
           {!isCollapsed && <span>View Storefront</span>}
         </Link>
-        <Link
-          href="/login"
+        <button
+          onClick={handleLogout}
           className={cn(
-            "flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-rose-300 hover:bg-rose-950/30 transition-colors",
+            "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-rose-300 hover:bg-rose-950/30 transition-colors cursor-pointer text-left",
             isCollapsed && "justify-center px-0"
           )}
           title="Sign Out"
         >
           <LogOut className="h-4 w-4 shrink-0" />
           {!isCollapsed && <span>Logout</span>}
-        </Link>
+        </button>
       </div>
     </div>
   );

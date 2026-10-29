@@ -4,11 +4,14 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowUpRight, Lock, Eye, EyeOff } from "lucide-react";
+import { ArrowUpRight, Lock, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
+import { useAuth } from "@/context/AuthContext";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { register, isAuthenticated, user, isLoading: authLoading } = useAuth();
+
   const [formData, setFormData] = React.useState({
     fullName: "",
     email: "",
@@ -20,27 +23,57 @@ export default function RegisterPage() {
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // If already logged in, redirect
+  React.useEffect(() => {
+    if (!authLoading && isAuthenticated && user) {
+      if (user.role === "ADMIN" || user.role === "STAFF") {
+        router.push("/admin");
+      } else {
+        router.push("/account");
+      }
+    }
+  }, [authLoading, isAuthenticated, user, router]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.password) {
-      alert("Please fill in all required fields.");
+    setErrorMessage(null);
+
+    if (!formData.fullName.trim() || !formData.phone.trim() || !formData.password) {
+      setErrorMessage("Please complete all required fields (Name, Phone number, and Password).");
       return;
     }
+
+    if (formData.password.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match.");
+      setErrorMessage("Passwords do not match. Please re-enter carefully.");
       return;
     }
+
     if (!formData.agreedToTerms) {
-      alert("Please agree to the Terms and Privacy policy.");
+      setErrorMessage("Please confirm you agree to the Terms and Privacy policy.");
       return;
     }
 
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    const res = await register({
+      name: formData.fullName.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim() || undefined,
+      password: formData.password,
+    });
+    setIsLoading(false);
+
+    if (res.success) {
       router.push("/account");
-    }, 600);
+    } else {
+      setErrorMessage(res.message || "Registration could not be completed. Please try again.");
+    }
   };
 
   return (
@@ -48,7 +81,7 @@ export default function RegisterPage() {
       <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16">
         <div className="max-w-[1040px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            {/* Left Column: Lifestyle photo & copy (6 cols) */}
+            {/* Left Column: Lifestyle photo & copy */}
             <div className="lg:col-span-6 order-2 lg:order-1">
               <div className="relative aspect-[16/9] sm:aspect-[4/3] rounded-[4px] overflow-hidden bg-[#EAE5DC] border border-[#E0D9CD]">
                 <Image
@@ -69,13 +102,12 @@ export default function RegisterPage() {
                   Keep your favourites close.
                 </h2>
                 <p className="text-[13px] text-[#6F7771] font-light leading-relaxed max-w-md">
-                  Follow your orders and keep your delivery details ready for next
-                  time.
+                  Follow your orders, verify payments, and manage your artisanal selections.
                 </p>
               </div>
             </div>
 
-            {/* Right Column: Register Form & Tabs (6 cols) */}
+            {/* Right Column: Register Form & Tabs */}
             <div className="lg:col-span-6 order-1 lg:order-2">
               {/* Header Tabs */}
               <div className="flex items-center gap-8 mb-8 text-[13.5px]">
@@ -94,9 +126,17 @@ export default function RegisterPage() {
               <h1 className="font-serif text-3xl sm:text-[40px] text-[#143527] font-normal leading-tight mb-2">
                 A considered beginning.
               </h1>
-              <p className="text-[13px] text-[#6F7771] font-light mb-8">
-                A few details to make yourself at home.
+              <p className="text-[13px] text-[#6F7771] font-light mb-6">
+                A few details to create your customer account.
               </p>
+
+              {/* Error Alert */}
+              {errorMessage && (
+                <div className="mb-5 p-3.5 rounded-[3px] bg-red-50 border border-red-200 text-red-800 text-[12.5px] flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -111,39 +151,38 @@ export default function RegisterPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, fullName: e.target.value })
                     }
-                    placeholder="Your name"
+                    placeholder="e.g. Tanvir Ahmed"
                     className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
                   />
                 </div>
 
                 <div>
                   <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                    Email address *
+                    Phone number (11 digits) *
                   </label>
                   <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    placeholder="you@example.com"
-                    className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                    Phone number *
-                  </label>
-                  <input
-                    type="text"
+                    type="tel"
                     required
                     value={formData.phone}
                     onChange={(e) =>
                       setFormData({ ...formData, phone: e.target.value })
                     }
                     placeholder="01XXXXXXXXX"
+                    className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
+                    Email address (optional)
+                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
+                    placeholder="you@example.com"
                     className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
                   />
                 </div>
@@ -160,7 +199,7 @@ export default function RegisterPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, password: e.target.value })
                       }
-                      placeholder="Create a strong password"
+                      placeholder="Minimum 6 characters"
                       className="w-full h-11 px-3.5 pr-10 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
                     />
                     <button
@@ -176,9 +215,6 @@ export default function RegisterPage() {
                       )}
                     </button>
                   </div>
-                  <p className="text-[11px] text-[#8C948E] font-light mt-1">
-                    Use at least 12 characters with a mix of letters, numbers and symbols.
-                  </p>
                 </div>
 
                 <div>
@@ -207,7 +243,7 @@ export default function RegisterPage() {
                     }
                     className="mt-0.5 w-4 h-4 text-[#143527] rounded-[2px] focus:ring-[#143527]"
                   />
-                  <span>I agree to the Terms and Privacy policy.</span>
+                  <span>I agree to the Terms of Service and Privacy policy.</span>
                 </label>
 
                 {/* Action Button */}
@@ -217,20 +253,29 @@ export default function RegisterPage() {
                     disabled={isLoading}
                     className="w-full h-11 bg-[#143527] hover:bg-[#1B4332] text-white text-[13.5px] font-medium rounded-[3px] inline-flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-xs disabled:opacity-75"
                   >
-                    <span>{isLoading ? "Creating account..." : "Create account"}</span>
-                    <ArrowUpRight className="w-4 h-4" />
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Registering account...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Create account</span>
+                        <ArrowUpRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 </div>
 
                 {/* Verification Notice */}
                 <div className="flex items-center gap-2 text-[11px] text-[#8C948E] font-light pt-2">
                   <Lock className="w-3.5 h-3.5 text-[#8C948E] shrink-0" />
-                  <span>An email verification step follows registration.</span>
+                  <span>Your account details are securely encrypted and stored.</span>
                 </div>
               </form>
 
               {/* Guest Checkout Alternative */}
-              <div className="mt-10 pt-6">
+              <div className="mt-10 pt-6 border-t border-[#EAE3D6]">
                 <p className="text-[12px] text-[#6F7771] font-light mb-3">
                   Just placing an order? You can check out as a guest.
                 </p>

@@ -49,14 +49,58 @@ function TrackOrderContent() {
     }
   }, [initialOrderParam]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setHasSearched(true);
-    const cleanOrder = orderQuery.trim().toLowerCase();
+    const cleanOrder = orderQuery.trim();
     const cleanPhone = phoneQuery.trim();
 
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/v1/orders/track/${encodeURIComponent(cleanOrder)}${
+          cleanPhone ? `?phone=${encodeURIComponent(cleanPhone.replace(/\s+/g, ""))}` : ""
+        }`
+      );
+      const json = await res.json();
+      if (json.success && json.data) {
+        const ord = json.data;
+        setMatchedOrder({
+          id: ord.id,
+          orderNumber: ord.orderNumber,
+          customerName: ord.customerName,
+          customerPhone: ord.customerPhone,
+          shippingAddress: ord.shippingAddress,
+          city: ord.city,
+          totalAmount: Number(ord.totalAmount),
+          finalAmount: Number(ord.totalAmount),
+          subtotal: Number(ord.subtotal),
+          discount: Number(ord.discountAmount),
+          deliveryCharge: Number(ord.shippingCost),
+          paymentMethod: ord.paymentMethod,
+          paymentStatus: ord.paymentStatus,
+          orderStatus: ord.orderStatus,
+          createdAt: new Date(ord.createdAt).toLocaleDateString(),
+          items: ord.items?.map((i: any) => ({
+            id: i.id,
+            productId: i.productId,
+            productName: i.productName,
+            quantity: i.quantity,
+            price: Number(i.unitPrice),
+          })) || [],
+          trackingTimeline: ord.trackingEvents?.map((ev: any) => ({
+            title: `Status: ${ev.status}`,
+            description: ev.description,
+            time: new Date(ev.timestamp).toLocaleString(),
+          })) || [],
+        } as any);
+        return;
+      }
+    } catch (err) {
+      console.warn("Backend track order fallback:", err);
+    }
+
     const found = MOCK_ORDERS.find((o) => {
-      const matchNum = o.orderNumber.toLowerCase() === cleanOrder;
+      const matchNum = o.orderNumber.toLowerCase() === cleanOrder.toLowerCase();
       const matchPhone = cleanPhone
         ? o.customerPhone.replace(/\s+/g, "").includes(cleanPhone.replace(/\s+/g, ""))
         : true;

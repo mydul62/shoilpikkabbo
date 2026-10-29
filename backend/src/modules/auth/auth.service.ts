@@ -12,19 +12,29 @@ export class AuthService {
     email?: string;
     password: string;
   }) {
-    const existing = await prisma.user.findUnique({
-      where: { phone: data.phone },
+    const existingPhone = await prisma.user.findUnique({
+      where: { phone: data.phone.trim() },
     });
-    if (existing) {
-      throw new ApiError(409, "User with this phone number already exists.");
+    if (existingPhone) {
+      throw new ApiError(409, "An account with this phone number already exists.");
+    }
+
+    const cleanEmail = data.email && data.email.trim() ? data.email.trim() : null;
+    if (cleanEmail) {
+      const existingEmail = await prisma.user.findFirst({
+        where: { email: { equals: cleanEmail, mode: "insensitive" } },
+      });
+      if (existingEmail) {
+        throw new ApiError(409, "An account with this email address already exists.");
+      }
     }
 
     const passwordHash = await bcrypt.hash(data.password, 10);
     const user = await prisma.user.create({
       data: {
-        name: data.name,
-        phone: data.phone,
-        email: data.email,
+        name: data.name.trim(),
+        phone: data.phone.trim(),
+        email: cleanEmail,
         passwordHash,
         role: Role.CUSTOMER,
       },
@@ -47,17 +57,32 @@ export class AuthService {
     return { user, token };
   }
 
-  static async login(data: { phone: string; password: string }) {
-    const user = await prisma.user.findUnique({
-      where: { phone: data.phone },
+  static async login(data: {
+    phone?: string;
+    email?: string;
+    emailOrPhone?: string;
+    identifier?: string;
+    password: string;
+  }) {
+    const identifier = (data.identifier || data.emailOrPhone || data.email || data.phone || "").trim();
+    if (!identifier) {
+      throw new ApiError(400, "Please provide your email address or phone number.");
+    }
+
+    const isEmail = identifier.includes("@");
+    const user = await prisma.user.findFirst({
+      where: isEmail
+        ? { email: { equals: identifier, mode: "insensitive" } }
+        : { phone: identifier },
     });
+
     if (!user) {
-      throw new ApiError(401, "Invalid phone number or password.");
+      throw new ApiError(401, "Invalid email/phone or password.");
     }
 
     const isMatch = await bcrypt.compare(data.password, user.passwordHash);
     if (!isMatch) {
-      throw new ApiError(401, "Invalid phone number or password.");
+      throw new ApiError(401, "Invalid email/phone or password.");
     }
 
     const token = jwt.sign(

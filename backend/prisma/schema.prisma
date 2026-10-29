@@ -354,3 +354,26 @@ model AuditLog {
 
   @@index([userId])
 }
+
+enum PageStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model PageVersion {
+  id          String     @id @default(uuid())
+  slug        String     @default("home")
+  title       String     @default("Home Page")
+  status      PageStatus @default(DRAFT)
+  version     Int        @default(1)
+  sections    Json
+  metadata    Json?
+  authorId    String?
+  publishedAt DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([slug, status])
+  @@index([slug, version])
+}

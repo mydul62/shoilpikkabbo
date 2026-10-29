@@ -8,6 +8,10 @@ import { couponRoutes } from "./modules/coupon/coupon.route";
 import { inquiryRoutes } from "./modules/inquiry/inquiry.route";
 import { analyticsRoutes } from "./modules/analytics/analytics.route";
 import { settingsRoutes } from "./modules/settings/settings.route";
+import { pageRoutes } from "./modules/page/page.route";
+import { bannerRoutes } from "./modules/banner/banner.route";
+import { careerRoutes } from "./modules/career/career.route";
+import { customerRoutes } from "./modules/customer/customer.route";
 
 const router = Router();
 
@@ -20,5 +24,9 @@ router.use("/coupons", couponRoutes);
 router.use("/inquiries", inquiryRoutes);
 router.use("/analytics", analyticsRoutes);
 router.use("/settings", settingsRoutes);
+router.use("/pages", pageRoutes);
+router.use("/banners", bannerRoutes);
+router.use("/careers", careerRoutes);
+router.use("/customers", customerRoutes);
 
 export const appRouter = router;

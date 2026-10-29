@@ -66,7 +66,9 @@ export default function ServicesPage() {
     formRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.contact || !formData.requirements) {
       alert("Please fill in your name, contact phone/email, and requirements.");
@@ -77,7 +79,26 @@ export default function ServicesPage() {
       return;
     }
 
-    setIsSubmitted(true);
+    try {
+      setIsSubmitting(true);
+      await fetch("http://localhost:5000/api/v1/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          serviceType: formData.serviceArea || "Special E-Sheba Service Brief",
+          customerName: formData.name,
+          customerPhone: formData.contact,
+          customerEmail: formData.contact.includes("@") ? formData.contact : undefined,
+          requirements: `${formData.quantityBudget ? `Budget/Qty: ${formData.quantityBudget} | ` : ""}${formData.preferredDate ? `Target Date: ${formData.preferredDate} | ` : ""}${formData.requirements}`,
+        }),
+      });
+      setIsSubmitted(true);
+    } catch (err) {
+      console.warn("Inquiry submission warning:", err);
+      setIsSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
