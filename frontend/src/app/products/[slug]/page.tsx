@@ -149,14 +149,14 @@ export default function ProductDetailPage() {
             {/* Left Column: Visual Gallery (6 cols) */}
             <div className="lg:col-span-6">
               {/* Main Image Frame */}
-              <div className="relative w-full aspect-square sm:aspect-[1.05/1] rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-4">
+              <div className="relative w-full aspect-square rounded-3xl overflow-hidden bg-white p-6 shadow-[0_2px_14px_rgba(0,0,0,0.03)] mb-4 flex items-center justify-center">
                 <Image
                   src={selectedImage}
                   alt={product.name}
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover transition-opacity duration-300"
+                  className="object-contain p-4 transition-opacity duration-300"
                 />
               </div>
 
@@ -169,10 +169,10 @@ export default function ProductDetailPage() {
                       key={idx}
                       type="button"
                       onClick={() => setSelectedImage(imgUrl)}
-                      className={`relative aspect-[1.75/1] rounded-lg overflow-hidden bg-[#E8E2D6] cursor-pointer border transition-all ${
+                      className={`relative aspect-[1.75/1] rounded-xl overflow-hidden bg-white p-1 cursor-pointer transition-all shadow-2xs ${
                         isSelected
-                          ? "border-[#143527] ring-1 ring-[#143527]"
-                          : "border-[#D5CDC0] opacity-80 hover:opacity-100"
+                          ? "ring-2 ring-[#0D3B37]"
+                          : "opacity-75 hover:opacity-100 hover:shadow-xs"
                       }`}
                       aria-label={`View image ${idx + 1}`}
                     >
@@ -181,7 +181,7 @@ export default function ProductDetailPage() {
                         alt=""
                         fill
                         sizes="160px"
-                        className="object-cover"
+                        className="object-contain p-1"
                       />
                     </button>
                   );
@@ -189,101 +189,101 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Caption */}
-              <p className="text-[11.5px] sm:text-[12px] text-[#7E8881] font-light leading-relaxed">
+              <p className="text-xs text-gray-400 font-normal leading-relaxed">
                 Natural fibres have their own character. Colour and weave may vary slightly.
               </p>
             </div>
 
             {/* Right Column: Buy Box & Product Options (6 cols) */}
-            <div className="lg:col-span-6 flex flex-col justify-start">
+            <div className="lg:col-span-6 bg-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-[0_2px_14px_rgba(0,0,0,0.03)] flex flex-col justify-start">
               {/* Overline Tag */}
-              <p className="text-[11px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-2 sm:mb-3">
-                {product.categoryName.toUpperCase()} / THE NATURAL COLLECTION
+              <p className="text-xs font-bold tracking-wider uppercase text-[#E0592A] mb-2 sm:mb-2.5">
+                {product.categoryName.toUpperCase()} / AUTHENTIC BANGLADESHI
               </p>
 
               {/* Product Headline */}
-              <h1 className="font-serif text-3xl sm:text-4xl lg:text-[44px] font-normal text-[#143527] leading-[1.14] tracking-tight mb-3">
+              <h1 className="text-2xl sm:text-3xl lg:text-[36px] font-bold text-[#0D3B37] leading-snug tracking-tight mb-3">
                 {product.name}
               </h1>
 
               {/* Short Description */}
-              <p className="text-[13.5px] sm:text-[14px] text-[#556059] font-light leading-relaxed mb-5">
+              <p className="text-sm sm:text-[15px] text-gray-600 font-normal leading-relaxed mb-6">
                 {product.description ||
                   "A place for the little things. A handwoven basket that brings warmth and order to a corner of your home."}
               </p>
 
               {/* Price & Savings Row */}
-              <div className="flex items-center gap-3 mb-4">
-                <span className="font-serif text-2xl sm:text-[28px] font-semibold text-[#143527]">
+              <div className="flex items-center gap-3.5 mb-5 flex-wrap">
+                <span className="text-3xl sm:text-4xl font-extrabold text-[#0D3B37]">
                   ৳{product.price.toLocaleString()}
                 </span>
-                <span className="text-[14px] text-[#8C948E] line-through font-light">
+                <span className="text-base text-gray-400 line-through font-normal">
                   ৳{(product.salePrice ?? product.price + savings).toLocaleString()}
                 </span>
-                <span className="px-2 py-0.5 bg-[#FAF7F2] border border-[#D5CDC0] text-[#143527] text-[11px] font-medium rounded-[2px]">
+                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-lg">
                   Save ৳{savings.toLocaleString()}
                 </span>
               </div>
 
               {/* Stock Indicator */}
               <div className="mb-6">
-                <span className="inline-flex items-center px-3 py-1 bg-[#EEF4F0] text-[#1E563E] text-[11.5px] font-medium rounded-[2px]">
-                  In stock · ready to order
+                <span className="inline-flex items-center px-3.5 py-1.5 bg-emerald-50 text-emerald-800 text-xs font-semibold rounded-xl">
+                  ✓ In stock · ready to dispatch
                 </span>
               </div>
 
               {/* Size Selector */}
               <div className="mb-6">
-                <label className="text-[12.5px] font-semibold text-[#143527] mb-2.5 block tracking-tight">
-                  Size
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2.5 block">
+                  Select Size
                 </label>
                 <div className="flex flex-wrap items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setSelectedSize("Medium · 28 cm")}
-                    className={`px-4 py-2.5 rounded-[2px] text-[13px] transition-all cursor-pointer ${
+                    className={`px-4 py-2.5 rounded-xl text-sm transition-all cursor-pointer font-semibold ${
                       selectedSize.startsWith("Medium")
-                        ? "border-2 border-[#143527] bg-white text-[#143527] font-medium"
-                        : "border border-[#D5CDC0] bg-transparent hover:bg-white text-[#556059]"
+                        ? "bg-[#0D3B37] text-white shadow-xs"
+                        : "bg-[#FAF8F5] hover:bg-[#F3EFE6] text-gray-700"
                     }`}
                   >
                     Medium · 28 cm
                   </button>
                   <Link
                     href="/products/everyday-jute-basket-large"
-                    className="px-4 py-2.5 border border-[#D5CDC0] bg-transparent hover:bg-white text-[#556059] hover:text-[#143527] rounded-[2px] text-[13px] inline-flex items-center gap-1.5 transition-all group"
+                    className="px-4 py-2.5 bg-[#FAF8F5] hover:bg-[#F3EFE6] text-gray-700 rounded-xl text-sm font-semibold inline-flex items-center gap-1.5 transition-all group"
                   >
                     <span>Large · 34 cm</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-[#556059] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-gray-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </Link>
                 </div>
-                <p className="text-[12px] text-[#7E8881] font-light mt-2.5">
+                <p className="text-xs text-gray-400 font-medium mt-2.5">
                   Selected: {selectedSize} · Natural
                 </p>
               </div>
 
               {/* Quantity Stepper & Add to Bag Row */}
-              <div className="flex items-center gap-2.5 sm:gap-3 mb-3">
+              <div className="flex items-center gap-3 mb-3.5">
                 {/* Quantity Stepper */}
-                <div className="flex items-center justify-between border border-[#D5CDC0] bg-white rounded-[2px] h-11 sm:h-12 w-24 sm:w-28 px-2.5 sm:px-3 shrink-0">
+                <div className="flex items-center justify-between border border-gray-200 bg-gray-50 rounded-xl h-12 w-28 px-3 shrink-0">
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="text-[#143527] hover:text-[#B85D38] p-1 cursor-pointer transition-colors"
+                    className="text-gray-600 hover:text-gray-900 p-1 cursor-pointer transition-colors"
                     aria-label="Decrease quantity"
                   >
-                    <Minus className="w-3.5 h-3.5" />
+                    <Minus className="w-4 h-4" />
                   </button>
-                  <span className="text-[13px] font-medium text-[#143527]">
+                  <span className="text-sm font-bold text-gray-900">
                     {quantity}
                   </span>
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
-                    className="text-[#143527] hover:text-[#B85D38] p-1 cursor-pointer transition-colors"
+                    className="text-gray-600 hover:text-gray-900 p-1 cursor-pointer transition-colors"
                     aria-label="Increase quantity"
                   >
-                    <Plus className="w-3.5 h-3.5" />
+                    <Plus className="w-4 h-4" />
                   </button>
                 </div>
 
@@ -291,17 +291,17 @@ export default function ProductDetailPage() {
                 <button
                   type="button"
                   onClick={handleAddToCart}
-                  className="flex-1 h-11 sm:h-12 bg-[#143527] hover:bg-[#1B4332] text-white text-[12.5px] sm:text-[13px] font-medium rounded-[2px] inline-flex items-center justify-center gap-1.5 sm:gap-2 transition-colors cursor-pointer shadow-sm px-2"
+                  className="flex-1 h-12 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md px-3"
                 >
                   {isAdded ? (
                     <>
-                      <span>Added to bag!</span>
+                      <span>Added to cart!</span>
                       <Check className="w-4 h-4 text-white" />
                     </>
                   ) : (
                     <>
-                      <span>Add to bag · ৳{(product.price * quantity).toLocaleString()}</span>
-                      <ArrowUpRight className="w-3.5 h-3.5" />
+                      <span>Add to Cart · ৳{(product.price * quantity).toLocaleString()}</span>
+                      <ArrowUpRight className="w-4 h-4" />
                     </>
                   )}
                 </button>
@@ -311,40 +311,40 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 onClick={handleBuyNow}
-                className="w-full h-11 sm:h-12 bg-transparent hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[12.5px] sm:text-[13px] font-medium rounded-[2px] inline-flex items-center justify-center gap-2 transition-colors cursor-pointer mb-6"
+                className="w-full h-12 bg-white hover:bg-gray-50 border border-gray-200 text-[#0D3B37] text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 transition-colors cursor-pointer mb-6 shadow-2xs"
               >
                 <span>Buy now</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
+                <ArrowUpRight className="w-4 h-4" />
               </button>
 
               {/* Assurances & Need Help */}
-              <div className="space-y-2 text-[12px] text-[#6A736C] font-light leading-relaxed pt-2 border-t border-[#EAE3D5]">
+              <div className="space-y-2 text-xs text-gray-500 font-normal leading-relaxed pt-3 border-t border-gray-100">
                 <p>
                   Delivery charge and estimated arrival are shown after you choose your area at checkout.
                 </p>
-                <p className="text-[#143527] font-medium">
+                <p className="text-[#0D3B37] font-semibold">
                   bKash · Nagad · Card · BRAC Bank transfer
                 </p>
-                <div className="flex items-center gap-1.5 pt-1 text-[#6A736C]">
+                <div className="flex items-center gap-2 pt-1 text-gray-500 font-medium">
                   <span>Need help choosing?</span>
                   <a
                     href={`https://wa.me/88${CLIENT_INFO.phonePrimary}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#143527] hover:text-[#B85D38] font-medium inline-flex items-center gap-0.5 transition-colors"
+                    className="text-[#0D3B37] hover:text-[#E0592A] font-bold inline-flex items-center gap-0.5 transition-colors"
                   >
                     <span>WhatsApp</span>
-                    <ArrowUpRight className="w-3 h-3" />
+                    <ArrowUpRight className="w-3.5 h-3.5" />
                   </a>
                   <span>·</span>
                   <a
                     href="https://m.me/shoilpikkabbo"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#143527] hover:text-[#B85D38] font-medium inline-flex items-center gap-0.5 transition-colors"
+                    className="text-[#0D3B37] hover:text-[#E0592A] font-bold inline-flex items-center gap-0.5 transition-colors"
                   >
                     <span>Messenger</span>
-                    <ArrowUpRight className="w-3 h-3" />
+                    <ArrowUpRight className="w-3.5 h-3.5" />
                   </a>
                 </div>
               </div>

@@ -250,32 +250,32 @@ function ShopContent() {
         </div>
 
         {/* 3. Catalog Controls Toolbar: Filters Summary, Active Global Search Tag, and Sort */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#EAE3D5]">
+        <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div className="flex flex-wrap items-center gap-3">
             {/* Mobile Filter Toggle */}
             <button
               onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-              className="lg:hidden inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-[#D5CDC0] text-[#143527] text-[12.5px] font-medium rounded-[2px] shadow-2xs hover:border-[#143527] transition-colors cursor-pointer"
+              className="lg:hidden inline-flex items-center gap-2 px-4 py-2 bg-[#FAF8F5] hover:bg-[#F3EFE6] text-[#0D3B37] text-xs sm:text-sm font-semibold rounded-xl shadow-2xs transition-colors cursor-pointer"
             >
               <SlidersHorizontal className="w-4 h-4" />
               <span>Filters ({selectedCategories.length + (inStockOnly ? 1 : 0) + (appliedMaxPrice < 10000 ? 1 : 0)})</span>
             </button>
 
             {/* Results Count */}
-            <p className="text-[13px] text-[#6A736C] font-light">
-              Showing <span className="font-medium text-[#143527]">{filteredProducts.length}</span> {filteredProducts.length === 1 ? "product" : "products"}
+            <p className="text-xs sm:text-sm text-gray-500 font-medium">
+              Showing <span className="font-bold text-[#0D3B37]">{filteredProducts.length}</span> {filteredProducts.length === 1 ? "product" : "products"}
             </p>
 
             {/* Active Global Search Tag (if searched via Header) */}
             {searchQuery && (
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#143527] text-white rounded-[2px] text-[12px] font-medium shadow-2xs">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#0D3B37] text-white rounded-xl text-xs font-semibold shadow-2xs">
                 <span>Search: &ldquo;{searchQuery}&rdquo;</span>
                 <button
                   onClick={() => {
                     setSearchQuery("");
                     router.push("/shop");
                   }}
-                  className="hover:text-[#D4AF37] p-0.5 cursor-pointer transition-colors"
+                  className="hover:text-orange-300 p-0.5 cursor-pointer transition-colors"
                   title="Clear search"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -286,13 +286,13 @@ function ShopContent() {
 
           {/* Sort By Dropdown */}
           <div className="flex items-center gap-2.5 self-end sm:self-auto">
-            <label className="text-[12px] text-[#556059] font-medium tracking-tight whitespace-nowrap">
+            <label className="text-xs text-gray-500 font-semibold uppercase tracking-wider whitespace-nowrap">
               Sort by:
             </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="h-10 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[12.5px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors cursor-pointer shadow-2xs"
+              className="h-10 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-xs sm:text-sm text-[#0D3B37] font-semibold focus:outline-none focus:ring-2 focus:ring-[#0D3B37]/15 transition-all cursor-pointer shadow-2xs"
             >
               <option value="featured">Featured</option>
               <option value="price-asc">Price: Low to High</option>
@@ -303,128 +303,130 @@ function ShopContent() {
         </div>
 
         {/* 4. Two-Column Layout (Sidebar + Catalog) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Column: Filter your finds Sidebar (Sticky on Large Devices when scrolling) */}
           <aside
-            className={`lg:col-span-3 space-y-7 lg:block lg:sticky lg:top-[145px] lg:max-h-[calc(100vh-165px)] lg:overflow-y-auto lg:pr-3 scrollbar-thin ${
+            className={`lg:col-span-3 lg:block lg:sticky lg:top-[145px] lg:max-h-[calc(100vh-165px)] lg:overflow-y-auto scrollbar-thin ${
               isMobileFilterOpen
-                ? "block bg-white p-5 sm:p-6 rounded-lg border border-[#D5CDC0] shadow-sm mb-6 lg:mb-0 lg:bg-transparent lg:p-0 lg:border-none lg:shadow-none"
-                : "hidden"
+                ? "block bg-white p-6 sm:p-7 rounded-3xl shadow-xl mb-6 lg:mb-0"
+                : "hidden bg-white p-6 sm:p-7 rounded-3xl shadow-[0_2px_14px_rgba(0,0,0,0.03)]"
             }`}
           >
-            <div className="flex items-center justify-between">
-              <h2 className="font-serif text-2xl sm:text-[25px] font-normal text-[#143527] tracking-tight">
-                Filter your finds
-              </h2>
-              {isMobileFilterOpen && (
+            <div className="space-y-7">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                <h2 className="text-lg sm:text-xl font-bold text-[#0D3B37] tracking-tight">
+                  Filter Your Finds
+                </h2>
+                {isMobileFilterOpen && (
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileFilterOpen(false)}
+                    className="lg:hidden text-xs text-gray-500 hover:text-gray-900 p-1 rounded-md"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+
+              {/* Block 1: Categories */}
+              <div>
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3.5">
+                  Categories
+                </h3>
+                <div className="space-y-2.5 max-h-[300px] overflow-y-auto pr-1 scrollbar-thin">
+                  {(liveCategories.length > 0 ? liveCategories : OFFICIAL_CATEGORIES).map((cat) => {
+                    const isChecked = selectedCategories.includes(cat.slug);
+                    return (
+                      <label
+                        key={cat.slug}
+                        className="flex items-start gap-3 text-xs sm:text-[13.5px] text-gray-700 hover:text-[#0D3B37] cursor-pointer select-none leading-snug font-medium transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggleCategory(cat.slug)}
+                          className="mt-0.5 w-4 h-4 rounded text-[#0D3B37] focus:ring-0 cursor-pointer accent-[#0D3B37]"
+                        />
+                        <span className={isChecked ? "font-bold text-[#0D3B37]" : ""}>{cat.name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Block 2: Price Range */}
+              <div>
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                  Price range - BDT
+                </h3>
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <div>
+                    <label className="text-[11px] text-gray-500 font-medium mb-1 block">
+                      Min
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-2.5 text-xs text-gray-400 font-medium">
+                        ৳
+                      </span>
+                      <input
+                        type="number"
+                        value={minPriceInput}
+                        onChange={(e) => setMinPriceInput(e.target.value)}
+                        placeholder="0"
+                        className="w-full h-10 pl-7 pr-2 bg-[#FAF8F5] border border-gray-200 rounded-xl text-xs sm:text-sm text-[#0D3B37] font-semibold focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-gray-500 font-medium mb-1 block">
+                      Max
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3 top-2.5 text-xs text-gray-400 font-medium">
+                        ৳
+                      </span>
+                      <input
+                        type="number"
+                        value={maxPriceInput}
+                        onChange={(e) => setMaxPriceInput(e.target.value)}
+                        placeholder="2000"
+                        className="w-full h-10 pl-7 pr-2 bg-[#FAF8F5] border border-gray-200 rounded-xl text-xs sm:text-sm text-[#0D3B37] font-semibold focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
                 <button
                   type="button"
-                  onClick={() => setIsMobileFilterOpen(false)}
-                  className="lg:hidden text-xs text-[#6A736C] hover:text-[#143527] p-1"
+                  onClick={handleApplyPrice}
+                  className="w-full py-2.5 sm:py-3 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-xs sm:text-sm font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
                 >
-                  <X className="w-4 h-4" />
+                  <span>Apply filters</span>
+                  <ArrowUpRight className="w-4 h-4" />
                 </button>
-              )}
-            </div>
-
-            {/* Block 1: Categories */}
-            <div>
-              <h3 className="text-[12.5px] font-semibold text-[#143527] mb-3.5 tracking-tight">
-                Categories
-              </h3>
-              <div className="space-y-2.5">
-                {(liveCategories.length > 0 ? liveCategories : OFFICIAL_CATEGORIES).map((cat) => {
-                  const isChecked = selectedCategories.includes(cat.slug);
-                  return (
-                    <label
-                      key={cat.slug}
-                      className="flex items-start gap-3 text-[13px] text-[#33423A] hover:text-[#143527] cursor-pointer select-none leading-snug"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => toggleCategory(cat.slug)}
-                        className="mt-0.5 w-4 h-4 rounded-[2px] border-[#C4B8A5] text-[#143527] focus:ring-0 cursor-pointer accent-[#143527]"
-                      />
-                      <span>{cat.name}</span>
-                    </label>
-                  );
-                })}
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="text-xs text-gray-400 hover:text-[#E0592A] font-semibold cursor-pointer mt-3 block transition-colors text-center w-full"
+                >
+                  Clear all filters
+                </button>
               </div>
-            </div>
 
-            {/* Block 2: Price Range */}
-            <div>
-              <h3 className="text-[12.5px] font-semibold text-[#143527] mb-3 tracking-tight">
-                Price range - BDT
-              </h3>
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <div>
-                  <label className="text-[11px] text-[#6A736C] font-light mb-1 block">
-                    Min
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-2.5 top-2 text-[12px] text-[#6A736C]">
-                      ৳
-                    </span>
-                    <input
-                      type="number"
-                      value={minPriceInput}
-                      onChange={(e) => setMinPriceInput(e.target.value)}
-                      placeholder="0"
-                      className="w-full h-9 pl-6 pr-2 bg-white border border-[#D5CDC0] rounded-[2px] text-[12.5px] text-[#143527] focus:outline-none focus:border-[#143527]"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-[11px] text-[#6A736C] font-light mb-1 block">
-                    Max
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-2.5 top-2 text-[12px] text-[#6A736C]">
-                      ৳
-                    </span>
-                    <input
-                      type="number"
-                      value={maxPriceInput}
-                      onChange={(e) => setMaxPriceInput(e.target.value)}
-                      placeholder="2000"
-                      className="w-full h-9 pl-6 pr-2 bg-white border border-[#D5CDC0] rounded-[2px] text-[12.5px] text-[#143527] focus:outline-none focus:border-[#143527]"
-                    />
-                  </div>
-                </div>
+              {/* Block 3: Availability */}
+              <div className="pt-2 border-t border-gray-100">
+                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
+                  Availability
+                </h3>
+                <label className="flex items-center gap-3 text-xs sm:text-sm text-gray-700 hover:text-[#0D3B37] font-medium cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={inStockOnly}
+                    onChange={(e) => setInStockOnly(e.target.checked)}
+                    className="w-4 h-4 rounded text-[#0D3B37] focus:ring-0 cursor-pointer accent-[#0D3B37]"
+                  />
+                  <span className={inStockOnly ? "font-bold text-[#0D3B37]" : ""}>In stock only</span>
+                </label>
               </div>
-              <button
-                type="button"
-                onClick={handleApplyPrice}
-                className="w-full py-2.5 bg-[#143527] hover:bg-[#1B4332] text-white text-[12.5px] font-medium rounded-[2px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <span>Apply filters</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={handleResetFilters}
-                className="text-[12px] text-[#6A736C] hover:text-[#B85D38] cursor-pointer mt-2.5 block transition-colors"
-              >
-                Clear all filters
-              </button>
-            </div>
-
-            {/* Block 3: Availability */}
-            <div>
-              <h3 className="text-[12.5px] font-semibold text-[#143527] mb-3 tracking-tight">
-                Availability
-              </h3>
-              <label className="flex items-center gap-3 text-[13px] text-[#33423A] cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={inStockOnly}
-                  onChange={(e) => setInStockOnly(e.target.checked)}
-                  className="w-4 h-4 rounded-[2px] border-[#C4B8A5] text-[#143527] focus:ring-0 cursor-pointer accent-[#143527]"
-                />
-                <span>In stock only</span>
-              </label>
             </div>
           </aside>
 
@@ -432,7 +434,7 @@ function ShopContent() {
           <main className="lg:col-span-9">
             {/* Context & Active Pills Bar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-              <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light">
+              <p className="text-xs sm:text-sm text-gray-500 font-medium">
                 {filteredProducts.length} {filteredProducts.length === 1 ? "product" : "products"}
                 {totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ""}
                 {searchQuery ? ` · Search "${searchQuery}"` : ""}
@@ -446,10 +448,10 @@ function ShopContent() {
                     <button
                       key={slug}
                       onClick={() => removeCategory(slug)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#D5CDC0] rounded-[2px] text-[11.5px] text-[#143527] font-medium hover:border-[#B85D38] transition-colors group cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-white shadow-2xs rounded-xl text-xs text-[#0D3B37] font-semibold hover:text-[#E0592A] transition-colors group cursor-pointer"
                     >
                       <span>{catObj?.name || slug}</span>
-                      <X className="w-3 h-3 text-[#6A736C] group-hover:text-[#B85D38]" />
+                      <X className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#E0592A]" />
                     </button>
                   );
                 })}
@@ -460,84 +462,89 @@ function ShopContent() {
                       setMaxPriceInput("5000");
                       setAppliedMaxPrice(10000);
                     }}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#D5CDC0] rounded-[2px] text-[11.5px] text-[#143527] font-medium hover:border-[#B85D38] transition-colors group cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white shadow-2xs rounded-xl text-xs text-[#0D3B37] font-semibold hover:text-[#E0592A] transition-colors group cursor-pointer"
                   >
                     <span>Under ৳{appliedMaxPrice.toLocaleString()}</span>
-                    <X className="w-3 h-3 text-[#6A736C] group-hover:text-[#B85D38]" />
+                    <X className="w-3.5 h-3.5 text-gray-400 group-hover:text-[#E0592A]" />
                   </button>
                 )}
               </div>
             </div>
 
-            {/* Product Cards Grid - 2 Columns Matching Client Reference */}
+            {/* Product Cards Grid */}
             {filteredProducts.length === 0 ? (
-              <div className="p-16 text-center border border-[#EAE3D5] rounded-2xl bg-white/60 my-6">
-                <p className="font-serif text-2xl text-[#143527] mb-2 font-normal">
+              <div className="p-16 text-center rounded-3xl bg-white shadow-[0_2px_14px_rgba(0,0,0,0.03)] my-6">
+                <p className="text-2xl text-[#0D3B37] mb-2 font-bold">
                   No matching finds found
                 </p>
-                <p className="text-xs text-[#6A736C] font-light mb-6 max-w-sm mx-auto">
+                <p className="text-sm text-gray-500 font-normal mb-6 max-w-sm mx-auto">
                   Try clearing your search query or adjusting your price filters.
                 </p>
                 <button
                   onClick={handleResetFilters}
-                  className="px-6 py-2.5 bg-[#143527] text-white text-xs font-medium rounded-[2px]"
+                  className="px-6 py-3 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-xl transition-colors cursor-pointer"
                 >
                   Reset all filters
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8 mb-10 sm:mb-12">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-7 mb-10 sm:mb-12">
                 {paginatedProducts.map((prod) => (
-                  <div key={prod.id} className="group flex flex-col">
-                    {/* Visual Card Image with Floating Quick-Add */}
-                    <div className="relative w-full aspect-[1.48/1] rounded-xl sm:rounded-2xl overflow-hidden bg-[#E8E2D6] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-2.5 sm:mb-3.5">
-                      <Link
-                        href={`/products/${prod.slug}`}
-                        className="block relative w-full h-full"
-                      >
-                        <Image
-                          src={prod.imageUrl}
-                          alt={prod.name}
-                          fill
-                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-103 transition-transform duration-500 ease-out"
-                        />
-                      </Link>
+                  <div
+                    key={prod.id}
+                    className="group bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 relative"
+                  >
+                    <div>
+                      {/* Visual Card Image with Floating Quick-Add */}
+                      <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-[#FAF8F5] p-3 mb-3 sm:mb-4 flex items-center justify-center group-hover:bg-[#F5F1E9] transition-colors">
+                        <Link
+                          href={`/products/${prod.slug}`}
+                          className="block relative w-full h-full"
+                        >
+                          <Image
+                            src={prod.imageUrl}
+                            alt={prod.name}
+                            fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
+                            className="object-contain p-1 group-hover:scale-106 transition-transform duration-300"
+                          />
+                        </Link>
 
-                      {/* Floating Add to Bag Button */}
-                      <button
-                        onClick={() => handleQuickAdd(prod)}
-                        className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-white hover:bg-[#143527] text-[#143527] hover:text-white shadow-sm flex items-center justify-center transition-all cursor-pointer group/btn"
-                        title="Add to bag"
-                        aria-label={`Add ${prod.name} to bag`}
-                      >
-                        {addedProductId === prod.id ? (
-                          <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#143527]" />
-                        ) : (
-                          <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
-                        )}
-                      </button>
+                        {/* Floating Add to Bag Button */}
+                        <button
+                          onClick={() => handleQuickAdd(prod)}
+                          className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-[#0D3B37] hover:bg-[#E0592A] text-white shadow-md flex items-center justify-center transition-all cursor-pointer group/btn hover:scale-105"
+                          title="Add to bag"
+                          aria-label={`Add ${prod.name} to bag`}
+                        >
+                          {addedProductId === prod.id ? (
+                            <Check className="w-4 h-4 text-white" />
+                          ) : (
+                            <Plus className="w-4 h-4 group-hover/btn:rotate-90 transition-transform duration-200" />
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Category Label */}
+                      <span className="text-xs text-gray-400 font-medium">
+                        {prod.categoryName}
+                      </span>
+
+                      {/* Product Name */}
+                      <Link href={`/products/${prod.slug}`}>
+                        <h3 className="text-sm sm:text-[15.5px] font-semibold text-gray-900 group-hover:text-[#E0592A] transition-colors mt-1 leading-snug line-clamp-2">
+                          {prod.name}
+                        </h3>
+                      </Link>
                     </div>
 
-                    {/* Category Label */}
-                    <span className="text-[10px] sm:text-[11.5px] text-[#6A736C] font-light">
-                      {prod.categoryName}
-                    </span>
-
-                    {/* Product Name */}
-                    <Link href={`/products/${prod.slug}`}>
-                      <h3 className="text-[13px] sm:text-[15.5px] font-medium text-[#143527] group-hover:text-[#B85D38] transition-colors mt-0.5 leading-snug line-clamp-1 sm:line-clamp-none">
-                        {prod.name}
-                      </h3>
-                    </Link>
-
                     {/* Price Row */}
-                    <div className="flex items-center gap-1.5 sm:gap-2 mt-1 sm:mt-1.5">
-                      <span className="text-[13px] sm:text-[14.5px] font-semibold text-[#143527]">
+                    <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-gray-50">
+                      <span className="text-base sm:text-lg font-bold text-[#0D3B37]">
                         ৳{prod.price.toLocaleString()}
                       </span>
                       {prod.salePrice && prod.salePrice > prod.price && (
-                        <span className="text-[11px] sm:text-[12px] text-[#8C948E] line-through font-light">
+                        <span className="text-xs sm:text-sm text-gray-400 line-through font-light">
                           ৳{prod.salePrice.toLocaleString()}
                         </span>
                       )}
@@ -551,37 +558,37 @@ function ShopContent() {
             {totalPages > 1 && (
               <nav
                 aria-label="Shop catalog pagination"
-                className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 pb-4 border-t border-[#EAE3D5] mb-8"
+                className="bg-white rounded-2xl p-4 sm:p-5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row items-center justify-between gap-4 mb-8"
               >
                 {/* Count indicator */}
-                <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light">
+                <p className="text-xs sm:text-sm text-gray-500 font-medium">
                   Showing{" "}
-                  <span className="font-medium text-[#143527]">
+                  <span className="font-bold text-[#0D3B37]">
                     {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
                     {Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length)}
                   </span>{" "}
                   of{" "}
-                  <span className="font-medium text-[#143527]">{filteredProducts.length}</span>{" "}
+                  <span className="font-bold text-[#0D3B37]">{filteredProducts.length}</span>{" "}
                   products
                 </p>
 
                 {/* Page Buttons */}
-                <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
-                    className={`inline-flex items-center gap-1 px-3 sm:px-3.5 py-1.5 sm:py-2 text-[12px] sm:text-[12.5px] font-medium rounded-[2px] transition-colors ${
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all ${
                       currentPage === 1
-                        ? "text-[#A8B2AA] border border-[#EAE3D5] cursor-not-allowed bg-transparent opacity-60"
-                        : "text-[#143527] border border-[#D5CDC0] hover:border-[#143527] hover:bg-white bg-transparent cursor-pointer"
+                        ? "text-gray-300 cursor-not-allowed bg-transparent"
+                        : "text-[#0D3B37] hover:bg-[#FAF8F5] bg-white shadow-2xs cursor-pointer"
                     }`}
                   >
-                    <ChevronLeft className="w-3.5 h-3.5" />
+                    <ChevronLeft className="w-4 h-4" />
                     <span className="hidden sm:inline">Previous</span>
                   </button>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
                       const isActive = pageNum === currentPage;
                       return (
@@ -589,10 +596,10 @@ function ShopContent() {
                           key={pageNum}
                           type="button"
                           onClick={() => handlePageChange(pageNum)}
-                          className={`min-w-8 sm:min-w-9 h-8 sm:h-9 px-2 text-[12px] sm:text-[12.5px] font-medium rounded-[2px] transition-all cursor-pointer ${
+                          className={`min-w-9 h-9 px-2 text-xs sm:text-sm font-bold rounded-xl transition-all cursor-pointer ${
                             isActive
-                              ? "bg-[#143527] text-white shadow-xs"
-                              : "text-[#33423A] bg-white border border-[#D5CDC0] hover:border-[#143527] hover:text-[#143527]"
+                              ? "bg-[#0D3B37] text-white shadow-xs"
+                              : "text-gray-700 bg-white hover:bg-[#FAF8F5] shadow-2xs"
                           }`}
                           aria-current={isActive ? "page" : undefined}
                         >
@@ -606,22 +613,22 @@ function ShopContent() {
                     type="button"
                     onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}
-                    className={`inline-flex items-center gap-1 px-3 sm:px-3.5 py-1.5 sm:py-2 text-[12px] sm:text-[12.5px] font-medium rounded-[2px] transition-colors ${
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all ${
                       currentPage === totalPages
-                        ? "text-[#A8B2AA] border border-[#EAE3D5] cursor-not-allowed bg-transparent opacity-60"
-                        : "text-[#143527] border border-[#D5CDC0] hover:border-[#143527] hover:bg-white bg-transparent cursor-pointer"
+                        ? "text-gray-300 cursor-not-allowed bg-transparent"
+                        : "text-[#0D3B37] hover:bg-[#FAF8F5] bg-white shadow-2xs cursor-pointer"
                     }`}
                   >
                     <span className="hidden sm:inline">Next</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
+                    <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
               </nav>
             )}
 
             {/* Bottom Row: Summary & Action */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6 border-t border-[#EAE3D5]">
-              <p className="text-[12.5px] sm:text-[13px] text-[#6A736C] font-light">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-6">
+              <p className="text-xs sm:text-sm text-gray-500 font-medium">
                 {filteredProducts.length > 0
                   ? `Page ${currentPage} of ${totalPages} · ${filteredProducts.length} total products`
                   : "No products to display."}
@@ -629,10 +636,10 @@ function ShopContent() {
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-transparent hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group self-start sm:self-auto cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-[#FAF8F5] text-[#0D3B37] text-xs sm:text-sm font-bold rounded-xl shadow-2xs transition-all group self-start sm:self-auto cursor-pointer"
               >
                 <span>Explore every category</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <ArrowUpRight className="w-4 h-4 text-[#0D3B37] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </button>
             </div>
           </main>

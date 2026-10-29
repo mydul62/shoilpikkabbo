@@ -370,457 +370,456 @@ export default function CheckoutPage() {
 
           <form
             onSubmit={handleSubmitOrder}
-            className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start"
+            className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start"
           >
             {/* Left Column: Guest banner + 01 Contact + 02 Delivery + 03 Payment (7-8 cols) */}
-            <div className="lg:col-span-8 space-y-10">
+            <div className="lg:col-span-8 space-y-8">
               {/* Guest Notification Bar */}
-              <div className="bg-[#EFECE6] border border-[#E2DDD3] rounded-[2px] px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between text-[12.5px] text-[#556059] gap-1">
+              <div className="bg-white rounded-2xl px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-gray-500 shadow-2xs gap-2">
                 <span>Checking out as a guest</span>
                 <Link
                   href="/login"
-                  className="text-[#143527] hover:text-[#B85D38] font-medium inline-flex items-center gap-1 transition-colors"
+                  className="text-[#0D3B37] hover:text-[#E0592A] font-semibold inline-flex items-center gap-1 transition-colors"
                 >
                   <span>Already a member? Sign in</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
 
-              {/* 01 Contact details */}
-              <section className="space-y-4">
-                <div className="flex items-baseline gap-3">
-                  <span className="font-serif text-[18px] text-[#7A837C]">01</span>
-                  <h2 className="font-serif text-[22px] sm:text-[24px] text-[#143527] font-normal">
-                    Contact details
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                      Full name *
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      value={formData.fullName}
-                      onChange={(e) =>
-                        setFormData({ ...formData, fullName: e.target.value })
-                      }
-                      className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                      Phone number *
-                    </label>
-                    <input
-                      required
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
-                      }
-                      className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                    Email address *
-                  </label>
-                  <input
-                    required
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
-                    className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
-                  />
-                </div>
-              </section>
-
-              {/* 02 Delivery address */}
-              <section className="space-y-4 pt-4 border-t border-[#E8E2D8]">
-                <div className="flex items-baseline gap-3">
-                  <span className="font-serif text-[18px] text-[#7A837C]">02</span>
-                  <h2 className="font-serif text-[22px] sm:text-[24px] text-[#143527] font-normal">
-                    Delivery address
-                  </h2>
-                </div>
-
-                <div>
-                  <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                    Street address *
-                  </label>
-                  <input
-                    required
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) =>
-                      setFormData({ ...formData, address: e.target.value })
-                    }
-                    className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                      District *
-                    </label>
-                    <select
-                      value={formData.district}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setFormData({ ...formData, district: val });
-                        setShippingCity(val === "Dhaka" ? "Dhaka" : "Outside Dhaka");
-                      }}
-                      className="w-full h-11 px-3 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors cursor-pointer"
-                    >
-                      <option value="Dhaka">Dhaka</option>
-                      <option value="Chattogram">Chattogram</option>
-                      <option value="Sylhet">Sylhet</option>
-                      <option value="Rajshahi">Rajshahi</option>
-                      <option value="Khulna">Khulna</option>
-                      <option value="Barishal">Barishal</option>
-                      <option value="Rangpur">Rangpur</option>
-                      <option value="Mymensingh">Mymensingh</option>
-                    </select>
+              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.03)] space-y-8">
+                {/* 01 Contact details */}
+                <section className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <span className="w-7 h-7 rounded-lg bg-[#0D3B37]/10 text-[#0D3B37] flex items-center justify-center font-bold text-xs">01</span>
+                    <h2 className="text-xl sm:text-2xl text-[#0D3B37] font-bold">
+                      Contact Details
+                    </h2>
                   </div>
 
-                  <div>
-                    <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                      Area *
-                    </label>
-                    <select
-                      value={formData.area}
-                      onChange={(e) =>
-                        setFormData({ ...formData, area: e.target.value })
-                      }
-                      className="w-full h-11 px-3 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors cursor-pointer"
-                    >
-                      <option value="Dhanmondi">Dhanmondi</option>
-                      <option value="Gulshan">Gulshan</option>
-                      <option value="Banani">Banani</option>
-                      <option value="Uttara">Uttara</option>
-                      <option value="Mirpur">Mirpur</option>
-                      <option value="Mohammadpur">Mohammadpur</option>
-                      <option value="Bashundhara">Bashundhara</option>
-                      <option value="Badda">Badda</option>
-                      <option value="Motijheel">Motijheel</option>
-                      <option value="Other">Other Area</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                      Postcode
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.postcode}
-                      onChange={(e) =>
-                        setFormData({ ...formData, postcode: e.target.value })
-                      }
-                      className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-[12px] font-medium text-[#143527] block mb-1.5">
-                    Delivery note (optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.deliveryNotes}
-                    onChange={(e) =>
-                      setFormData({ ...formData, deliveryNotes: e.target.value })
-                    }
-                    className="w-full h-11 px-3.5 bg-white border border-[#D5CDC0] rounded-[2px] text-[13px] text-[#143527] focus:outline-none focus:border-[#143527] transition-colors"
-                  />
-                </div>
-
-                {/* Selected Delivery Option Box */}
-                <div className="mt-4 p-4 rounded-[2px] border border-[#143527] bg-[#F3F6F3] flex items-center justify-between">
-                  <div className="flex items-start gap-3">
-                    <span className="w-4 h-4 rounded-full border-4 border-[#143527] bg-white mt-0.5 shrink-0" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-[13px] font-medium text-[#143527]">
-                        Standard delivery · {formData.district === "Dhaka" ? "Dhaka" : "Outside Dhaka"}
-                      </p>
-                      <p className="text-[11.5px] text-[#6A736C] font-light mt-0.5">
-                        Estimated 3–5 Nov 2026
-                      </p>
+                      <label className="text-xs font-semibold text-gray-700 block mb-1.5">
+                        Full name *
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        value={formData.fullName}
+                        onChange={(e) =>
+                          setFormData({ ...formData, fullName: e.target.value })
+                        }
+                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold text-gray-700 block mb-1.5">
+                        Phone number *
+                      </label>
+                      <input
+                        required
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) =>
+                          setFormData({ ...formData, phone: e.target.value })
+                        }
+                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                      />
                     </div>
                   </div>
-                  <span className="text-[14px] font-medium text-[#143527]">
-                    ৳{displayDelivery.toLocaleString()}
-                  </span>
-                </div>
-                <p className="text-[11.5px] text-[#8C948E] font-light">
-                  Available delivery options and final charges depend on your address.
-                </p>
-              </section>
 
-              {/* 03 Payment */}
-              <section className="space-y-5 pt-4 border-t border-[#E8E2D8]">
-                <div className="flex items-baseline gap-3">
-                  <span className="font-serif text-[18px] text-[#7A837C]">03</span>
-                  <h2 className="font-serif text-[22px] sm:text-[24px] text-[#143527] font-normal">
-                    Payment
-                  </h2>
-                </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 block mb-1.5">
+                      Email address *
+                    </label>
+                    <input
+                      required
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                    />
+                  </div>
+                </section>
 
-                <div>
-                  <h3 className="font-serif text-[18px] text-[#143527] font-normal">
-                    How would you like to pay?
-                  </h3>
-                  <p className="text-[12.5px] text-[#6A736C] font-light mt-0.5">
-                    Select a method. No card or wallet credentials are entered on this page.
-                  </p>
-                </div>
+                {/* 02 Delivery address */}
+                <section className="space-y-4 pt-6 border-t border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <span className="w-7 h-7 rounded-lg bg-[#0D3B37]/10 text-[#0D3B37] flex items-center justify-center font-bold text-xs">02</span>
+                    <h2 className="text-xl sm:text-2xl text-[#0D3B37] font-bold">
+                      Delivery Address
+                    </h2>
+                  </div>
 
-                {/* Payment Option Cards */}
-                <div className="space-y-3">
-                  {/* bKash */}
-                  <label
-                    className={`block p-4 rounded-[3px] border cursor-pointer transition-all ${
-                      formData.paymentMethod === "bKash"
-                        ? "border-[#143527] bg-[#F4F7F4] ring-1 ring-[#143527]"
-                        : "border-[#D5CDC0] bg-white hover:border-[#143527]/50"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="bKash"
-                          checked={formData.paymentMethod === "bKash"}
-                          onChange={() =>
-                            setFormData({ ...formData, paymentMethod: "bKash" })
-                          }
-                          className="w-4 h-4 text-[#143527] focus:ring-[#143527]"
-                        />
-                        <div>
-                          <p className="text-[13.5px] font-medium text-[#143527]">
-                            bKash
-                          </p>
-                          <p className="text-[11.5px] text-[#7A837C] font-light">
-                            Continue to secure bKash payment
-                          </p>
-                        </div>
-                      </div>
-                      {formData.paymentMethod === "bKash" && (
-                        <span className="text-[11.5px] font-medium text-[#143527]">
-                          Selected
-                        </span>
-                      )}
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 block mb-1.5">
+                      Street address *
+                    </label>
+                    <input
+                      required
+                      type="text"
+                      value={formData.address}
+                      onChange={(e) =>
+                        setFormData({ ...formData, address: e.target.value })
+                      }
+                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                      <label className="text-xs font-semibold text-gray-700 block mb-1.5">
+                        District *
+                      </label>
+                      <select
+                        value={formData.district}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setFormData({ ...formData, district: val });
+                          setShippingCity(val === "Dhaka" ? "Dhaka" : "Outside Dhaka");
+                        }}
+                        className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
+                      >
+                        <option value="Dhaka">Dhaka</option>
+                        <option value="Chattogram">Chattogram</option>
+                        <option value="Sylhet">Sylhet</option>
+                        <option value="Rajshahi">Rajshahi</option>
+                        <option value="Khulna">Khulna</option>
+                        <option value="Barishal">Barishal</option>
+                        <option value="Rangpur">Rangpur</option>
+                        <option value="Mymensingh">Mymensingh</option>
+                      </select>
                     </div>
-                  </label>
 
-                  {/* Nagad */}
-                  <label
-                    className={`block p-4 rounded-[3px] border cursor-pointer transition-all ${
-                      formData.paymentMethod === "Nagad"
-                        ? "border-[#143527] bg-[#F4F7F4] ring-1 ring-[#143527]"
-                        : "border-[#D5CDC0] bg-white hover:border-[#143527]/50"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="Nagad"
-                          checked={formData.paymentMethod === "Nagad"}
-                          onChange={() =>
-                            setFormData({ ...formData, paymentMethod: "Nagad" })
-                          }
-                          className="w-4 h-4 text-[#143527] focus:ring-[#143527]"
-                        />
-                        <div>
-                          <p className="text-[13.5px] font-medium text-[#143527]">
-                            Nagad
-                          </p>
-                          <p className="text-[11.5px] text-[#7A837C] font-light">
-                            Continue to secure Nagad payment
-                          </p>
-                        </div>
-                      </div>
-                      {formData.paymentMethod === "Nagad" && (
-                        <span className="text-[11.5px] font-medium text-[#143527]">
-                          Selected
-                        </span>
-                      )}
+                    <div>
+                      <label className="text-xs font-semibold text-gray-700 block mb-1.5">
+                        Area *
+                      </label>
+                      <select
+                        value={formData.area}
+                        onChange={(e) =>
+                          setFormData({ ...formData, area: e.target.value })
+                        }
+                        className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
+                      >
+                        <option value="Dhanmondi">Dhanmondi</option>
+                        <option value="Gulshan">Gulshan</option>
+                        <option value="Banani">Banani</option>
+                        <option value="Uttara">Uttara</option>
+                        <option value="Mirpur">Mirpur</option>
+                        <option value="Mohammadpur">Mohammadpur</option>
+                        <option value="Bashundhara">Bashundhara</option>
+                        <option value="Badda">Badda</option>
+                        <option value="Motijheel">Motijheel</option>
+                        <option value="Other">Other Area</option>
+                      </select>
                     </div>
-                  </label>
 
-                  {/* Card */}
-                  <label
-                    className={`block p-4 rounded-[3px] border cursor-pointer transition-all ${
-                      formData.paymentMethod === "Card"
-                        ? "border-[#143527] bg-[#F4F7F4] ring-1 ring-[#143527]"
-                        : "border-[#D5CDC0] bg-white hover:border-[#143527]/50"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="Card"
-                          checked={formData.paymentMethod === "Card"}
-                          onChange={() =>
-                            setFormData({ ...formData, paymentMethod: "Card" })
-                          }
-                          className="w-4 h-4 text-[#143527] focus:ring-[#143527]"
-                        />
-                        <div>
-                          <p className="text-[13.5px] font-medium text-[#143527]">
-                            Card
-                          </p>
-                          <p className="text-[11.5px] text-[#7A837C] font-light">
-                            Visa / Mastercard via secure gateway
-                          </p>
-                        </div>
-                      </div>
-                      {formData.paymentMethod === "Card" && (
-                        <span className="text-[11.5px] font-medium text-[#143527]">
-                          Selected
-                        </span>
-                      )}
+                    <div>
+                      <label className="text-xs font-semibold text-gray-700 block mb-1.5">
+                        Postcode
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.postcode}
+                        onChange={(e) =>
+                          setFormData({ ...formData, postcode: e.target.value })
+                        }
+                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                      />
                     </div>
-                  </label>
+                  </div>
 
-                  {/* Bank transfer - BRAC Bank */}
-                  <label
-                    className={`block p-4 rounded-[3px] border cursor-pointer transition-all ${
-                      formData.paymentMethod === "Bank transfer - BRAC Bank"
-                        ? "border-[#143527] bg-[#F4F7F4] ring-1 ring-[#143527]"
-                        : "border-[#D5CDC0] bg-white hover:border-[#143527]/50"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="Bank transfer - BRAC Bank"
-                          checked={formData.paymentMethod === "Bank transfer - BRAC Bank"}
-                          onChange={() =>
-                            setFormData({
-                              ...formData,
-                              paymentMethod: "Bank transfer - BRAC Bank",
-                            })
-                          }
-                          className="w-4 h-4 text-[#143527] focus:ring-[#143527]"
-                        />
-                        <div>
-                          <p className="text-[13.5px] font-medium text-[#143527]">
-                            Bank transfer - BRAC Bank
-                          </p>
-                          <p className="text-[11.5px] text-[#7A837C] font-light">
-                            Receive verified transfer instructions securely
-                          </p>
-                        </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 block mb-1.5">
+                      Delivery note (optional)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.deliveryNotes}
+                      onChange={(e) =>
+                        setFormData({ ...formData, deliveryNotes: e.target.value })
+                      }
+                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                    />
+                  </div>
+
+                  {/* Selected Delivery Option Box */}
+                  <div className="mt-4 p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 flex items-center justify-between">
+                    <div className="flex items-start gap-3">
+                      <span className="w-4 h-4 rounded-full border-4 border-[#0D3B37] bg-white mt-0.5 shrink-0" />
+                      <div>
+                        <p className="text-sm font-bold text-[#0D3B37]">
+                          Standard delivery · {formData.district === "Dhaka" ? "Dhaka" : "Outside Dhaka"}
+                        </p>
+                        <p className="text-xs text-gray-500 font-normal mt-0.5">
+                          Estimated 3–5 Nov 2026
+                        </p>
                       </div>
-                      {formData.paymentMethod === "Bank transfer - BRAC Bank" && (
-                        <span className="text-[11.5px] font-medium text-[#143527]">
-                          Selected
-                        </span>
-                      )}
                     </div>
+                    <span className="text-sm font-bold text-[#0D3B37]">
+                      ৳{displayDelivery.toLocaleString()}
+                    </span>
+                  </div>
+                </section>
+
+                {/* 03 Payment */}
+                <section className="space-y-5 pt-6 border-t border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <span className="w-7 h-7 rounded-lg bg-[#0D3B37]/10 text-[#0D3B37] flex items-center justify-center font-bold text-xs">03</span>
+                    <h2 className="text-xl sm:text-2xl text-[#0D3B37] font-bold">
+                      Payment
+                    </h2>
+                  </div>
+
+                  <div>
+                    <h3 className="text-base font-semibold text-gray-900">
+                      How would you like to pay?
+                    </h3>
+                    <p className="text-xs text-gray-500 font-normal mt-0.5">
+                      Select a method. No card or wallet credentials are entered on this page.
+                    </p>
+                  </div>
+
+                  {/* Payment Option Cards */}
+                  <div className="space-y-3">
+                    {/* bKash */}
+                    <label
+                      className={`block p-4 rounded-2xl cursor-pointer transition-all ${
+                        formData.paymentMethod === "bKash"
+                          ? "border border-[#0D3B37] bg-emerald-50/50 shadow-xs"
+                          : "border border-gray-200 bg-white hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="bKash"
+                            checked={formData.paymentMethod === "bKash"}
+                            onChange={() =>
+                              setFormData({ ...formData, paymentMethod: "bKash" })
+                            }
+                            className="w-4 h-4 text-[#0D3B37] accent-[#0D3B37]"
+                          />
+                          <div>
+                            <p className="text-sm font-bold text-[#0D3B37]">
+                              bKash
+                            </p>
+                            <p className="text-xs text-gray-500 font-normal">
+                              Continue to secure bKash payment
+                            </p>
+                          </div>
+                        </div>
+                        {formData.paymentMethod === "bKash" && (
+                          <span className="text-xs font-bold text-[#0D3B37]">
+                            Selected
+                          </span>
+                        )}
+                      </div>
+                    </label>
+
+                    {/* Nagad */}
+                    <label
+                      className={`block p-4 rounded-2xl cursor-pointer transition-all ${
+                        formData.paymentMethod === "Nagad"
+                          ? "border border-[#0D3B37] bg-emerald-50/50 shadow-xs"
+                          : "border border-gray-200 bg-white hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="Nagad"
+                            checked={formData.paymentMethod === "Nagad"}
+                            onChange={() =>
+                              setFormData({ ...formData, paymentMethod: "Nagad" })
+                            }
+                            className="w-4 h-4 text-[#0D3B37] accent-[#0D3B37]"
+                          />
+                          <div>
+                            <p className="text-sm font-bold text-[#0D3B37]">
+                              Nagad
+                            </p>
+                            <p className="text-xs text-gray-500 font-normal">
+                              Continue to secure Nagad payment
+                            </p>
+                          </div>
+                        </div>
+                        {formData.paymentMethod === "Nagad" && (
+                          <span className="text-xs font-bold text-[#0D3B37]">
+                            Selected
+                          </span>
+                        )}
+                      </div>
+                    </label>
+
+                    {/* Card */}
+                    <label
+                      className={`block p-4 rounded-2xl cursor-pointer transition-all ${
+                        formData.paymentMethod === "Card"
+                          ? "border border-[#0D3B37] bg-emerald-50/50 shadow-xs"
+                          : "border border-gray-200 bg-white hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="Card"
+                            checked={formData.paymentMethod === "Card"}
+                            onChange={() =>
+                              setFormData({ ...formData, paymentMethod: "Card" })
+                            }
+                            className="w-4 h-4 text-[#0D3B37] accent-[#0D3B37]"
+                          />
+                          <div>
+                            <p className="text-sm font-bold text-[#0D3B37]">
+                              Card
+                            </p>
+                            <p className="text-xs text-gray-500 font-normal">
+                              Visa / Mastercard via secure gateway
+                            </p>
+                          </div>
+                        </div>
+                        {formData.paymentMethod === "Card" && (
+                          <span className="text-xs font-bold text-[#0D3B37]">
+                            Selected
+                          </span>
+                        )}
+                      </div>
+                    </label>
+
+                    {/* Bank transfer - BRAC Bank */}
+                    <label
+                      className={`block p-4 rounded-2xl cursor-pointer transition-all ${
+                        formData.paymentMethod === "Bank transfer - BRAC Bank"
+                          ? "border border-[#0D3B37] bg-emerald-50/50 shadow-xs"
+                          : "border border-gray-200 bg-white hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="Bank transfer - BRAC Bank"
+                            checked={formData.paymentMethod === "Bank transfer - BRAC Bank"}
+                            onChange={() =>
+                              setFormData({
+                                ...formData,
+                                paymentMethod: "Bank transfer - BRAC Bank",
+                              })
+                            }
+                            className="w-4 h-4 text-[#0D3B37] accent-[#0D3B37]"
+                          />
+                          <div>
+                            <p className="text-sm font-bold text-[#0D3B37]">
+                              Bank transfer - BRAC Bank
+                            </p>
+                            <p className="text-xs text-gray-500 font-normal">
+                              Receive verified transfer instructions securely
+                            </p>
+                          </div>
+                        </div>
+                        {formData.paymentMethod === "Bank transfer - BRAC Bank" && (
+                          <span className="text-xs font-bold text-[#0D3B37]">
+                            Selected
+                          </span>
+                        )}
+                      </div>
+                    </label>
+                  </div>
+
+                  {/* Secure handoff banner */}
+                  <div className="p-3.5 bg-[#FAF8F5] rounded-xl flex items-center gap-2.5 text-xs text-gray-600">
+                    <ShieldCheck className="w-4 h-4 text-[#0D3B37] shrink-0" />
+                    <span>
+                      Secure handoff → authorize with your provider → return for confirmation. SHOILPIKKABBO does not store card details.
+                    </span>
+                  </div>
+
+                  {/* Policy consent checkbox */}
+                  <label className="flex items-start gap-2.5 pt-2 text-xs text-gray-600 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.agreedToTerms}
+                      onChange={(e) =>
+                        setFormData({ ...formData, agreedToTerms: e.target.checked })
+                      }
+                      className="mt-0.5 w-4 h-4 text-[#0D3B37] accent-[#0D3B37] rounded"
+                    />
+                    <span>
+                      I agree to the Terms, Privacy, Shipping and Return / refund policies.
+                    </span>
                   </label>
-                </div>
-
-                {/* Secure handoff banner */}
-                <div className="p-3.5 bg-[#EFECE6] border border-[#E2DDD3] rounded-[2px] flex items-center gap-2.5 text-[12px] text-[#556059]">
-                  <ShieldCheck className="w-4 h-4 text-[#143527] shrink-0" />
-                  <span>
-                    Secure handoff → authorize with your provider → return for confirmation. SHOILPIKKABBO does not store card details.
-                  </span>
-                </div>
-
-                {/* Policy consent checkbox */}
-                <label className="flex items-start gap-2.5 pt-2 text-[12.5px] text-[#556059] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.agreedToTerms}
-                    onChange={(e) =>
-                      setFormData({ ...formData, agreedToTerms: e.target.checked })
-                    }
-                    className="mt-0.5 w-4 h-4 text-[#143527] rounded-[2px] focus:ring-[#143527]"
-                  />
-                  <span>
-                    I agree to the Terms, Privacy, Shipping and Return / refund policies.
-                  </span>
-                </label>
-              </section>
+                </section>
+              </div>
             </div>
 
             {/* Right Column: Order Summary Card (4 cols) */}
             <div className="lg:col-span-4">
-              <div className="bg-white border border-[#E8E2D8] rounded-xl p-6 sm:p-7 shadow-xs sticky top-24">
-                <h2 className="font-serif text-[22px] sm:text-[24px] text-[#143527] font-normal leading-tight">
-                  Your order
+              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.03)] sticky top-24 space-y-4">
+                <h2 className="text-xl sm:text-2xl text-[#0D3B37] font-bold leading-tight">
+                  Your Order
                 </h2>
-                <p className="text-[12.5px] text-[#8C948E] font-light mt-1 mb-5">
+                <p className="text-xs text-gray-400 font-medium">
                   {displayItems.reduce((acc, i) => acc + i.quantity, 0)} items · thoughtfully chosen
                 </p>
 
                 {/* Line Items Breakdown */}
-                <div className="space-y-3 pt-2 text-[13px] border-t border-[#F0EBE1]">
+                <div className="space-y-3 pt-3 text-sm border-t border-gray-100">
                   {displayItems.map((item) => (
                     <div
                       key={item.product.id}
-                      className="flex justify-between items-start text-[#333E35]"
+                      className="flex justify-between items-start text-gray-700"
                     >
-                      <span className="pr-3 text-[#333E35] font-light line-clamp-1">
+                      <span className="pr-3 text-gray-600 font-normal line-clamp-1">
                         {item.product.name} × {item.quantity}
                       </span>
-                      <span className="font-medium text-[#143527] shrink-0">
+                      <span className="font-semibold text-[#0D3B37] shrink-0">
                         ৳{(item.product.price * item.quantity).toLocaleString()}
                       </span>
                     </div>
                   ))}
 
-                  <div className="flex justify-between text-[#333E35] pt-1">
-                    <span className="font-light">Subtotal</span>
-                    <span className="font-medium text-[#143527]">
+                  <div className="flex justify-between text-gray-700 pt-1">
+                    <span className="font-normal text-gray-600">Subtotal</span>
+                    <span className="font-semibold text-[#0D3B37]">
                       ৳{displaySubtotal.toLocaleString()}
                     </span>
                   </div>
 
                   {displayDiscount > 0 && (
-                    <div className="flex justify-between text-[#333E35]">
-                      <span className="font-light">{appliedCoupon?.code || "WELCOME150"}</span>
-                      <span className="font-medium text-[#143527]">
+                    <div className="flex justify-between text-emerald-700 font-medium">
+                      <span>{appliedCoupon?.code || "WELCOME150"}</span>
+                      <span>
                         -৳{displayDiscount.toLocaleString()}
                       </span>
                     </div>
                   )}
 
-                  <div className="flex justify-between text-[#333E35]">
-                    <span className="font-light">
+                  <div className="flex justify-between text-gray-700">
+                    <span className="font-normal text-gray-600">
                       Delivery · {formData.district === "Dhaka" ? "Dhaka" : "Outside Dhaka"}
                     </span>
-                    <span className="font-medium text-[#143527]">
+                    <span className="font-semibold text-[#0D3B37]">
                       ৳{displayDelivery.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
                 {/* Total Row */}
-                <div className="border-t border-[#E8E2D8] mt-4 pt-4 flex justify-between items-baseline">
-                  <span className="text-[14px] font-medium text-[#143527]">
+                <div className="border-t border-gray-100 pt-4 flex justify-between items-baseline">
+                  <span className="text-sm font-bold text-gray-900">
                     Total · BDT
                   </span>
-                  <span className="font-serif text-[26px] sm:text-[28px] text-[#143527] font-normal tracking-tight">
+                  <span className="text-2xl sm:text-3xl text-[#0D3B37] font-black tracking-tight">
                     ৳{displayTotal.toLocaleString()}
                   </span>
                 </div>
@@ -829,7 +828,7 @@ export default function CheckoutPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full h-12 bg-[#143527] hover:bg-[#1B4332] text-white text-[13.5px] font-medium rounded-[3px] inline-flex items-center justify-center gap-2 mt-5 transition-colors cursor-pointer disabled:opacity-75 shadow-xs"
+                  className="w-full h-12 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 mt-4 transition-colors cursor-pointer disabled:opacity-75 shadow-md"
                 >
                   <span>
                     {isSubmitting
@@ -840,13 +839,13 @@ export default function CheckoutPage() {
                 </button>
 
                 {/* Disclaimer subtext */}
-                <p className="text-[11px] text-[#8C948E] leading-relaxed mt-4 font-light text-center">
+                <p className="text-[11px] text-gray-400 leading-relaxed font-normal text-center">
                   You'll continue to the secure gateway. Card details are never stored by SHOILPIKKABBO.
                 </p>
               </div>
 
               {/* Note outside card matching client mockup */}
-              <p className="text-[11.5px] text-[#8C948E] leading-relaxed mt-4 font-light">
+              <p className="text-xs text-gray-400 leading-relaxed mt-4 font-normal">
                 Your order is confirmed only after payment is verified. A cancelled or unsuccessful payment can be retried from your order page.
               </p>
             </div>

@@ -20,6 +20,7 @@ import {
   Phone,
   Mail,
   Truck,
+  ShoppingCart,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -400,25 +401,25 @@ export function Header() {
       </React.Suspense>
 
       {/* 1. Top Bar (Dark Teal #0D3B37) */}
-      <div className="bg-[#0D3B37] text-white/90 py-1.5 border-b border-[#0A2F2C]">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-[11.5px] sm:text-xs">
+      <div className="bg-[#0D3B37] text-white/90 py-2 border-b border-[#0A2F2C]">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs sm:text-[13px]">
           {/* Left Contact Info */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-3.5 sm:gap-5">
             <a
               href="mailto:shoilpikkabbo@gmail.com"
-              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors"
+              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors font-medium"
             >
-              <Mail className="w-3.5 h-3.5 text-orange-400" />
+              <Mail className="w-3.5 h-3.5 text-white/90" />
               <span className="hidden sm:inline">shoilpikkabbo@gmail.com</span>
               <span className="sm:hidden">Email</span>
             </a>
             <span className="text-white/30">|</span>
             <a
               href="tel:01731214379"
-              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors"
+              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors font-medium"
             >
-              <Phone className="w-3.5 h-3.5 text-orange-400" />
-              <span>01731214379, 01811909068</span>
+              <Phone className="w-3.5 h-3.5 text-white/90" />
+              <span>01731214379, 01811999068</span>
             </a>
           </div>
 
@@ -426,47 +427,46 @@ export function Header() {
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
             <Link
               href="/track-order"
-              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors text-[11.5px] sm:text-xs"
+              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors text-xs sm:text-[13px] text-white/90 font-medium"
             >
-              <Truck className="w-3.5 h-3.5 text-orange-400" />
+              <Truck className="w-3.5 h-3.5 text-white/90" />
               <span>Track Order</span>
             </Link>
             <span className="text-white/30">|</span>
-            <div className="flex items-center gap-1 bg-[#092926] p-0.5 rounded">
-              <button
-                type="button"
-                onClick={() => setLang("bn")}
-                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
-                  lang === "bn"
-                    ? "bg-[#E0592A] text-white shadow-xs"
-                    : "text-white/70 hover:text-white"
-                }`}
-              >
-                বাংলা
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang("en")}
-                className={`px-2 py-0.5 rounded text-[11px] font-semibold transition-all cursor-pointer ${
-                  lang === "en"
-                    ? "bg-[#E0592A] text-white shadow-xs"
-                    : "text-white/70 hover:text-white"
-                }`}
-              >
-                English
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => setLang("bn")}
+              className={`px-2.5 py-0.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                lang === "bn"
+                  ? "bg-[#E0592A] text-white shadow-xs"
+                  : "text-white/70 hover:text-white"
+              }`}
+            >
+              বাংলা
+            </button>
+            <span className="text-white/30">|</span>
+            <button
+              type="button"
+              onClick={() => setLang("en")}
+              className={`px-1.5 py-0.5 text-xs font-semibold transition-all cursor-pointer ${
+                lang === "en"
+                  ? "text-orange-400 font-bold"
+                  : "text-white/80 hover:text-white"
+              }`}
+            >
+              English
+            </button>
           </div>
         </div>
       </div>
 
       {/* 2. Main Header Row (Clean White Background) */}
       <div className="bg-white border-b border-gray-100">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
           {/* Mobile Menu Button with Smooth Icon Transition */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-1.5 -ml-1 text-[#0D3B37] hover:bg-gray-100 rounded-md focus:outline-none cursor-pointer transition-colors"
+            className="lg:hidden p-2 -ml-1 text-[#0D3B37] hover:bg-gray-100 rounded-lg focus:outline-none cursor-pointer transition-colors"
             aria-label="Toggle navigation menu"
           >
             <div className="relative w-6 h-6 flex items-center justify-center">
@@ -489,23 +489,15 @@ export function Header() {
 
           {/* Brand Logo matching Client Mockup */}
           <div className="shrink-0 flex items-center justify-center flex-1 lg:flex-initial">
-            <Link href="/" className="group flex items-center gap-2.5">
-              <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0">
-                <svg className="w-full h-full" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 12C8 10.8954 8.89543 10 10 10H30C31.1046 10 32 10.8954 32 12L34 33C34 34.6569 32.6569 36 31 36H9C7.34315 36 6 34.6569 6 33L8 12Z" fill="#0D3B37" />
-                  <path d="M14 12V9C14 6.79086 15.7909 5 18 5H22C24.2091 5 26 6.79086 26 9V12" stroke="#0D3B37" strokeWidth="2.5" strokeLinecap="round" />
-                  <path d="M14 27C14 20 22 17 26 15C26 21 21 27 15 28" fill="#22C55E" />
-                  <path d="M12 29C14 24 19 22 23 23C20 26 16 30 12 29Z" fill="#E0592A" />
-                </svg>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-extrabold text-[19px] sm:text-[23px] tracking-tight text-[#0D3B37] leading-none group-hover:text-[#E0592A] transition-colors">
-                  SHOILPIKKABBO
-                </span>
-                <span className="text-[8.5px] sm:text-[9.5px] font-bold tracking-[0.2em] text-[#0D3B37]/75 mt-1 uppercase">
-                  DELIVERY • QUALITY • RELIABILITY
-                </span>
-              </div>
+            <Link href="/" className="group flex items-center">
+              <Image
+                src="/images/client-mockup/logo-brand-exact.png"
+                alt="SHOILPIKKABBO - Delivery • Quality • Reliability"
+                width={250}
+                height={62}
+                priority
+                className="h-10 sm:h-12 w-auto object-contain hover:opacity-95 transition-opacity"
+              />
             </Link>
           </div>
 
@@ -515,7 +507,7 @@ export function Header() {
             className="hidden lg:flex flex-1 max-w-[580px] mx-auto relative"
           >
             <form onSubmit={handleSearchSubmit} className="w-full">
-              <div className="relative w-full flex items-center bg-[#F9FAFB] border border-[#E5E7EB] rounded-md transition-all focus-within:border-[#E0592A] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#E0592A]/10 overflow-hidden shadow-2xs">
+              <div className="relative w-full flex items-center bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl transition-all focus-within:border-[#E0592A] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#E0592A]/10 overflow-hidden shadow-2xs">
                 <input
                   type="text"
                   placeholder="Search for products, categories..."
@@ -527,7 +519,7 @@ export function Header() {
                   onFocus={() => {
                     if (searchQuery.trim().length > 0) setIsDesktopDropdownOpen(true);
                   }}
-                  className="w-full h-10 pl-4 pr-9 bg-transparent text-[13.5px] text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
+                  className="w-full h-11 pl-4 pr-10 bg-transparent text-sm text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none"
                 />
                 {searchQuery && (
                   <button
@@ -544,7 +536,7 @@ export function Header() {
                 )}
                 <button
                   type="submit"
-                  className="h-10 px-4 bg-[#E0592A] hover:bg-[#C94B20] text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                  className="h-11 px-5 bg-[#E0592A] hover:bg-[#C94B20] text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
                   aria-label="Search"
                 >
                   <Search className="w-4 h-4" strokeWidth={2.2} />
@@ -557,21 +549,21 @@ export function Header() {
           </div>
 
           {/* Right: Actions (Login/Register, Wishlist, Cart) */}
-          <div className="flex items-center gap-3.5 sm:gap-5 lg:gap-7 shrink-0">
+          <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 shrink-0">
             {isAuthenticated && user ? (
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2 text-xs sm:text-[13px] text-[#0D3B37] hover:text-[#E0592A] transition-colors font-medium group cursor-pointer"
+                  className="flex items-center gap-2.5 text-sm text-[#0D3B37] hover:text-[#E0592A] transition-colors font-medium group cursor-pointer"
                   title="My Account"
                   aria-label="My Account"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#0D3B37] text-white flex items-center justify-center text-xs font-semibold uppercase">
+                  <div className="w-9 h-9 rounded-full bg-[#0D3B37] text-white flex items-center justify-center text-xs font-bold uppercase shadow-2xs">
                     {user.name ? user.name.charAt(0) : "U"}
                   </div>
                   <div className="hidden lg:flex flex-col items-start leading-tight">
-                    <span className="text-[10px] text-gray-400 font-normal">Welcome,</span>
-                    <span className="font-semibold text-[#0D3B37] max-w-[110px] truncate">
+                    <span className="text-[10.5px] text-gray-400 font-normal">Welcome,</span>
+                    <span className="font-semibold text-sm text-[#0D3B37] max-w-[120px] truncate">
                       {user.name.split(" ")[0]}
                     </span>
                   </div>
@@ -580,18 +572,18 @@ export function Header() {
 
                 {/* Account Dropdown Menu */}
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-56 rounded-md bg-white border border-gray-100 shadow-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                    <div className="px-4 py-2.5 border-b border-gray-100">
+                  <div className="absolute right-0 top-full mt-2 w-60 rounded-xl bg-white border border-gray-100 shadow-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-4 py-3 border-b border-gray-100">
                       <p className="text-[11px] text-gray-400 font-normal">Signed in as</p>
                       <p className="text-sm font-semibold text-[#0D3B37] truncate mt-0.5">{user.name}</p>
-                      <p className="text-[11.5px] text-gray-500 truncate">{user.phone || user.email}</p>
+                      <p className="text-xs text-gray-500 truncate">{user.phone || user.email}</p>
                     </div>
 
-                    <div className="py-1 text-xs sm:text-sm text-gray-700">
+                    <div className="py-1.5 text-sm text-gray-700">
                       <Link
                         href="/account"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
+                        className="flex items-center gap-2.5 px-4 py-2 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
                       >
                         <User className="w-4 h-4 text-gray-400" />
                         <span>My Profile & Orders</span>
@@ -600,7 +592,7 @@ export function Header() {
                       <Link
                         href="/track-order"
                         onClick={() => setIsUserMenuOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
+                        className="flex items-center gap-2.5 px-4 py-2 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
                       >
                         <Package className="w-4 h-4 text-gray-400" />
                         <span>Track My Order</span>
@@ -610,7 +602,7 @@ export function Header() {
                         <Link
                           href="/admin"
                           onClick={() => setIsUserMenuOpen(false)}
-                          className="flex items-center gap-2 px-4 py-2 font-semibold text-[#0D3B37] hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors border-t border-gray-100"
+                          className="flex items-center gap-2.5 px-4 py-2 font-semibold text-[#0D3B37] hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors border-t border-gray-100"
                         >
                           <ShieldCheck className="w-4 h-4 text-[#0D3B37]" />
                           <span>Admin Dashboard</span>
@@ -625,7 +617,7 @@ export function Header() {
                           await logout();
                           router.push("/");
                         }}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer text-left"
+                        className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer text-left font-medium"
                       >
                         <LogOut className="w-4 h-4" />
                         <span>Sign out</span>
@@ -637,37 +629,37 @@ export function Header() {
             ) : (
               <Link
                 href="/login"
-                className="flex items-center gap-1.5 text-xs sm:text-[13px] text-gray-700 hover:text-[#E0592A] transition-colors font-medium group"
+                className="flex items-center gap-2 text-sm text-gray-700 hover:text-[#E0592A] transition-colors font-semibold group"
                 title="Login / Register"
               >
-                <User className="w-[18px] h-[18px] text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
-                <span className="hidden lg:inline font-semibold">Login / Register</span>
+                <User className="w-5 h-5 text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
+                <span className="hidden lg:inline">Login / Register</span>
               </Link>
             )}
 
             {/* Wishlist Link */}
             <Link
               href="/shop"
-              className="hidden sm:flex items-center gap-1.5 text-xs sm:text-[13px] text-gray-700 hover:text-[#E0592A] transition-colors font-medium group"
+              className="hidden sm:flex items-center gap-2 text-sm text-gray-700 hover:text-[#E0592A] transition-colors font-semibold group"
               title="Wishlist"
             >
-              <Heart className="w-[18px] h-[18px] text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
-              <span className="hidden lg:inline font-semibold">Wishlist</span>
+              <Heart className="w-5 h-5 text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
+              <span className="hidden lg:inline">Wishlist</span>
             </Link>
 
-            {/* Cart Button */}
+            {/* Cart Button with Cart Icon & Badge */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="flex items-center gap-2 text-xs sm:text-[13px] text-gray-700 hover:text-[#E0592A] transition-colors font-medium cursor-pointer group"
-              aria-label="Open Shopping Bag"
+              className="flex items-center gap-2 text-sm text-[#0D3B37] hover:text-[#E0592A] transition-colors font-bold cursor-pointer group"
+              aria-label="Open Cart"
             >
-              <div className="relative">
-                <ShoppingBag className="w-5 h-5 text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
-                <span className="absolute -top-1.5 -right-2 bg-[#E0592A] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+              <div className="relative flex items-center">
+                <ShoppingCart className="w-5 h-5 text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
+                <span className="absolute -top-2 -right-2 bg-[#E0592A] text-white text-[10px] font-bold w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs">
                   {totalItemCount}
                 </span>
               </div>
-              <span className="hidden lg:inline font-semibold">Cart</span>
+              <span className="hidden lg:inline text-sm font-bold text-[#0D3B37] group-hover:text-[#E0592A]">Cart</span>
             </button>
           </div>
         </div>
@@ -675,10 +667,10 @@ export function Header() {
         {/* Mobile & Tablet Full-Width Search Bar */}
         <div
           ref={mobileSearchRef}
-          className="lg:hidden px-4 sm:px-6 py-2.5 bg-gray-50 border-t border-gray-100 relative"
+          className="lg:hidden px-4 sm:px-6 py-3 bg-[#FAF8F5] border-t border-gray-100 relative"
         >
           <form onSubmit={handleSearchSubmit} className="relative max-w-[768px] mx-auto flex items-center">
-            <div className="relative w-full flex items-center bg-white border border-gray-200 rounded-md overflow-hidden focus-within:border-[#E0592A]">
+            <div className="relative w-full flex items-center bg-white border border-gray-200 rounded-xl overflow-hidden shadow-2xs focus-within:border-[#E0592A]">
               <input
                 type="text"
                 placeholder="Search for products, categories..."
@@ -690,7 +682,7 @@ export function Header() {
                 onFocus={() => {
                   if (searchQuery.trim().length > 0) setIsMobileDropdownOpen(true);
                 }}
-                className="w-full h-10 pl-3.5 pr-8 bg-transparent text-xs sm:text-sm text-[#111827] placeholder:text-gray-400 focus:outline-none"
+                className="w-full h-11 pl-4 pr-9 bg-transparent text-sm text-[#111827] placeholder:text-gray-400 focus:outline-none"
               />
               {searchQuery && (
                 <button
@@ -701,14 +693,14 @@ export function Header() {
                   }}
                   className="p-1 mr-1 text-gray-400 hover:text-gray-700"
                 >
-                  <X className="w-3.5 h-3.5" />
+                  <X className="w-4 h-4" />
                 </button>
               )}
               <button
                 type="submit"
-                className="h-10 px-3.5 bg-[#E0592A] hover:bg-[#C94B20] text-white flex items-center justify-center transition-colors shrink-0"
+                className="h-11 px-4 bg-[#E0592A] hover:bg-[#C94B20] text-white flex items-center justify-center transition-colors shrink-0"
               >
-                <Search className="w-3.5 h-3.5" strokeWidth={2.2} />
+                <Search className="w-4 h-4" strokeWidth={2.2} />
               </button>
             </div>
           </form>
@@ -723,43 +715,42 @@ export function Header() {
       </div>
 
       {/* 3. Navigation Bar (All Categories Button + Centered Links) */}
-      <nav className="border-b border-gray-100 bg-white">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4 py-2">
+      <nav className="border-b border-gray-100 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-6 sm:gap-8 lg:gap-10 py-2.5">
           {/* All Categories Dropdown Button */}
           <div className="relative shrink-0" ref={categoriesMenuRef}>
             <button
               type="button"
               onClick={() => setIsCategoriesMenuOpen(!isCategoriesMenuOpen)}
-              className="flex items-center gap-2 px-4 py-2 bg-[#E0592A] hover:bg-[#C94B20] text-white rounded-md font-bold text-xs sm:text-[13px] tracking-wide transition-colors shadow-2xs cursor-pointer"
+              className="flex items-center gap-2.5 px-5 py-2.5 bg-[#E0592A] hover:bg-[#C94B20] text-white rounded-xl font-bold text-sm tracking-wide transition-colors shadow-xs cursor-pointer"
             >
-              <Menu className="w-4 h-4" />
+              <Menu className="w-4 h-4 stroke-[2.2]" />
               <span>All Categories</span>
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isCategoriesMenuOpen ? "rotate-180" : ""}`} />
             </button>
 
             {/* Dropdown Menu */}
             {isCategoriesMenuOpen && (
-              <div className="absolute left-0 top-full mt-1.5 w-64 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50">
+              <div className="absolute left-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2.5 z-50 animate-in fade-in zoom-in-95 duration-150">
                 {SEARCH_CATEGORIES.map((cat) => (
                   <Link
                     key={cat.slug}
                     href={cat.href || `/shop?category=${cat.slug}`}
                     onClick={() => setIsCategoriesMenuOpen(false)}
-                    className="flex items-center justify-between px-4 py-2 text-xs sm:text-[13px] text-gray-700 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
+                    className="flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
                   >
                     <span>{cat.name}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-gray-300" />
+                    <ArrowRight className="w-4 h-4 text-gray-300" />
                   </Link>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Horizontal Menu Links */}
-          <div className="hidden md:flex items-center gap-5 lg:gap-7 text-xs sm:text-[13px] font-semibold text-gray-700">
+          {/* Horizontal Menu Links matching Screenshot */}
+          <div className="hidden md:flex items-center gap-7 lg:gap-9 text-sm font-semibold text-gray-700">
             <Link
               href="/"
-              className="text-[#E0592A] hover:text-[#C94B20] transition-colors font-bold"
+              className="text-[#804A3E] hover:text-[#E0592A] transition-colors font-bold border-b-2 border-[#804A3E] pb-0.5"
             >
               Home
             </Link>
@@ -767,46 +758,46 @@ export function Header() {
             <button
               type="button"
               onClick={() => setIsCategoriesMenuOpen(!isCategoriesMenuOpen)}
-              className="flex items-center gap-1 hover:text-[#E0592A] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-gray-700 hover:text-[#E0592A] transition-colors cursor-pointer font-semibold"
             >
               <span>Categories</span>
-              <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+              <ChevronDown className="w-4 h-4 text-gray-400" />
             </button>
 
             <Link
               href="/offers"
-              className="flex items-center gap-1 hover:text-[#E0592A] transition-colors"
+              className="relative flex items-center gap-1.5 text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
             >
               <span>Offers</span>
-              <span className="px-1.5 py-0.2 bg-[#E0592A] text-white text-[9px] font-bold rounded-full uppercase leading-tight animate-pulse">
+              <span className="px-1.5 py-0.2 bg-[#EF4444] text-white text-[9.5px] font-bold rounded-full uppercase leading-tight animate-pulse">
                 Hot
               </span>
             </Link>
 
             <Link
               href="/services"
-              className="hover:text-[#E0592A] transition-colors"
+              className="text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
             >
               Services
             </Link>
 
             <Link
               href="/about"
-              className="hover:text-[#E0592A] transition-colors"
+              className="text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
             >
               About Us
             </Link>
 
             <Link
               href="/careers"
-              className="hover:text-[#E0592A] transition-colors"
+              className="text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
             >
               Career
             </Link>
 
             <Link
               href="/contact"
-              className="hover:text-[#E0592A] transition-colors"
+              className="text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
             >
               Contact Us
             </Link>

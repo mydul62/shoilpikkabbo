@@ -44,7 +44,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="Mobile Bottom Navigation"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-100 px-2 py-1.5 shadow-[0_-2px_10px_rgba(0,0,0,0.03)]"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-100 px-3 py-2 shadow-[0_-4px_16px_rgba(0,0,0,0.04)]"
     >
       <div className="flex items-center justify-around max-w-md mx-auto">
         {navItems.map((item) => {
@@ -54,20 +54,20 @@ export function MobileBottomNav() {
             <Link
               key={item.label}
               href={item.href}
-              className={`flex flex-col items-center justify-center py-1 px-3 rounded-md transition-colors ${
+              className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all ${
                 active
-                  ? "text-[#E0592A]"
-                  : "text-gray-500 hover:text-[#0D3B37]"
+                  ? "text-[#E0592A] font-bold"
+                  : "text-gray-500 hover:text-[#0D3B37] font-medium"
               }`}
             >
               <IconComp
-                className={`w-[21px] h-[21px] ${
-                  active ? "stroke-[2.2] text-[#E0592A]" : "stroke-[1.6]"
+                className={`w-5 h-5 transition-transform duration-200 ${
+                  active ? "stroke-[2.2] scale-105 text-[#E0592A]" : "stroke-[1.7]"
                 }`}
               />
               <span
-                className={`text-[10px] mt-0.5 tracking-tight ${
-                  active ? "font-bold text-[#E0592A]" : "font-normal"
+                className={`text-[11px] mt-0.5 tracking-normal ${
+                  active ? "font-bold text-[#E0592A]" : "font-medium"
                 }`}
               >
                 {item.label}

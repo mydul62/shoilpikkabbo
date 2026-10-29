@@ -20,6 +20,7 @@ import {
   Headset,
   Package,
   Lock,
+  Sparkles,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/data/mock-data";
@@ -63,149 +64,120 @@ export function ClientMockupHome() {
     setIsCartOpen(true);
   };
 
-  // Top 6 Featured Products matching Client Mockup
-  const featuredProducts = MOCK_PRODUCTS.slice(0, 6);
+  // Top 5 Featured Products matching user request
+  const featuredProducts = MOCK_PRODUCTS.slice(0, 5);
+
+  // 10 Products for "For You" Section (5 per row, 2 rows)
+  const forYouProducts = [
+    MOCK_PRODUCTS[0], // Jute Shopping Bag
+    MOCK_PRODUCTS[1], // Baby Care Set
+    MOCK_PRODUCTS[2], // Organic Honey
+    MOCK_PRODUCTS[3], // Men's T-Shirt
+    MOCK_PRODUCTS[4], // Organic Fertilizer
+    MOCK_PRODUCTS[5], // Cosmetic Set
+    MOCK_PRODUCTS[6], // Everyday Jute Basket
+    MOCK_PRODUCTS[7], // The Everyday Jute Tote
+    MOCK_PRODUCTS[8], // Woven Coaster Set
+    MOCK_PRODUCTS[10] || MOCK_PRODUCTS[9], // Terracotta Stem Vase
+  ].filter(Boolean);
 
   return (
-    <div className="w-full bg-[#F8F9FA] pb-16 space-y-8 sm:space-y-12">
+    <div className="w-full bg-[#F8F9FA] pb-16">
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION */}
+      {/* 1. HERO SECTION (Exact Match to Client Mockup) */}
       {/* ========================================================================= */}
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
-        <div className="relative bg-[#FAF8F3] rounded-2xl sm:rounded-3xl border border-[#EDE8DC] p-6 sm:p-10 lg:p-12 overflow-hidden shadow-xs">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-            {/* Left Content Column */}
-            <div className="lg:col-span-6 space-y-4 sm:space-y-6">
-              {/* Overline Tag */}
-              <div className="inline-flex items-center gap-2 bg-[#0D3B37] text-white px-3.5 py-1 rounded-full text-[11px] sm:text-xs font-semibold tracking-wide">
-                <span>Handmade</span>
-                <span>•</span>
-                <span>Eco Friendly</span>
-                <span>•</span>
-                <span>Local Products</span>
-              </div>
+      <section className="w-full bg-[#FAF6EB] border-b border-[#EDE8DC] relative overflow-hidden">
+        <div className="relative w-full max-w-[1524px] mx-auto aspect-[1024/300] min-h-[200px] sm:min-h-[270px] md:min-h-[320px] lg:min-h-[380px]">
+          {/* Panoramic High-Res Hero Banner */}
+          <Image
+            src="/images/client-mockup/hero-banner-exact.png"
+            alt="বাংলার ঐতিহ্য, আপনার প্রয়োজন - SHOILPIKKABBO"
+            fill
+            priority
+            className="object-cover sm:object-fill"
+            sizes="(max-width: 1524px) 100vw, 1524px"
+          />
 
-              {/* Large Bengali Headline */}
-              <div className="space-y-1">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-[54px] font-extrabold text-[#0D3B37] leading-[1.15] tracking-tight">
-                  বাংলার ঐতিহ্য,
-                </h1>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-[54px] font-extrabold text-[#E0592A] leading-[1.15] tracking-tight">
-                  আপনার প্রয়োজন
-                </h2>
-              </div>
+          {/* Clickable Action on "Shop Now →" Button Area */}
+          <Link
+            href="/shop"
+            className="absolute left-[7.6%] bottom-[7.2%] w-[11.5%] h-[10.5%] min-w-[110px] min-h-[32px] rounded-full hover:ring-2 hover:ring-[#E0592A]/60 transition-all cursor-pointer z-10"
+            title="Shop Now"
+            aria-label="Shop Now"
+          />
 
-              {/* Bengali Subtitle */}
-              <p className="text-sm sm:text-base lg:text-[17px] text-gray-600 font-normal leading-relaxed max-w-lg">
-                দেশীয় পণ্য ও আধুনিক সেবার সমন্বয়ে শিল্পকলা এখন আপনার হাতের কাছে!
-              </p>
+          {/* Interactive Carousel Left Arrow */}
+          <button
+            type="button"
+            onClick={() => setCurrentSlide((prev) => (prev === 0 ? 1 : 0))}
+            className="absolute left-[1.5%] sm:left-[1.8%] top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/90 hover:bg-white text-[#0D3B37] shadow-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer z-10"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
 
-              {/* 3 Value Propositions */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-1 sm:pt-2">
-                <div className="flex items-center gap-1.5 sm:gap-2 text-[#0D3B37]">
-                  <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-[#0D3B37] shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-semibold leading-tight">
-                    Fast Delivery
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 sm:gap-2 text-[#0D3B37]">
-                  <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-[#0D3B37] shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-semibold leading-tight">
-                    Quality Products
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 sm:gap-2 text-[#0D3B37]">
-                  <Handshake className="w-4 h-4 sm:w-5 sm:h-5 text-[#0D3B37] shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-semibold leading-tight">
-                    Reliable Service
-                  </span>
-                </div>
-              </div>
+          {/* Interactive Carousel Right Arrow */}
+          <button
+            type="button"
+            onClick={() => setCurrentSlide((prev) => (prev === 0 ? 1 : 0))}
+            className="absolute right-[1.5%] sm:right-[1.8%] top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/90 hover:bg-white text-[#0D3B37] shadow-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer z-10"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
 
-              {/* CTA Button */}
-              <div className="pt-2">
-                <Link
-                  href="/shop"
-                  className="inline-flex items-center gap-2.5 px-7 py-3 sm:py-3.5 bg-[#E0592A] hover:bg-[#C94B20] text-white font-bold text-xs sm:text-sm rounded-full transition-all shadow-md hover:shadow-lg hover:gap-3 cursor-pointer"
-                >
-                  <span>Shop Now</span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Visual Image Column */}
-            <div className="lg:col-span-6 relative flex items-center justify-center">
-              <div className="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-xl overflow-hidden shadow-md">
-                <Image
-                  src="/images/client-mockup/hero-composition.png"
-                  alt="Bangladeshi Artisan Products Composition"
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-
-                {/* Floating Support Local Products Sticker */}
-                <div className="absolute top-3 sm:top-5 right-3 sm:right-5 bg-white/95 backdrop-blur-xs px-3.5 py-1.5 rounded-full shadow-md border border-gray-100 flex items-center gap-1.5">
-                  <span className="text-[11px] sm:text-xs font-bold text-[#0D3B37]">
-                    Support Local Products
-                  </span>
-                  <Heart className="w-3.5 h-3.5 text-[#E0592A] fill-[#E0592A]" />
-                </div>
-              </div>
-
-              {/* Carousel Arrows */}
-              <button
-                type="button"
-                onClick={() => setCurrentSlide((prev) => (prev === 0 ? 1 : 0))}
-                className="absolute -left-3 sm:-left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white text-[#0D3B37] shadow-md border border-gray-100 flex items-center justify-center hover:bg-[#0D3B37] hover:text-white transition-colors cursor-pointer z-10"
-                aria-label="Previous slide"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setCurrentSlide((prev) => (prev === 0 ? 1 : 0))}
-                className="absolute -right-3 sm:-right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white text-[#0D3B37] shadow-md border border-gray-100 flex items-center justify-center hover:bg-[#0D3B37] hover:text-white transition-colors cursor-pointer z-10"
-                aria-label="Next slide"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Pagination Dots */}
-          <div className="flex items-center justify-center gap-1.5 pt-6">
-            <span
-              className={`w-2 h-2 rounded-full transition-all ${
-                currentSlide === 0 ? "bg-[#E0592A] w-5" : "bg-gray-300"
+          {/* Interactive Pagination Dots matching screenshot */}
+          <div className="absolute bottom-[2%] sm:bottom-[2.5%] left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 z-10">
+            <button
+              type="button"
+              onClick={() => setCurrentSlide(0)}
+              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all cursor-pointer ${
+                currentSlide === 0 ? "bg-[#0D3B37] ring-1 ring-white" : "bg-[#0D3B37]"
               }`}
+              aria-label="Slide 1"
             />
-            <span
-              className={`w-2 h-2 rounded-full transition-all ${
-                currentSlide === 1 ? "bg-[#E0592A] w-5" : "bg-gray-300"
+            <button
+              type="button"
+              onClick={() => setCurrentSlide(1)}
+              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all cursor-pointer ${
+                currentSlide === 1 ? "bg-[#E0592A] ring-1 ring-white" : "bg-[#E0592A]"
               }`}
+              aria-label="Slide 2"
+            />
+            <button
+              type="button"
+              onClick={() => setCurrentSlide(2)}
+              className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#CBD5E1] hover:bg-gray-400 transition-all cursor-pointer"
+              aria-label="Slide 3"
+            />
+            <button
+              type="button"
+              onClick={() => setCurrentSlide(3)}
+              className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#CBD5E1] hover:bg-gray-400 transition-all cursor-pointer"
+              aria-label="Slide 4"
             />
           </div>
         </div>
       </section>
+
+      {/* Spacing wrapper for downstream sections */}
+      <div className="space-y-12 sm:space-y-16 lg:space-y-20 pt-10 sm:pt-14 pb-20">
 
       {/* ========================================================================= */}
       {/* 2. SHOP BY CATEGORY */}
       {/* ========================================================================= */}
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex items-center justify-between pb-5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#0D3B37]/10 flex items-center justify-center text-[#0D3B37]">
+        <div className="flex items-center justify-between pb-6 sm:pb-7">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-[#0D3B37]/10 flex items-center justify-center text-[#0D3B37]">
               <LayoutGrid className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-[#0D3B37]">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B37] tracking-tight">
                 Shop by Category
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500">
+              <p className="text-sm sm:text-[15px] text-gray-500 font-normal mt-0.5">
                 Explore our wide range of products and services
               </p>
             </div>
@@ -213,7 +185,7 @@ export function ClientMockupHome() {
 
           <Link
             href="/shop"
-            className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group"
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group"
           >
             <span>View All Categories</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -221,22 +193,22 @@ export function ClientMockupHome() {
         </div>
 
         {/* 6-Column Responsive Grid matching Client Design */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4 lg:gap-5">
           {/* Category 1: Handicrafts */}
           <Link
             href="/shop?category=handicraft"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-handicrafts.png"
                 alt="Handicrafts"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
               Handicrafts
             </span>
           </Link>
@@ -244,18 +216,18 @@ export function ClientMockupHome() {
           {/* Category 2: Jute Items */}
           <Link
             href="/shop?category=jute-items"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-jute.png"
                 alt="Jute Items"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
               Jute Items
             </span>
           </Link>
@@ -263,18 +235,18 @@ export function ClientMockupHome() {
           {/* Category 3: Polymer */}
           <Link
             href="/shop?category=polymer"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-polymer.png"
                 alt="Polymer"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
               Polymer
             </span>
           </Link>
@@ -282,18 +254,18 @@ export function ClientMockupHome() {
           {/* Category 4: Baby Items */}
           <Link
             href="/shop?category=baby-items"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-baby.png"
                 alt="Baby Items"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
               Baby Items
             </span>
           </Link>
@@ -301,37 +273,37 @@ export function ClientMockupHome() {
           {/* Category 5: Corporate Gift Items */}
           <Link
             href="/shop?category=corporate-gift-items"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-corporate.png"
                 alt="Corporate Gift Items"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
-              Corporate Gift Items
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
+              Corporate Gifts
             </span>
           </Link>
 
           {/* Category 6: Rudiment Garments */}
           <Link
             href="/shop?category=rudiment-garments"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-garments.png"
                 alt="Rudiment Garments"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
               Rudiment Garments
             </span>
           </Link>
@@ -339,18 +311,18 @@ export function ClientMockupHome() {
           {/* Row 2: Category 7 - Industrial Solutions */}
           <Link
             href="/shop?category=industrial-solutions"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-industrial.png"
                 alt="Industrial Solutions"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
               Industrial Solutions
             </span>
           </Link>
@@ -358,18 +330,18 @@ export function ClientMockupHome() {
           {/* Category 8: Health & Beauty */}
           <Link
             href="/shop?category=health-and-beauty"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-beauty.png"
                 alt="Health & Beauty"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
               Health & Beauty
             </span>
           </Link>
@@ -377,18 +349,18 @@ export function ClientMockupHome() {
           {/* Category 9: Agriculture */}
           <Link
             href="/shop?category=agriculture"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-agriculture.png"
                 alt="Agriculture"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
               Agriculture
             </span>
           </Link>
@@ -396,39 +368,39 @@ export function ClientMockupHome() {
           {/* Category 10: Special E-Sheba / Services */}
           <Link
             href="/services"
-            className="bg-white hover:bg-[#FAF8F3] border border-gray-100 hover:border-[#0D3B37]/20 rounded-xl p-3.5 flex flex-col items-center text-center transition-all shadow-2xs hover:shadow-md group"
+            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
           >
-            <div className="relative w-14 h-12 mb-2 flex items-center justify-center">
+            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
               <Image
                 src="/images/client-mockup/cat-services.png"
                 alt="Special E-Sheba"
-                width={56}
-                height={48}
-                className="object-contain group-hover:scale-105 transition-transform"
+                width={64}
+                height={54}
+                className="object-contain group-hover:scale-108 transition-transform duration-300"
               />
             </div>
-            <span className="text-xs font-semibold text-gray-800 group-hover:text-[#E0592A] transition-colors">
-              Special E-Sheba / Services
+            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
+              Special E-Sheba
             </span>
           </Link>
 
           {/* Quality Products Better Life Banner (Spans 2 columns) */}
-          <div className="col-span-2 relative bg-gradient-to-r from-[#0D3B37] to-[#124B46] rounded-xl p-4 sm:p-5 flex items-center justify-between overflow-hidden shadow-xs">
-            <div className="space-y-2 z-10">
-              <p className="text-white font-extrabold text-sm sm:text-base leading-snug">
+          <div className="col-span-2 relative bg-gradient-to-r from-[#0D3B37] to-[#124B46] rounded-2xl p-5 sm:p-6 flex items-center justify-between overflow-hidden shadow-sm">
+            <div className="space-y-2.5 z-10">
+              <p className="text-white font-extrabold text-base sm:text-lg leading-snug">
                 Quality Products
                 <br />
-                <span className="text-emerald-300">Better Life</span>
+                <span className="text-emerald-300 font-bold">Better Life</span>
               </p>
               <Link
                 href="/shop"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#E0592A] hover:bg-[#C94B20] text-white text-[11px] font-bold rounded-full transition-colors shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#E0592A] hover:bg-[#C94B20] text-white text-xs font-bold rounded-xl transition-all shadow-xs"
               >
                 <span>Explore Categories</span>
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-            <div className="relative w-28 h-20 shrink-0">
+            <div className="relative w-28 h-20 sm:w-32 sm:h-22 shrink-0">
               <Image
                 src="/images/client-mockup/cat-promo-banner.png"
                 alt="Quality Products Better Life"
@@ -441,20 +413,20 @@ export function ClientMockupHome() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 3. FEATURED PRODUCTS (6 Products matching Client Mockup) */}
+      {/* 3. FEATURED PRODUCTS (5 Products matching Client Mockup) */}
       {/* ========================================================================= */}
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex items-center justify-between pb-5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center">
+        <div className="flex items-center justify-between pb-6 sm:pb-7">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
               <Star className="w-5 h-5 fill-emerald-600 text-emerald-600" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-[#0D3B37]">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B37] tracking-tight">
                 Featured Products
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500">
+              <p className="text-sm sm:text-[15px] text-gray-500 font-normal mt-0.5">
                 Best selling and most popular products
               </p>
             </div>
@@ -462,15 +434,15 @@ export function ClientMockupHome() {
 
           <Link
             href="/shop"
-            className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group"
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group"
           >
             <span>View All Products</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
 
-        {/* 6-Column Grid of Products */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+        {/* 5-Column Grid of Products */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
           {featuredProducts.map((product) => {
             const isWishlisted = !!wishlist[product.id];
             const isAdded = addedProductId === product.id;
@@ -484,18 +456,18 @@ export function ClientMockupHome() {
             return (
               <div
                 key={product.id}
-                className="bg-white border border-gray-100 hover:border-gray-200 rounded-xl p-3 flex flex-col justify-between transition-all hover:shadow-md group relative"
+                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group relative"
               >
                 {/* Wishlist Button */}
                 <button
                   type="button"
                   onClick={() => toggleWishlist(product.id)}
-                  className="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-white/90 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
+                  className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
                   title="Save to Wishlist"
                   aria-label="Save to Wishlist"
                 >
                   <Heart
-                    className={`w-4 h-4 ${
+                    className={`w-4 h-4 transition-colors ${
                       isWishlisted
                         ? "fill-[#E0592A] text-[#E0592A]"
                         : "text-gray-400"
@@ -503,67 +475,69 @@ export function ClientMockupHome() {
                   />
                 </button>
 
-                {/* Product Image */}
-                <Link
-                  href={`/products/${product.slug}`}
-                  className="relative w-full aspect-square rounded-lg overflow-hidden bg-gray-50 mb-2.5 flex items-center justify-center group-hover:bg-[#FAF8F3] transition-colors"
-                >
-                  <Image
-                    src={product.imageUrl}
-                    alt={product.name}
-                    width={180}
-                    height={180}
-                    className="object-contain p-2 group-hover:scale-105 transition-transform"
-                  />
-                </Link>
-
-                {/* Details */}
-                <div className="space-y-1">
+                <div>
+                  {/* Product Image */}
                   <Link
                     href={`/products/${product.slug}`}
-                    className="block font-semibold text-xs text-gray-800 hover:text-[#E0592A] transition-colors truncate"
-                    title={product.name}
+                    className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 sm:mb-3.5 flex items-center justify-center p-3 group-hover:bg-[#F5F1E9] transition-colors block"
                   >
-                    {product.name}
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                      className="object-contain p-2 group-hover:scale-106 transition-transform duration-300"
+                    />
                   </Link>
 
-                  <p className="text-[10px] text-gray-400 truncate">
-                    {product.categoryName}
-                  </p>
+                  {/* Details */}
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium truncate">
+                      {product.categoryName}
+                    </p>
 
-                  {/* Rating */}
-                  <div className="flex items-center gap-1 text-[10px] text-amber-500">
-                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                    <span className="font-bold text-gray-700">
-                      {product.rating ?? 4.8}
-                    </span>
-                    <span className="text-gray-400">
-                      ({product.reviewCount ?? 80})
-                    </span>
-                  </div>
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="block font-semibold text-sm sm:text-[15px] text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 leading-snug"
+                      title={product.name}
+                    >
+                      {product.name}
+                    </Link>
 
-                  {/* Price & Discount */}
-                  <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                    <span className="font-extrabold text-xs sm:text-sm text-[#0D3B37]">
-                      ৳ {product.price}
-                    </span>
-                    {product.salePrice && (
-                      <span className="text-[10px] sm:text-xs text-gray-400 line-through">
-                        ৳ {product.salePrice}
+                    {/* Rating */}
+                    <div className="flex items-center gap-1 text-xs text-amber-500 pt-0.5">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <span className="font-bold text-gray-700">
+                        {product.rating ?? 4.8}
                       </span>
-                    )}
-                    <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded">
-                      {discountPct}% OFF
-                    </span>
+                      <span className="text-gray-400">
+                        ({product.reviewCount ?? 80})
+                      </span>
+                    </div>
+
+                    {/* Price & Discount */}
+                    <div className="flex items-center gap-2 flex-wrap pt-1.5">
+                      <span className="font-extrabold text-base sm:text-lg text-[#0D3B37]">
+                        ৳ {product.price}
+                      </span>
+                      {product.salePrice && (
+                        <span className="text-xs sm:text-sm text-gray-400 line-through">
+                          ৳ {product.salePrice}
+                        </span>
+                      )}
+                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                        {discountPct}% OFF
+                      </span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Add to Cart Button */}
-                <div className="pt-3">
+                <div className="pt-4">
                   <button
                     type="button"
                     onClick={() => handleAddToCart(product)}
-                    className={`w-full py-2 px-2 rounded-lg font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 transition-all shadow-2xs cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
                       isAdded
                         ? "bg-emerald-600 text-white"
                         : "bg-[#0D3B37] hover:bg-[#E0592A] text-white"
@@ -571,12 +545,12 @@ export function ClientMockupHome() {
                   >
                     {isAdded ? (
                       <>
-                        <Check className="w-3.5 h-3.5" />
-                        <span>Added</span>
+                        <Check className="w-4 h-4" />
+                        <span>Added to Cart</span>
                       </>
                     ) : (
                       <>
-                        <ShoppingCart className="w-3.5 h-3.5" />
+                        <ShoppingCart className="w-4 h-4" />
                         <span>Add to Cart</span>
                       </>
                     )}
@@ -592,32 +566,32 @@ export function ClientMockupHome() {
       {/* 4. PROMOTIONAL 3-COLUMN BANNER SECTION */}
       {/* ========================================================================= */}
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
           {/* Card 1: Special Offer UP TO 50% OFF */}
-          <div className="relative bg-gradient-to-br from-[#E86230] to-[#CF4E1D] rounded-2xl p-6 sm:p-7 text-white flex flex-col justify-between overflow-hidden shadow-xs min-h-[220px]">
-            <div className="space-y-1 z-10">
-              <span className="text-xs font-bold text-white/90 uppercase tracking-wider">
+          <div className="relative bg-gradient-to-br from-[#E0592A] to-[#C94B20] rounded-3xl p-7 sm:p-8 text-white flex flex-col justify-between overflow-hidden shadow-md min-h-[250px] group">
+            <div className="space-y-1.5 z-10">
+              <span className="text-xs sm:text-sm font-bold text-white/90 uppercase tracking-wider">
                 Special Offer
               </span>
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              <h3 className="text-3xl sm:text-4xl font-black text-white leading-tight">
                 UP TO 50% OFF
               </h3>
-              <p className="text-xs sm:text-sm text-white/90">
+              <p className="text-sm text-white/90 font-medium">
                 On Selected Products
               </p>
             </div>
 
-            <div className="pt-4 z-10">
+            <div className="pt-5 z-10">
               <Link
                 href="/offers"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#CF4E1D] hover:bg-[#FAF8F3] font-bold text-xs rounded-full shadow-sm transition-all hover:gap-2.5"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#C94B20] hover:bg-[#FAF8F5] font-bold text-xs sm:text-sm rounded-full shadow-md transition-all hover:gap-2.5"
               >
                 <span>Shop Now</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
-            <div className="absolute right-2 bottom-2 w-36 h-32 opacity-95 pointer-events-none">
+            <div className="absolute right-2 bottom-2 w-36 h-32 sm:w-40 sm:h-36 opacity-95 pointer-events-none group-hover:scale-105 transition-transform duration-300">
               <Image
                 src="/images/client-mockup/promo-special-offer.png"
                 alt="Special Offer"
@@ -628,46 +602,46 @@ export function ClientMockupHome() {
           </div>
 
           {/* Card 2: Our Services */}
-          <div className="bg-[#FAF8F3] border border-[#EDE8DC] rounded-2xl p-6 sm:p-7 flex flex-col justify-between shadow-2xs min-h-[220px]">
+          <div className="bg-[#FAF8F3] rounded-3xl p-7 sm:p-8 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] min-h-[250px] transition-all duration-300">
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#0D3B37]">
+              <h3 className="text-xl sm:text-2xl font-bold text-[#0D3B37] tracking-tight">
                 Our Services
               </h3>
-              <p className="text-xs text-gray-500 mb-4">
+              <p className="text-xs sm:text-sm text-gray-500 mb-4 font-normal mt-0.5">
                 More than just products
               </p>
 
               {/* 4 Quick Service Actions in 2x2 grid */}
-              <div className="grid grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-2 gap-3">
                 <Link
                   href="/track-order"
-                  className="bg-white hover:bg-gray-50 border border-gray-100 rounded-xl p-2.5 flex items-center gap-2 text-xs font-semibold text-gray-700 transition-colors shadow-2xs group"
+                  className="bg-white hover:bg-white rounded-xl p-3 sm:p-3.5 flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-gray-800 transition-all shadow-[0_1px_4px_rgba(0,0,0,0.03)] hover:shadow-xs group"
                 >
-                  <Truck className="w-4 h-4 text-[#0D3B37] group-hover:text-[#E0592A] shrink-0" />
+                  <Truck className="w-4 h-4 text-[#0D3B37] group-hover:text-[#E0592A] shrink-0 transition-colors" />
                   <span className="truncate">Home Delivery</span>
                 </Link>
 
                 <Link
                   href="/shop?category=corporate-gift-items"
-                  className="bg-white hover:bg-gray-50 border border-gray-100 rounded-xl p-2.5 flex items-center gap-2 text-xs font-semibold text-gray-700 transition-colors shadow-2xs group"
+                  className="bg-white hover:bg-white rounded-xl p-3 sm:p-3.5 flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-gray-800 transition-all shadow-[0_1px_4px_rgba(0,0,0,0.03)] hover:shadow-xs group"
                 >
-                  <Gift className="w-4 h-4 text-[#0D3B37] group-hover:text-[#E0592A] shrink-0" />
+                  <Gift className="w-4 h-4 text-[#0D3B37] group-hover:text-[#E0592A] shrink-0 transition-colors" />
                   <span className="truncate">Corporate Gifts</span>
                 </Link>
 
                 <Link
                   href="/services"
-                  className="bg-white hover:bg-gray-50 border border-gray-100 rounded-xl p-2.5 flex items-center gap-2 text-xs font-semibold text-gray-700 transition-colors shadow-2xs group"
+                  className="bg-white hover:bg-white rounded-xl p-3 sm:p-3.5 flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-gray-800 transition-all shadow-[0_1px_4px_rgba(0,0,0,0.03)] hover:shadow-xs group"
                 >
-                  <Settings className="w-4 h-4 text-[#0D3B37] group-hover:text-[#E0592A] shrink-0" />
+                  <Settings className="w-4 h-4 text-[#0D3B37] group-hover:text-[#E0592A] shrink-0 transition-colors" />
                   <span className="truncate">Custom Orders</span>
                 </Link>
 
                 <Link
                   href="/services"
-                  className="bg-white hover:bg-gray-50 border border-gray-100 rounded-xl p-2.5 flex items-center gap-2 text-xs font-semibold text-gray-700 transition-colors shadow-2xs group"
+                  className="bg-white hover:bg-white rounded-xl p-3 sm:p-3.5 flex items-center gap-2.5 text-xs sm:text-sm font-semibold text-gray-800 transition-all shadow-[0_1px_4px_rgba(0,0,0,0.03)] hover:shadow-xs group"
                 >
-                  <Headset className="w-4 h-4 text-[#0D3B37] group-hover:text-[#E0592A] shrink-0" />
+                  <Headset className="w-4 h-4 text-[#0D3B37] group-hover:text-[#E0592A] shrink-0 transition-colors" />
                   <span className="truncate">Special E-Sheba</span>
                 </Link>
               </div>
@@ -675,12 +649,12 @@ export function ClientMockupHome() {
           </div>
 
           {/* Card 3: Stay Connected / Get in Touch */}
-          <div className="bg-[#FAF8F3] border border-[#EDE8DC] rounded-2xl p-6 sm:p-7 flex items-center justify-between shadow-2xs relative overflow-hidden min-h-[220px]">
-            <div className="space-y-2 z-10 max-w-[60%]">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+          <div className="bg-[#FAF8F3] rounded-3xl p-7 sm:p-8 flex items-center justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] min-h-[250px] relative overflow-hidden transition-all duration-300">
+            <div className="space-y-2.5 z-10 max-w-[60%]">
+              <span className="text-xs sm:text-sm font-bold text-gray-400 uppercase tracking-wider">
                 Stay Connected
               </span>
-              <h3 className="text-2xl font-extrabold text-[#0D3B37] leading-tight">
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#0D3B37] leading-tight">
                 Get in Touch
               </h3>
 
@@ -691,10 +665,10 @@ export function ClientMockupHome() {
                   href="https://wa.me/8801731214379"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-sm"
+                  className="w-11 h-11 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
                   title="Chat on WhatsApp"
                 >
-                  <span className="text-base font-bold">✆</span>
+                  <span className="text-lg font-bold">✆</span>
                 </a>
 
                 {/* Messenger */}
@@ -702,14 +676,14 @@ export function ClientMockupHome() {
                   href="https://m.me/shoilpikkabbo"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-full bg-[#0084FF] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-sm"
+                  className="w-11 h-11 rounded-full bg-[#0084FF] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
                   title="Chat on Messenger"
                 >
-                  <span className="text-base font-bold">💬</span>
+                  <span className="text-lg font-bold">💬</span>
                 </a>
               </div>
 
-              <p className="text-[11px] text-gray-500 pt-1">
+              <p className="text-xs text-gray-500 pt-1">
                 Chat with us anytime
               </p>
             </div>
@@ -727,70 +701,223 @@ export function ClientMockupHome() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. WHY CHOOSE SHOILPIKKABBO (Trust Section) */}
+      {/* 5. FOR YOU SECTION (5 Products per Row x 2 Rows = 10 Products) */}
       {/* ========================================================================= */}
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white border border-gray-100 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-xs">
+        {/* Section Header */}
+        <div className="flex items-center justify-between pb-6 sm:pb-7">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 fill-amber-500 text-amber-500" />
+            </div>
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B37] tracking-tight">
+                For You
+              </h2>
+              <p className="text-sm sm:text-[15px] text-gray-500 font-normal mt-0.5">
+                Specially handpicked recommendations tailored for you
+              </p>
+            </div>
+          </div>
+
+          <Link
+            href="/shop"
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group"
+          >
+            <span>View All</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </div>
+
+        {/* 5-Column Grid with 2 Rows (10 Products total) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
+          {forYouProducts.map((product) => {
+            const isWishlisted = !!wishlist[product.id];
+            const isAdded = addedProductId === product.id;
+            const discountPct =
+              product.salePrice && product.salePrice > product.price
+                ? Math.round(
+                    ((product.salePrice - product.price) / product.salePrice) * 100
+                  )
+                : 20;
+
+            return (
+              <div
+                key={product.id}
+                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group relative"
+              >
+                {/* Wishlist Button */}
+                <button
+                  type="button"
+                  onClick={() => toggleWishlist(product.id)}
+                  className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
+                  title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+                >
+                  <Heart
+                    className={`w-4 h-4 transition-colors ${
+                      isWishlisted ? "fill-[#E0592A] text-[#E0592A]" : "text-gray-400"
+                    }`}
+                  />
+                </button>
+
+                {/* For You Badge */}
+                <div className="absolute top-3 left-3 z-10">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-white bg-gradient-to-r from-[#E0592A] to-[#F59E0B] px-2 py-0.5 rounded-md shadow-xs">
+                    For You
+                  </span>
+                </div>
+
+                <div>
+                  {/* Product Image */}
+                  <Link
+                    href={`/products/${product.slug}`}
+                    className="block relative w-full aspect-square mb-3 sm:mb-3.5 bg-[#FAF8F5] rounded-xl overflow-hidden p-3 group-hover:bg-[#F5F1E9] transition-colors"
+                  >
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                      className="object-contain p-2 group-hover:scale-106 transition-transform duration-300"
+                    />
+                  </Link>
+
+                  {/* Category Name */}
+                  <p className="text-xs text-gray-500 font-medium truncate mb-1">
+                    {product.categoryName}
+                  </p>
+
+                  {/* Product Title */}
+                  <Link
+                    href={`/products/${product.slug}`}
+                    className="block font-semibold text-sm sm:text-[15px] text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 leading-snug mb-1.5"
+                    title={product.name}
+                  >
+                    {product.name}
+                  </Link>
+
+                  {/* Rating */}
+                  <div className="flex items-center gap-1 text-xs text-amber-500 pt-0.5">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="font-bold text-gray-700">
+                      {product.rating ?? 4.8}
+                    </span>
+                    <span className="text-gray-400">
+                      ({product.reviewCount ?? 50})
+                    </span>
+                  </div>
+
+                  {/* Price & Discount */}
+                  <div className="flex items-center gap-2 flex-wrap pt-1.5">
+                    <span className="font-extrabold text-base sm:text-lg text-[#0D3B37]">
+                      ৳ {product.price}
+                    </span>
+                    {product.salePrice && (
+                      <span className="text-xs sm:text-sm text-gray-400 line-through">
+                        ৳ {product.salePrice}
+                      </span>
+                    )}
+                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                      {discountPct}% OFF
+                    </span>
+                  </div>
+                </div>
+
+                {/* Add to Cart Button */}
+                <div className="pt-4">
+                  <button
+                    type="button"
+                    onClick={() => handleAddToCart(product)}
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                      isAdded
+                        ? "bg-emerald-600 text-white"
+                        : "bg-[#0D3B37] hover:bg-[#E0592A] text-white"
+                    }`}
+                  >
+                    {isAdded ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>Added to Cart</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="w-4 h-4" />
+                        <span>Add to Cart</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 6. WHY CHOOSE SHOILPIKKABBO (Trust Section) */}
+      {/* ========================================================================= */}
+      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-3xl p-8 sm:p-10 lg:p-12 shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left 4 Features (7 Cols) */}
             <div className="lg:col-span-7 space-y-6">
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-[#0D3B37]">
                   <ShieldCheck className="w-5 h-5 text-[#0D3B37]" />
-                  <h3 className="text-xl sm:text-2xl font-bold">
+                  <h3 className="text-2xl sm:text-3xl font-bold tracking-tight">
                     Why Choose SHOILPIKKABBO?
                   </h3>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-500">
+                <p className="text-sm sm:text-[15px] text-gray-500 font-normal">
                   Your trust is our biggest asset
                 </p>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
-                <div className="space-y-1 text-center sm:text-left">
-                  <div className="w-9 h-9 rounded-full bg-[#FAF8F3] text-[#0D3B37] flex items-center justify-center mx-auto sm:mx-0">
+                <div className="space-y-1.5 text-center sm:text-left">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FAF8F3] text-[#0D3B37] flex items-center justify-center mx-auto sm:mx-0 shadow-2xs">
                     <Package className="w-5 h-5" />
                   </div>
-                  <h4 className="text-xs font-bold text-gray-800">
+                  <h4 className="text-sm font-bold text-gray-900">
                     Wide Product Range
                   </h4>
-                  <p className="text-[11px] text-gray-500">
+                  <p className="text-xs text-gray-500">
                     From local to modern
                   </p>
                 </div>
 
-                <div className="space-y-1 text-center sm:text-left">
-                  <div className="w-9 h-9 rounded-full bg-[#FAF8F3] text-[#0D3B37] flex items-center justify-center mx-auto sm:mx-0">
+                <div className="space-y-1.5 text-center sm:text-left">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FAF8F3] text-[#0D3B37] flex items-center justify-center mx-auto sm:mx-0 shadow-2xs">
                     <Lock className="w-5 h-5" />
                   </div>
-                  <h4 className="text-xs font-bold text-gray-800">
+                  <h4 className="text-sm font-bold text-gray-900">
                     Secure Payment
                   </h4>
-                  <p className="text-[11px] text-gray-500">
+                  <p className="text-xs text-gray-500">
                     Safe & trusted transaction
                   </p>
                 </div>
 
-                <div className="space-y-1 text-center sm:text-left">
-                  <div className="w-9 h-9 rounded-full bg-[#FAF8F3] text-[#0D3B37] flex items-center justify-center mx-auto sm:mx-0">
+                <div className="space-y-1.5 text-center sm:text-left">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FAF8F3] text-[#0D3B37] flex items-center justify-center mx-auto sm:mx-0 shadow-2xs">
                     <Truck className="w-5 h-5" />
                   </div>
-                  <h4 className="text-xs font-bold text-gray-800">
+                  <h4 className="text-sm font-bold text-gray-900">
                     Fast Delivery
                   </h4>
-                  <p className="text-[11px] text-gray-500">
+                  <p className="text-xs text-gray-500">
                     On time, every time
                   </p>
                 </div>
 
-                <div className="space-y-1 text-center sm:text-left">
-                  <div className="w-9 h-9 rounded-full bg-[#FAF8F3] text-[#0D3B37] flex items-center justify-center mx-auto sm:mx-0">
+                <div className="space-y-1.5 text-center sm:text-left">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FAF8F3] text-[#0D3B37] flex items-center justify-center mx-auto sm:mx-0 shadow-2xs">
                     <Headset className="w-5 h-5" />
                   </div>
-                  <h4 className="text-xs font-bold text-gray-800">
+                  <h4 className="text-sm font-bold text-gray-900">
                     Customer Support
                   </h4>
-                  <p className="text-[11px] text-gray-500">
+                  <p className="text-xs text-gray-500">
                     Always here for you
                   </p>
                 </div>
@@ -798,10 +925,10 @@ export function ClientMockupHome() {
             </div>
 
             {/* Right Brand Mission Banner (5 Cols) */}
-            <div className="lg:col-span-5 bg-gradient-to-r from-[#0D3B37] to-[#124B46] rounded-xl p-5 sm:p-6 text-white flex items-center justify-between gap-4 shadow-sm relative overflow-hidden">
+            <div className="lg:col-span-5 bg-gradient-to-r from-[#0D3B37] to-[#124B46] rounded-2xl p-6 sm:p-7 text-white flex items-center justify-between gap-5 shadow-sm relative overflow-hidden">
               <div className="space-y-2.5 z-10 max-w-[65%]">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 shrink-0">
+                  <div className="w-7 h-7 shrink-0">
                     <svg className="w-full h-full" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M8 12C8 10.8954 8.89543 10 10 10H30C31.1046 10 32 10.8954 32 12L34 33C34 34.6569 32.6569 36 31 36H9C7.34315 36 6 34.6569 6 33L8 12Z" fill="#186A62" />
                       <path d="M14 12V9C14 6.79086 15.7909 5 18 5H22C24.2091 5 26 6.79086 26 9V12" stroke="#186A62" strokeWidth="2.5" strokeLinecap="round" />
@@ -814,14 +941,14 @@ export function ClientMockupHome() {
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-[13px] text-white/90 leading-relaxed font-light">
+                <p className="text-xs sm:text-sm text-white/95 leading-relaxed font-light">
                   &ldquo;We are committed to delivering high-quality products
                   and services with trust, care and reliability to make your
                   life easier.&rdquo;
                 </p>
               </div>
 
-              <div className="relative w-28 h-24 shrink-0">
+              <div className="relative w-28 h-24 sm:w-32 sm:h-28 shrink-0">
                 <Image
                   src="/images/client-mockup/trust-mission-banner.png"
                   alt="Commitment and Trust"
@@ -833,6 +960,7 @@ export function ClientMockupHome() {
           </div>
         </div>
       </section>
+      </div>
     </div>
   );
 }
