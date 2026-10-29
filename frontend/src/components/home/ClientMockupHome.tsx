@@ -14,6 +14,8 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  Loader2,
   LayoutGrid,
   Gift,
   Settings,
@@ -67,19 +69,48 @@ export function ClientMockupHome() {
   // Top 5 Featured Products matching user request
   const featuredProducts = MOCK_PRODUCTS.slice(0, 5);
 
-  // 10 Products for "For You" Section (5 per row, 2 rows)
-  const forYouProducts = [
-    MOCK_PRODUCTS[0], // Jute Shopping Bag
-    MOCK_PRODUCTS[1], // Baby Care Set
-    MOCK_PRODUCTS[2], // Organic Honey
-    MOCK_PRODUCTS[3], // Men's T-Shirt
-    MOCK_PRODUCTS[4], // Organic Fertilizer
-    MOCK_PRODUCTS[5], // Cosmetic Set
-    MOCK_PRODUCTS[6], // Everyday Jute Basket
-    MOCK_PRODUCTS[7], // The Everyday Jute Tote
-    MOCK_PRODUCTS[8], // Woven Coaster Set
-    MOCK_PRODUCTS[10] || MOCK_PRODUCTS[9], // Terracotta Stem Vase
-  ].filter(Boolean);
+  // Extended pool of 40 products for "For You" (5 items per row, batches of 10 items / 2 rows)
+  const allForYouProducts = React.useMemo(() => {
+    const baseItems = [
+      MOCK_PRODUCTS[0], // Jute Shopping Bag
+      MOCK_PRODUCTS[1], // Baby Care Set
+      MOCK_PRODUCTS[2], // Organic Honey
+      MOCK_PRODUCTS[3], // Men's T-Shirt
+      MOCK_PRODUCTS[4], // Organic Fertilizer
+      MOCK_PRODUCTS[5], // Cosmetic Set
+      MOCK_PRODUCTS[6], // Everyday Jute Basket
+      MOCK_PRODUCTS[7], // The Everyday Jute Tote
+      MOCK_PRODUCTS[8], // Woven Coaster Set
+      MOCK_PRODUCTS[10] || MOCK_PRODUCTS[9], // Terracotta Stem Vase
+    ].filter(Boolean);
+
+    // Combine with the rest of MOCK_PRODUCTS and cycle up to 40 items
+    const pool = [...baseItems, ...MOCK_PRODUCTS.slice(10), ...MOCK_PRODUCTS];
+    return Array.from({ length: 40 }).map((_, idx) => {
+      const item = pool[idx % pool.length];
+      return {
+        ...item,
+        id: `${item.id}-fy-${idx}`,
+      };
+    });
+  }, []);
+
+  // Show 2 rows initially (5 products per row = 10 products)
+  const [forYouVisibleCount, setForYouVisibleCount] = React.useState(10);
+  const [isLoadingMoreForYou, setIsLoadingMoreForYou] = React.useState(false);
+
+  // Load 2 more rows (10 products) per click
+  const handleLoadMoreForYou = () => {
+    setIsLoadingMoreForYou(true);
+    setTimeout(() => {
+      setForYouVisibleCount((prev) => Math.min(prev + 10, allForYouProducts.length));
+      setIsLoadingMoreForYou(false);
+    }, 400);
+  };
+
+  const displayedForYouProducts = React.useMemo(() => {
+    return allForYouProducts.slice(0, forYouVisibleCount);
+  }, [allForYouProducts, forYouVisibleCount]);
 
   // Hero carousel slides data based on user assets
   const heroSlides = React.useMemo(() => [
@@ -857,9 +888,9 @@ export function ClientMockupHome() {
           </Link>
         </div>
 
-        {/* 5-Column Grid with 2 Rows (10 Products total) */}
+        {/* 5-Column Grid (Loads 2 rows / 10 products per batch) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
-          {forYouProducts.map((product) => {
+          {displayedForYouProducts.map((product) => {
             const isWishlisted = !!wishlist[product.id];
             const isAdded = addedProductId === product.id;
             const discountPct =
@@ -978,6 +1009,40 @@ export function ClientMockupHome() {
               </div>
             );
           })}
+        </div>
+
+        {/* Load More Button Area (Loads 2 rows = 10 products per click) */}
+        <div className="mt-10 sm:mt-12 flex flex-col items-center justify-center text-center">
+          <p className="text-xs sm:text-sm text-gray-500 mb-3.5 font-medium">
+            Showing <span className="font-bold text-[#0D3B37]">{displayedForYouProducts.length}</span> of{" "}
+            <span className="font-bold text-[#0D3B37]">{allForYouProducts.length}</span> recommendations
+          </p>
+
+          {displayedForYouProducts.length < allForYouProducts.length ? (
+            <button
+              type="button"
+              onClick={handleLoadMoreForYou}
+              disabled={isLoadingMoreForYou}
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 sm:px-10 sm:py-4 rounded-full bg-[#0D3B37] hover:bg-[#E0592A] text-white font-bold text-sm sm:text-base transition-all duration-300 shadow-[0_4px_16px_rgba(13,59,55,0.18)] hover:shadow-[0_8px_24px_rgba(224,89,42,0.28)] hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-75 disabled:cursor-not-allowed group cursor-pointer"
+            >
+              {isLoadingMoreForYou ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin text-white" />
+                  <span>আরও পণ্য লোড হচ্ছে...</span>
+                </>
+              ) : (
+                <>
+                  <span>Load More Products</span>
+                  <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+                </>
+              )}
+            </button>
+          ) : (
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-sm font-semibold shadow-xs">
+              <Check className="w-4 h-4 text-emerald-600" />
+              <span>সব রিকমেন্ডেশন দেখানো হয়েছে (All Products Loaded)</span>
+            </div>
+          )}
         </div>
       </section>
 
