@@ -12,8 +12,13 @@ import {
   X,
   ArrowRight,
   ArrowUpRight,
+  ChevronDown,
+  LogOut,
+  Package,
+  ShieldCheck,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { MOCK_PRODUCTS } from "@/data/mock-data";
 
 const SEARCH_CATEGORIES = [
@@ -52,15 +57,18 @@ function SearchParamsSync({ onSync }: { onSync: (q: string) => void }) {
 export function Header() {
   const router = useRouter();
   const { totalItemCount, setIsCartOpen } = useCart();
+  const { user, isAuthenticated, logout } = useAuth();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = React.useState(false);
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = React.useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
   const [lang, setLang] = React.useState<"en" | "bn">("en");
   const [catalogProducts, setCatalogProducts] = React.useState<any[]>(MOCK_PRODUCTS);
 
   const desktopSearchRef = React.useRef<HTMLDivElement>(null);
   const mobileSearchRef = React.useRef<HTMLDivElement>(null);
+  const userMenuRef = React.useRef<HTMLDivElement>(null);
 
   // Fetch live products for accurate global search
   React.useEffect(() => {
@@ -103,6 +111,12 @@ export function Header() {
       ) {
         setIsMobileDropdownOpen(false);
       }
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(e.target as Node)
+      ) {
+        setIsUserMenuOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -115,6 +129,7 @@ export function Header() {
         setIsDesktopDropdownOpen(false);
         setIsMobileDropdownOpen(false);
         setIsMobileMenuOpen(false);
+        setIsUserMenuOpen(false);
       }
     }
     window.addEventListener("keydown", handleKeyDown);
@@ -496,15 +511,93 @@ export function Header() {
 
           {/* Right: Actions */}
           <div className="flex items-center gap-3.5 sm:gap-5 lg:gap-9 shrink-0">
-            <Link
-              href="/login"
-              className="flex items-center gap-2 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group"
-              title="Account"
-              aria-label="Account"
-            >
-              <User className="w-[19px] h-[19px] sm:w-[20px] sm:h-[20px] text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
-              <span className="hidden lg:inline">Sign in</span>
-            </Link>
+            {isAuthenticated && user ? (
+              <div className="relative" ref={userMenuRef}>
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center gap-2 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group cursor-pointer"
+                  title="My Account"
+                  aria-label="My Account"
+                >
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#143527] text-white flex items-center justify-center text-xs font-semibold uppercase">
+                    {user.name ? user.name.charAt(0) : "U"}
+                  </div>
+                  <div className="hidden lg:flex flex-col items-start leading-tight">
+                    <span className="text-[10.5px] text-[#7A837C] font-normal">Welcome,</span>
+                    <span className="font-medium text-[#143527] max-w-[110px] truncate text-xs sm:text-[13px]">
+                      {user.name.split(" ")[0]}
+                    </span>
+                  </div>
+                  <ChevronDown className={`hidden lg:inline w-3.5 h-3.5 text-[#7A837C] group-hover:text-[#143527] transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
+                </button>
+
+                {/* Account Dropdown Menu */}
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-56 rounded-md bg-white border border-[#EAE3D5] shadow-xl py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-4 py-2.5 border-b border-[#EAE3D5]">
+                      <p className="text-[11px] text-[#7A837C] font-normal">Signed in as</p>
+                      <p className="text-sm font-semibold text-[#143527] truncate mt-0.5">{user.name}</p>
+                      <p className="text-[11.5px] text-[#7A837C] truncate">{user.phone || user.email}</p>
+                    </div>
+
+                    <div className="py-1 text-xs sm:text-sm text-[#2D3F33]">
+                      <Link
+                        href="/account"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-[#FAF7F2] hover:text-[#B85D38] transition-colors"
+                      >
+                        <User className="w-4 h-4 text-[#8C948E]" />
+                        <span>My Profile & Orders</span>
+                      </Link>
+
+                      <Link
+                        href="/track-order"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 hover:bg-[#FAF7F2] hover:text-[#B85D38] transition-colors"
+                      >
+                        <Package className="w-4 h-4 text-[#8C948E]" />
+                        <span>Track My Order</span>
+                      </Link>
+
+                      {(user.role === "ADMIN" || user.role === "SUPER_ADMIN" || user.role === "STAFF") && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2 font-semibold text-[#143527] hover:bg-[#FAF7F2] hover:text-[#B85D38] transition-colors border-t border-[#EAE3D5]/50"
+                        >
+                          <ShieldCheck className="w-4 h-4 text-[#143527]" />
+                          <span>Admin Dashboard</span>
+                        </Link>
+                      )}
+                    </div>
+
+                    <div className="border-t border-[#EAE3D5] pt-1">
+                      <button
+                        onClick={async () => {
+                          setIsUserMenuOpen(false);
+                          await logout();
+                          router.push("/");
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer text-left"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-2 text-[13.5px] sm:text-[14px] text-[#143527] hover:text-[#B85D38] transition-colors font-medium group"
+                title="Sign in"
+                aria-label="Sign in"
+              >
+                <User className="w-[19px] h-[19px] sm:w-[20px] sm:h-[20px] text-[#143527] group-hover:text-[#B85D38] transition-colors" strokeWidth={1.6} />
+                <span className="hidden lg:inline">Sign in</span>
+              </Link>
+            )}
 
             <button
               onClick={() => setIsCartOpen(true)}
@@ -670,6 +763,40 @@ export function Header() {
 
           {/* Drawer Scrollable Content */}
           <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+            {/* User Profile Banner in Mobile Drawer */}
+            {isAuthenticated && user ? (
+              <div className="bg-[#F7F4EE] rounded-lg p-3.5 border border-[#EAE3D5] flex items-center justify-between">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-full bg-[#143527] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                    {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-[#143527] truncate">{user.name}</p>
+                    <p className="text-xs text-[#7A837C] truncate">{user.phone || user.email}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={async () => {
+                    setIsMobileMenuOpen(false);
+                    await logout();
+                    router.push("/");
+                  }}
+                  className="text-xs text-red-600 font-medium hover:underline shrink-0 ml-2 cursor-pointer"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-[#143527] text-white text-sm font-medium rounded-[2px] hover:bg-[#0F261B] transition-colors shadow-xs"
+              >
+                <User className="w-4 h-4" />
+                <span>Sign in to your account</span>
+              </Link>
+            )}
+
             {/* Primary Navigation */}
             <div>
               <p className="text-[10.5px] font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3">

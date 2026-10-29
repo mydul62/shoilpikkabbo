@@ -4,9 +4,15 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Search, Package, User } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export function MobileBottomNav() {
   const pathname = usePathname();
+  const { user, isAuthenticated } = useAuth();
+
+  const accountHref = isAuthenticated
+    ? (user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" ? "/admin" : "/account")
+    : "/login";
 
   const navItems = [
     {
@@ -28,10 +34,10 @@ export function MobileBottomNav() {
       isActive: pathname.startsWith("/track-order"),
     },
     {
-      label: "Account",
-      href: "/login",
+      label: isAuthenticated ? "Account" : "Sign In",
+      href: accountHref,
       icon: User,
-      isActive: pathname.startsWith("/login") || pathname.startsWith("/register") || pathname.startsWith("/account"),
+      isActive: pathname.startsWith("/login") || pathname.startsWith("/register") || pathname.startsWith("/account") || pathname.startsWith("/admin"),
     },
   ];
 
