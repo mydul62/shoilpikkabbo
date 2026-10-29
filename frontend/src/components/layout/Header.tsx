@@ -108,12 +108,13 @@ export function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close dropdowns on Escape key
+  // Close dropdowns and mobile menu on Escape key
   React.useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setIsDesktopDropdownOpen(false);
         setIsMobileDropdownOpen(false);
+        setIsMobileMenuOpen(false);
       }
     }
     window.addEventListener("keydown", handleKeyDown);
@@ -405,17 +406,28 @@ export function Header() {
       {/* 2. Main Header Row */}
       <div className="border-b border-[#EAE3D5] bg-[#F7F4EE]">
         <div className="max-w-[1524px] mx-auto px-5 py-3.5 sm:py-4 lg:py-5 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
-          {/* Mobile & Tablet Menu Button */}
+          {/* Mobile & Tablet Menu Button with Smooth Icon Transition */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-1.5 -ml-1 text-[#143527] hover:bg-[#EFE8DC] rounded-xs focus:outline-none cursor-pointer"
+            className="lg:hidden p-1.5 -ml-1 text-[#143527] hover:bg-[#EFE8DC] rounded-xs focus:outline-none cursor-pointer transition-colors"
             aria-label="Toggle navigation menu"
           >
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+            <div className="relative w-6 h-6 flex items-center justify-center">
+              <span
+                className={`absolute transition-all duration-300 ease-in-out transform ${
+                  isMobileMenuOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 rotate-90 scale-75"
+                }`}
+              >
+                <X className="h-6 w-6" />
+              </span>
+              <span
+                className={`absolute transition-all duration-300 ease-in-out transform ${
+                  !isMobileMenuOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-75"
+                }`}
+              >
+                <Menu className="h-6 w-6" />
+              </span>
+            </div>
           </button>
 
           {/* Brand Logo / Title */}
@@ -603,89 +615,105 @@ export function Header() {
         </div>
       </nav>
 
-      {/* Mobile Drawer Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden border-b border-[#EAE3D5] bg-[#F7F4EE] px-6 pt-5 pb-8 space-y-4 animate-in fade-in duration-200">
-          <div className="space-y-2 text-sm text-[#243329] font-medium divide-y divide-[#EAE3D5]/60">
-            <div className="flex flex-col space-y-3">
-              <Link
-                href="/shop"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="hover:text-[#B85D38] transition-colors"
-              >
-                Shop all
-              </Link>
-              <Link
-                href="/shop?category=handicraft"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="hover:text-[#B85D38] transition-colors"
-              >
-                Handicrafts
-              </Link>
-              <Link
-                href="/shop?category=jute-items"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="hover:text-[#B85D38] transition-colors"
-              >
-                Jute Items
-              </Link>
-              <Link
-                href="/shop?category=corporate-gift-items"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="hover:text-[#B85D38] transition-colors"
-              >
-                Gifting
-              </Link>
-              <Link
-                href="/services"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="hover:text-[#B85D38] transition-colors"
-              >
-                Services
-              </Link>
-            </div>
+      {/* Mobile Menubar Dropdown with smooth slow height, opacity, and backdrop transition */}
+      <div
+        className={`lg:hidden grid transition-all duration-500 ease-in-out border-b bg-[#F7F4EE] ${
+          isMobileMenuOpen
+            ? "grid-rows-[1fr] opacity-100 border-[#EAE3D5]"
+            : "grid-rows-[0fr] opacity-0 pointer-events-none border-transparent"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="px-6 pt-5 pb-8 space-y-4">
+            <div className="space-y-2 text-sm text-[#243329] font-medium divide-y divide-[#EAE3D5]/60">
+              <div className="flex flex-col space-y-3">
+                <Link
+                  href="/shop"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="hover:text-[#B85D38] transition-colors"
+                >
+                  Shop all
+                </Link>
+                <Link
+                  href="/shop?category=handicraft"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="hover:text-[#B85D38] transition-colors"
+                >
+                  Handicrafts
+                </Link>
+                <Link
+                  href="/shop?category=jute-items"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="hover:text-[#B85D38] transition-colors"
+                >
+                  Jute Items
+                </Link>
+                <Link
+                  href="/shop?category=corporate-gift-items"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="hover:text-[#B85D38] transition-colors"
+                >
+                  Gifting
+                </Link>
+                <Link
+                  href="/services"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="hover:text-[#B85D38] transition-colors"
+                >
+                  Services
+                </Link>
+              </div>
 
-            <div className="pt-3.5 flex flex-col space-y-3">
-              <Link
-                href="/offers"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-[#B85D38] font-semibold"
-              >
-                Offers / Discounts
-              </Link>
-              <Link
-                href="/about"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="hover:text-[#B85D38] transition-colors"
-              >
-                About us
-              </Link>
-              <Link
-                href="/careers"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="hover:text-[#B85D38] transition-colors"
-              >
-                Career
-              </Link>
-              <Link
-                href="/contact"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="hover:text-[#B85D38] transition-colors"
-              >
-                Contact us
-              </Link>
-              <Link
-                href="/admin"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-[#143527] font-bold flex items-center justify-between pt-1"
-              >
-                <span>Admin Dashboard</span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <div className="pt-3.5 flex flex-col space-y-3">
+                <Link
+                  href="/offers"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-[#B85D38] font-semibold"
+                >
+                  Offers / Discounts
+                </Link>
+                <Link
+                  href="/about"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="hover:text-[#B85D38] transition-colors"
+                >
+                  About us
+                </Link>
+                <Link
+                  href="/careers"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="hover:text-[#B85D38] transition-colors"
+                >
+                  Career
+                </Link>
+                <Link
+                  href="/contact"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="hover:text-[#B85D38] transition-colors"
+                >
+                  Contact us
+                </Link>
+                <Link
+                  href="/admin"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-[#143527] font-bold flex items-center justify-between pt-1"
+                >
+                  <span>Admin Dashboard</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
+
+      {/* Dimmed backdrop when mobile menubar is open */}
+      <div
+        className={`lg:hidden fixed inset-0 top-[110px] bg-black/40 backdrop-blur-xs z-30 transition-opacity duration-500 ease-in-out ${
+          isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
     </header>
   );
 }

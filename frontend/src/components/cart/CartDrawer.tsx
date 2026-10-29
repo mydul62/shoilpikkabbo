@@ -22,18 +22,46 @@ export function CartDrawer() {
     total,
   } = useCart();
 
-  if (!isCartOpen) return null;
+  // Prevent background scrolling and handle Escape key when cart drawer is open
+  React.useEffect(() => {
+    if (isCartOpen) {
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          setIsCartOpen(false);
+        }
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = "";
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [isCartOpen, setIsCartOpen]);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* Backdrop */}
+    <div
+      className={`fixed inset-0 z-50 overflow-hidden transition-all duration-500 ease-in-out ${
+        isCartOpen ? "visible pointer-events-auto" : "invisible pointer-events-none delay-500"
+      }`}
+      aria-hidden={!isCartOpen}
+    >
+      {/* Backdrop with smooth slow fade-in/fade-out */}
       <div
-        className="fixed inset-0 bg-charcoal-950/60 backdrop-blur-xs transition-opacity"
+        className={`fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-500 ease-in-out ${
+          isCartOpen ? "opacity-100" : "opacity-0"
+        }`}
         onClick={() => setIsCartOpen(false)}
       />
 
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-2 sm:pl-10">
-        <div className="w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-brand-border">
+        <div
+          className={`w-screen max-w-md bg-white shadow-2xl flex flex-col border-l border-brand-border transform transition-transform duration-500 ease-out ${
+            isCartOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-sand bg-ivory">
             <div className="flex items-center gap-2">
