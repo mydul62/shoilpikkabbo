@@ -30,20 +30,21 @@ function ShopContent() {
   const initialCat = searchParams.get("category");
   const initialQ = searchParams.get("q") || "";
 
-  // State
+  // State - Default to showing all products without hardcoded mock filters
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
-    initialCat ? [initialCat] : ["jute-items"]
+    initialCat ? [initialCat] : []
   );
-  const [searchQuery, setSearchQuery] = React.useState<string>(initialQ || "jute");
-  const [searchInput, setSearchInput] = React.useState<string>(initialQ || "jute");
+  const [searchQuery, setSearchQuery] = React.useState<string>(initialQ || "");
+  const [searchInput, setSearchInput] = React.useState<string>(initialQ || "");
   const [sortBy, setSortBy] = React.useState<string>("featured");
   const [minPriceInput, setMinPriceInput] = React.useState<string>("0");
-  const [maxPriceInput, setMaxPriceInput] = React.useState<string>("2000");
+  const [maxPriceInput, setMaxPriceInput] = React.useState<string>("10000");
   const [appliedMinPrice, setAppliedMinPrice] = React.useState<number>(0);
-  const [appliedMaxPrice, setAppliedMaxPrice] = React.useState<number>(2000);
-  const [inStockOnly, setInStockOnly] = React.useState<boolean>(true);
+  const [appliedMaxPrice, setAppliedMaxPrice] = React.useState<number>(10000);
+  const [inStockOnly, setInStockOnly] = React.useState<boolean>(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState<boolean>(false);
   const [addedProductId, setAddedProductId] = React.useState<string | null>(null);
+  const [liveCategories, setLiveCategories] = React.useState<any[]>([]);
 
   // Sync with searchParams
   React.useEffect(() => {
@@ -138,7 +139,18 @@ function ShopContent() {
         // Fallback to MOCK_PRODUCTS
       }
     };
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/v1/categories");
+        const json = await res.json();
+        if (json.success && json.data) {
+          setLiveCategories(json.data);
+        }
+      } catch (e) {}
+    };
+
     fetchCatalog();
+    fetchCategories();
   }, []);
 
   const catalogProducts = liveProducts.length > 0 ? liveProducts : MOCK_PRODUCTS;
@@ -314,7 +326,7 @@ function ShopContent() {
                 Categories
               </h3>
               <div className="space-y-2.5">
-                {OFFICIAL_CATEGORIES.map((cat) => {
+                {(liveCategories.length > 0 ? liveCategories : OFFICIAL_CATEGORIES).map((cat) => {
                   const isChecked = selectedCategories.includes(cat.slug);
                   return (
                     <label

@@ -20,11 +20,41 @@ export default function ProductDetailPage() {
   const slug = params?.slug as string;
   const { addToCart, setIsCartOpen } = useCart();
 
-  // Find product or fallback to Everyday jute basket
-  const product =
+  const fallbackProduct =
     MOCK_PRODUCTS.find((p) => p.slug === slug) ||
-    MOCK_PRODUCTS.find((p) => p.slug === "everyday-jute-basket") ||
     MOCK_PRODUCTS[0];
+
+  const [product, setProduct] = React.useState<Product>(fallbackProduct);
+
+  React.useEffect(() => {
+    if (slug) {
+      fetch(`http://localhost:5000/api/v1/products/${encodeURIComponent(slug)}`)
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.success && json.data) {
+            const p = json.data;
+            setProduct({
+              id: p.id,
+              name: p.name,
+              slug: p.slug,
+              categoryId: p.categoryId,
+              categoryName: p.category?.name || "Artisanal",
+              price: Number(p.price),
+              salePrice: p.salePrice ? Number(p.salePrice) : undefined,
+              stock: p.stock ?? 25,
+              sku: p.sku || `SK-${p.slug}`,
+              rating: 5,
+              reviewCount: 12,
+              imageUrl: p.images?.[0]?.url || "/images/product-jute-basket.png",
+              galleryUrls: p.images?.map((img: any) => img.url) || [],
+              description: p.description || p.name,
+              specifications: p.specifications || {},
+            });
+          }
+        })
+        .catch(() => {});
+    }
+  }, [slug]);
 
   // Gallery images
   const galleryImages = React.useMemo(() => {
