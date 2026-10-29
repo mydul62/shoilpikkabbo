@@ -304,12 +304,12 @@ function ShopContent() {
 
         {/* 4. Two-Column Layout (Sidebar + Catalog) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-          {/* Left Column: Filter your finds Sidebar */}
+          {/* Left Column: Filter your finds Sidebar (Sticky on Large Devices when scrolling) */}
           <aside
-            className={`lg:col-span-3 space-y-7 ${
+            className={`lg:col-span-3 space-y-7 lg:block lg:sticky lg:top-[145px] lg:max-h-[calc(100vh-165px)] lg:overflow-y-auto lg:pr-3 scrollbar-thin ${
               isMobileFilterOpen
-                ? "block bg-white p-5 sm:p-6 rounded-lg border border-[#D5CDC0] shadow-sm mb-6 lg:mb-0"
-                : "hidden lg:block"
+                ? "block bg-white p-5 sm:p-6 rounded-lg border border-[#D5CDC0] shadow-sm mb-6 lg:mb-0 lg:bg-transparent lg:p-0 lg:border-none lg:shadow-none"
+                : "hidden"
             }`}
           >
             <div className="flex items-center justify-between">
