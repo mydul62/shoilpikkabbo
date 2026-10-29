@@ -131,16 +131,16 @@ export function HomeSectionsRenderer({
             {/* Left Column: Typography & Action */}
             <div className="md:col-span-6 lg:col-span-5 flex flex-col justify-center">
               <p className="text-[11px] sm:text-xs font-semibold tracking-[0.16em] uppercase text-[#B85D38] mb-3 sm:mb-4 md:mb-5">
-                {p.overline || "THE EVERYDAY EDIT / 01"}
+                {p.overline || "AUTHENTIC BANGLADESHI CRAFTS & ESSENTIALS"}
               </p>
               <h1
                 style={{ color: p.textColor || "#143527" }}
                 className="font-serif text-[34px] sm:text-[42px] md:text-[48px] lg:text-[64px] xl:text-[72px] leading-[1.08] md:leading-[1.04] font-normal tracking-tight mb-4 sm:mb-5 md:mb-6 whitespace-pre-line"
               >
-                {p.headline || "A little craft.\nA lot of\ncharacter."}
+                {p.headline || "Handcrafted for your home.\nThoughtfully made."}
               </h1>
               <p className="text-[#555A54] text-[13.5px] sm:text-base lg:text-[17px] leading-relaxed max-w-[420px] mb-6 sm:mb-7 md:mb-8 font-light">
-                {p.subtitle || "Thoughtful objects, everyday essentials and services in one considered place."}
+                {p.subtitle || "Discover premium jute decor, traditional handicrafts, lifestyle essentials and custom corporate gifting — delivered all over Bangladesh."}
               </p>
               <div>
                 <Link
@@ -158,10 +158,10 @@ export function HomeSectionsRenderer({
                 </span>
                 <div className="flex flex-col">
                   <span className="text-[11px] font-bold tracking-[0.14em] uppercase text-[#14261D]">
-                    {p.overline || "THE EVERYDAY EDIT"}
+                    {p.overline || "AUTHENTIC BANGLADESHI CRAFTS"}
                   </span>
                   <span className="text-xs text-[#6B665F] font-light mt-0.5">
-                    {p.caption || "Natural textures. Considered details."}
+                    {p.caption || "100% authentic craftsmanship · Sustainable & durable"}
                   </span>
                 </div>
               </div>
@@ -199,7 +199,7 @@ export function HomeSectionsRenderer({
                 href={p.captionLink || "/shop"}
                 className="flex sm:hidden items-center justify-between pt-3 text-[12px] text-[#555A54] hover:text-[#143527] transition-colors group"
               >
-                <span>{p.caption || "Natural textures. Considered details."}</span>
+                <span>{p.caption || "100% authentic craftsmanship · Sustainable & durable"}</span>
                 <ArrowUpRight className="h-3.5 w-3.5 text-[#555A54] group-hover:text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </div>
@@ -224,12 +224,12 @@ export function HomeSectionsRenderer({
                 style={{ color: p.textColor || "#143527" }}
                 className="font-serif text-[24px] sm:text-3xl md:text-[32px] font-normal leading-[1.2] tracking-tight whitespace-pre-line"
               >
-                {p.headline || "For the way you live, give\nand grow."}
+                {p.headline || "Crafted with care.\nMade to last."}
               </h2>
             </div>
             <div className="md:col-span-6">
               <p className="text-[13px] sm:text-[14px] md:text-[14.5px] text-[#556059] font-light leading-relaxed max-w-xl">
-                {p.body || "Welcome to SHOILPIKKABBO. From handcrafted pieces to practical essentials, discover new possibilities for every day."}
+                {p.body || "At SHOILPIKKABBO, we connect local rural artisans with modern homes. Every piece supports sustainable craftsmanship and brings authentic beauty into your everyday life."}
               </p>
             </div>
           </div>
@@ -265,10 +265,10 @@ export function HomeSectionsRenderer({
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-6 sm:mb-8 md:mb-10">
             <div>
               <p className="text-[11px] sm:text-xs font-semibold tracking-[0.16em] uppercase text-[#B85D38] mb-2 sm:mb-2.5">
-                {p.overline || "MANY NEEDS. ONE DESTINATION."}
+                {p.overline || "EXPLORE OUR CATEGORIES"}
               </p>
               <h2 className="font-serif text-[28px] sm:text-3xl md:text-[36px] lg:text-[44px] font-normal text-[#143527] leading-[1.15] sm:leading-[1.1] tracking-tight">
-                {p.headline || "Find your everyday."}
+                {p.headline || "Shop by category."}
               </h2>
             </div>
             <Link
@@ -321,7 +321,7 @@ export function HomeSectionsRenderer({
     );
   };
 
-  // Section 4: Product Grid (The Considered Edit)
+  // Section 4: Product Grid (Customer Favourites & New Arrivals)
   const renderProductGrid = (section: HomeSectionData) => {
     const p = section.props || {};
     const defaultProducts = [
@@ -369,10 +369,10 @@ export function HomeSectionsRenderer({
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8 md:mb-10">
             <div>
               <p className="text-[11px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-2 sm:mb-3">
-                {p.overline || "THE CONSIDERED EDIT"}
+                {p.overline || "CURATED BESTSELLERS"}
               </p>
               <h2 className="font-serif text-[28px] sm:text-3xl md:text-[36px] lg:text-[44px] font-normal text-[#143527] leading-[1.15] sm:leading-[1.1] tracking-tight whitespace-pre-line">
-                {p.headline || "Small details.\nLasting delight."}
+                {p.headline || "Customer favourites\n& new arrivals."}
               </h2>
             </div>
             <Link
@@ -447,13 +447,13 @@ export function HomeSectionsRenderer({
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-14 items-start sm:items-center">
             <div className="md:col-span-6 flex flex-col justify-center">
               <p className="text-[10px] sm:text-xs font-semibold tracking-[0.16em] uppercase text-[#A8BDB2] mb-2 sm:mb-3 md:mb-4">
-                {p.tag || "A LITTLE SOMETHING TO BEGIN"}
+                {p.tag || "SPECIAL WELCOME OFFER"}
               </p>
               <h2
                 style={{ color: p.textColor || "#ffffff" }}
                 className="font-serif text-[28px] sm:text-3xl md:text-[36px] lg:text-[44px] xl:text-[46px] font-normal leading-[1.12] tracking-tight whitespace-pre-line"
               >
-                {p.headline || "Your first find,\na little sweeter."}
+                {p.headline || "Save on your\nfirst purchase."}
               </h2>
             </div>
             <div className="md:col-span-6 flex flex-col items-start justify-center">
@@ -461,7 +461,7 @@ export function HomeSectionsRenderer({
                 {p.offerHighlight || "৳150 off your first ৳1,500 order."}
               </p>
               <p className="text-[11.5px] sm:text-[12px] md:text-[12.5px] font-light text-[#9EB5A7] mb-4 sm:mb-5 md:mb-6">
-                {p.code || "WELCOME150"} <span className="select-none mx-1">·</span> {p.terms || "One use per customer · Valid online"}
+                {p.code || "WELCOME150"} <span className="select-none mx-1">·</span> {p.terms || "One use per customer · Valid on all categories"}
               </p>
               <Link
                 href={p.ctaLink || "/offers"}
@@ -505,13 +505,13 @@ export function HomeSectionsRenderer({
         <div className="max-w-[1524px] mx-auto px-5">
           <div className="mb-6 sm:mb-8 md:mb-10">
             <p className="text-[11px] sm:text-xs font-semibold tracking-[0.16em] uppercase text-[#B85D38] mb-2 sm:mb-2.5">
-              {p.overline || "BEYOND THE BASKET"}
+              {p.overline || "SPECIAL E-SHEBA & CUSTOM SOLUTIONS"}
             </p>
             <h2 className="font-serif text-[28px] sm:text-3xl md:text-[36px] lg:text-[44px] font-normal text-[#143527] leading-[1.12] tracking-tight mb-2">
-              {p.headline || "Make room for possibilities."}
+              {p.headline || "Need custom craft or bulk orders?"}
             </h2>
             <p className="text-[12.5px] sm:text-[13.5px] md:text-[14px] text-[#556059] font-light leading-relaxed max-w-2xl">
-              {p.subtitle || "Proposed service areas. Share your brief; scope and availability are confirmed before any commitment."}
+              {p.subtitle || "We design customized corporate gifts, bulk event items, and bespoke artisan solutions tailored to your unique requirements."}
             </p>
           </div>
 
@@ -538,7 +538,7 @@ export function HomeSectionsRenderer({
             href={p.ctaLink || "/services"}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F7F4EE] hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[13px] font-medium rounded-[2px] transition-all group shadow-2xs"
           >
-            <span>{p.ctaText || "Explore services"}</span>
+            <span>{p.ctaText || "Request a consultation"}</span>
             <ArrowUpRight className="w-3.5 h-3.5 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </Link>
         </div>
@@ -567,22 +567,22 @@ export function HomeSectionsRenderer({
           <div className="md:col-span-6 flex flex-col justify-center px-6 sm:px-8 md:px-10 lg:px-16 xl:px-20 py-10 md:py-12 lg:py-16 bg-[#ECE7DB]">
             <div className="max-w-lg">
               <p className="text-[10.5px] md:text-[11px] font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3">
-                {p.overline || "TEXTURE & EVERYDAY LIFE"}
+                {p.overline || "OUR ARTISAN HERITAGE"}
               </p>
               <h2
                 style={{ color: p.textColor || "#143527" }}
                 className="font-serif text-[28px] md:text-[34px] lg:text-[42px] font-normal leading-[1.16] tracking-tight mb-4 whitespace-pre-line"
               >
-                {p.headline || "Beauty in the things\nwe choose."}
+                {p.headline || "Empowering artisans,\npreserving traditions."}
               </h2>
               <p className="text-[13px] md:text-[13.5px] lg:text-[14.5px] text-[#556059] font-light leading-relaxed mb-6 md:mb-8">
-                {p.body || "The warmth of clay. The quiet character of natural fibres. Objects that feel at home in your life."}
+                {p.body || "From traditional clay pottery to handwoven jute, every Shoilpikkabbo creation celebrates Bangladeshi heritage while providing sustainable livelihoods to rural craft communities."}
               </p>
               <Link
                 href={p.ctaLink || "/about"}
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/80 hover:bg-white border border-[#D5CDC0] hover:border-[#143527] text-[#143527] text-[12.5px] md:text-[13px] font-medium rounded-[2px] transition-all group self-start shadow-2xs"
               >
-                <span>{p.ctaText || "Get to know us"}</span>
+                <span>{p.ctaText || "Learn our story"}</span>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#143527] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </Link>
             </div>
@@ -604,16 +604,16 @@ export function HomeSectionsRenderer({
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-center">
             <div className="md:col-span-6 flex flex-col justify-center">
               <p className="text-[10.5px] md:text-[11px] font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3">
-                {p.overline || "FOR PEOPLE, NOT JUST OCCASIONS"}
+                {p.overline || "CORPORATE & OCCASIONAL GIFTING"}
               </p>
               <h2
                 style={{ color: p.textColor || "#143527" }}
                 className="font-serif text-[28px] md:text-[34px] lg:text-[44px] font-normal leading-[1.14] tracking-tight mb-3 md:mb-4 whitespace-pre-line"
               >
-                {p.headline || "A thoughtful gesture\ngoes a long way."}
+                {p.headline || "Meaningful gifts your clients\n& team will cherish."}
               </h2>
               <p className="text-[13px] md:text-[13.5px] lg:text-[14.5px] text-[#556059] font-light leading-relaxed mb-6 md:mb-8 max-w-[440px]">
-                {p.body || "Gift-worthy pieces for your people or your team. Start larger orders with a simple brief."}
+                {p.body || "Handmade gift hampers, custom branding, and premium artisan boxes for company events, celebrations, and festive occasions."}
               </p>
               <Link
                 href={p.ctaLink || "/services"}
