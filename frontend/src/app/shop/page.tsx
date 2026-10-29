@@ -212,7 +212,7 @@ function ShopContent() {
 
   return (
     <div className="bg-[#F7F4EE] min-h-screen">
-      <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 py-8 sm:py-12">
+      <div className="max-w-[1524px] mx-auto px-5 py-8 sm:py-12">
         {/* 1. Breadcrumbs */}
         <nav aria-label="Breadcrumbs" className="flex items-center gap-1.5 text-[11.5px] sm:text-[12px] text-[#7E8881] font-light mb-3">
           <Link href="/" className="hover:text-[#143527] transition-colors">

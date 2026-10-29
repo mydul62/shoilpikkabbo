@@ -80,7 +80,7 @@ export default function CartPage() {
   return (
     <StorefrontLayout>
       <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-8 sm:py-12 border-b border-[#EAE3D5]">
-        <div className="max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1524px] mx-auto px-5">
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-1.5 text-[12px] text-[#7A837C] mb-6">
             <Link href="/" className="hover:text-[#143527] transition-colors">

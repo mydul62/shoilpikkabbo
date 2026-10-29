@@ -34,8 +34,8 @@ export function Header() {
   return (
     <header className="w-full bg-[#F7F4EE] z-40 sticky top-0 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
       {/* 1. Top Announcement Bar */}
-      <div className="bg-[#133829] text-[#DCE5DF] py-2 px-4 sm:px-8 lg:px-16 border-b border-[#0F2D21]">
-        <div className="max-w-[1440px] mx-auto flex items-center justify-between text-[11px] sm:text-[12px] font-normal tracking-wide">
+      <div className="bg-[#133829] text-[#DCE5DF] py-2 border-b border-[#0F2D21]">
+        <div className="max-w-[1524px] mx-auto px-5 flex items-center justify-between text-[11px] sm:text-[12px] font-normal tracking-wide">
           {/* Left Text: Delivery • Quality • Reliability */}
           <div className="text-[#DCE5DF] font-light">
             Delivery • Quality • Reliability
@@ -76,7 +76,7 @@ export function Header() {
 
       {/* 2. Main Header Row */}
       <div className="border-b border-[#EAE3D5] bg-[#F7F4EE]">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 py-3.5 sm:py-4 lg:py-5 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
+        <div className="max-w-[1524px] mx-auto px-5 py-3.5 sm:py-4 lg:py-5 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
           {/* Mobile & Tablet Menu Button (Left, visible on < lg) */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -165,7 +165,7 @@ export function Header() {
 
       {/* 3. Secondary Category Bar (Horizontal swipeable on Mobile/Tablet, Distributed on Desktop) */}
       <nav className="border-b border-[#EAE3D5] bg-[#F7F4EE] overflow-x-auto scrollbar-none">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-16 flex items-center justify-start lg:justify-between gap-5 sm:gap-7 lg:gap-0 py-2.5 sm:py-3 text-[12.5px] sm:text-[13.5px] whitespace-nowrap min-w-max lg:min-w-0">
+        <div className="max-w-[1524px] mx-auto px-5 flex items-center justify-start lg:justify-between gap-5 sm:gap-7 lg:gap-0 py-2.5 sm:py-3 text-[12.5px] sm:text-[13.5px] whitespace-nowrap min-w-max lg:min-w-0">
           <Link
             href="/shop"
             className="text-[#243329] font-medium hover:text-[#B85D38] transition-colors"

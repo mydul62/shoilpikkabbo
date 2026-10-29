@@ -98,7 +98,7 @@ function OrderConfirmationContent() {
 
   return (
     <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16">
-      <div className="max-w-[1040px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1524px] mx-auto px-5">
         {/* Top Tag & Checkmark */}
         <div className="flex items-start gap-4 mb-6">
           <div className="w-10 h-10 rounded-full bg-[#E5ECE7] text-[#143527] flex items-center justify-center shrink-0 mt-1">

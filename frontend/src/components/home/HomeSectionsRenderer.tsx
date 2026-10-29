@@ -126,7 +126,7 @@ export function HomeSectionsRenderer({
         style={{ backgroundColor: p.bgColor || "#FAF7F2" }}
         className="relative pt-6 pb-6 sm:py-10 md:py-12 lg:py-16 border-b border-[#EAE3D6] overflow-hidden"
       >
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="max-w-[1524px] mx-auto px-5">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-12 xl:gap-16 items-center">
             {/* Left Column: Typography & Action */}
             <div className="md:col-span-6 lg:col-span-5 flex flex-col justify-center">
@@ -217,7 +217,7 @@ export function HomeSectionsRenderer({
         style={{ backgroundColor: p.bgColor || "#EBF0EC" }}
         className="border-b border-[#D8DFD9] py-8 sm:py-10 md:py-12"
       >
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="max-w-[1524px] mx-auto px-5">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 items-center">
             <div className="md:col-span-6">
               <h2
@@ -261,7 +261,7 @@ export function HomeSectionsRenderer({
         style={{ backgroundColor: p.bgColor || "#FAF7F2" }}
         className="py-10 sm:py-14 md:py-16 lg:py-20 border-b border-[#EAE3D5]"
       >
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="max-w-[1524px] mx-auto px-5">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-6 sm:mb-8 md:mb-10">
             <div>
               <p className="text-[11px] sm:text-xs font-semibold tracking-[0.16em] uppercase text-[#B85D38] mb-2 sm:mb-2.5">
@@ -365,7 +365,7 @@ export function HomeSectionsRenderer({
         style={{ backgroundColor: p.bgColor || "#FAF7F2" }}
         className="py-10 sm:py-14 md:py-16 lg:py-20 border-b border-[#EAE3D5]"
       >
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="max-w-[1524px] mx-auto px-5">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6 sm:mb-8 md:mb-10">
             <div>
               <p className="text-[11px] sm:text-xs font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-2 sm:mb-3">
@@ -443,7 +443,7 @@ export function HomeSectionsRenderer({
         style={{ backgroundColor: p.bgColor || "#143527" }}
         className="text-white py-10 sm:py-14 md:py-16 lg:py-20 border-y border-[#0E2C1F] overflow-hidden"
       >
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="max-w-[1524px] mx-auto px-5">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 lg:gap-14 items-start sm:items-center">
             <div className="md:col-span-6 flex flex-col justify-center">
               <p className="text-[10px] sm:text-xs font-semibold tracking-[0.16em] uppercase text-[#A8BDB2] mb-2 sm:mb-3 md:mb-4">
@@ -502,7 +502,7 @@ export function HomeSectionsRenderer({
         style={{ backgroundColor: p.bgColor || "#FAF7F2" }}
         className="py-10 sm:py-14 md:py-16 lg:py-24 border-b border-[#EAE3D5]"
       >
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="max-w-[1524px] mx-auto px-5">
           <div className="mb-6 sm:mb-8 md:mb-10">
             <p className="text-[11px] sm:text-xs font-semibold tracking-[0.16em] uppercase text-[#B85D38] mb-2 sm:mb-2.5">
               {p.overline || "BEYOND THE BASKET"}
@@ -600,7 +600,7 @@ export function HomeSectionsRenderer({
         style={{ backgroundColor: p.bgColor || "#FAF7F2" }}
         className="py-10 sm:py-14 md:py-16 lg:py-24 border-b border-[#EAE3D5]"
       >
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="max-w-[1524px] mx-auto px-5">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-14 items-center">
             <div className="md:col-span-6 flex flex-col justify-center">
               <p className="text-[10.5px] md:text-[11px] font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3">

@@ -74,3 +74,13 @@ body {
 * {
   border-color: #e7dfd5;
 }
+
+/* Standard site container for large desktop (1484px content + 20px padding each side = 1524px max-width) */
+.container-site {
+  width: 100%;
+  max-width: 1524px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}

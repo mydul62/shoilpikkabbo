@@ -79,7 +79,7 @@ export default function AccountPage() {
 
   return (
     <StorefrontLayout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <div className="max-w-[1524px] mx-auto px-5 py-10 space-y-8">
         {/* User Welcome Banner */}
         <div className="p-6 sm:p-8 rounded-3xl bg-forest-950 text-sand border border-forest-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">

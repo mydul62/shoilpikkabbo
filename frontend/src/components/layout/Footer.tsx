@@ -10,7 +10,7 @@ export function Footer() {
     <div className="mt-auto pb-14 md:pb-0">
       {/* 1. Value Proposition 3-Step Process & Help Bar */}
       <div className="bg-[#EBF0EC] border-t border-[#D8DFD9]">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-16 py-8 sm:py-16">
+        <div className="max-w-[1524px] mx-auto px-5 py-8 sm:py-16">
           {/* Header on mobile & desktop */}
           <div className="mb-6 sm:mb-10">
             <h3 className="font-serif text-2xl sm:text-3xl lg:text-[34px] font-normal text-[#143527] leading-snug">
@@ -91,7 +91,7 @@ export function Footer() {
 
       {/* 2. Main Deep Green Footer */}
       <footer className="bg-[#133829] text-white overflow-hidden">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-10 lg:px-16 pt-8 sm:pt-14 lg:pt-20 pb-8 sm:pb-16">
+        <div className="max-w-[1524px] mx-auto px-5 pt-8 sm:pt-14 lg:pt-20 pb-8 sm:pb-16">
           <div className="space-y-6 sm:space-y-0 sm:grid sm:grid-cols-2 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-8 pb-6 sm:pb-12">
             {/* Column 1: Brand Info */}
             <div className="sm:col-span-1 lg:col-span-5">
