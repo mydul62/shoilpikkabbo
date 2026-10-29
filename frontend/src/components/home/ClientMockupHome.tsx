@@ -81,81 +81,206 @@ export function ClientMockupHome() {
     MOCK_PRODUCTS[10] || MOCK_PRODUCTS[9], // Terracotta Stem Vase
   ].filter(Boolean);
 
+  // Hero carousel slides data based on user assets
+  const heroSlides = React.useMemo(() => [
+    {
+      id: 1,
+      bgImage: "/images/client-mockup/hero-bg-exact.png",
+      pill: "Handmade  •  Eco Friendly  •  Local Products",
+      titleLine1: "বাংলার ঐতিহ্য,",
+      titleLine2: "আপনার প্রয়োজন",
+      subtitleLine1: "দেশীয় পণ্য ও আধুনিক সেবার সমন্বয়ে",
+      subtitleLine2: "শিল্পকলা এখন আপনার হাতের কাছে!",
+      ctaText: "Shop Now",
+      ctaLink: "/shop",
+      showBadge: true,
+    },
+    {
+      id: 2,
+      bgImage: "/images/client-mockup/hero-bg-green.png",
+      pill: "100% Natural  •  Pure Living  •  Sustainable",
+      titleLine1: "প্রকৃতির সান্নিধ্যে,",
+      titleLine2: "বিশুদ্ধ সমাহার",
+      subtitleLine1: "পরিবেশবান্ধব ও খাঁটি সামগ্রীর অনন্য কালেকশন",
+      subtitleLine2: "আপনার প্রতিদিনের জীবনের সেরা সঙ্গী!",
+      ctaText: "Explore More",
+      ctaLink: "/shop",
+      showBadge: false,
+    },
+    {
+      id: 3,
+      bgImage: "/images/client-mockup/hero-bg-peach.png",
+      pill: "Artisanal Craft  •  Jute & Clay  •  Heritage",
+      titleLine1: "মাটির সুরভী,",
+      titleLine2: "ঐতিহ্যের কারুকাজ",
+      subtitleLine1: "হাতে বোনা পাটজাত পণ্য ও লোকশিল্পের ভাণ্ডার",
+      subtitleLine2: "বাঙালির ঘর সাজুক দেশীয় শিল্পে!",
+      ctaText: "View Crafts",
+      ctaLink: "/shop",
+      showBadge: false,
+    },
+    {
+      id: 4,
+      bgImage: "/images/client-mockup/hero-bg-exact.png",
+      pill: "Corporate Gifting  •  Custom Orders  •  Special E-Sheba",
+      titleLine1: "কর্পোরেট সলিউশন,",
+      titleLine2: "বিশেষ ই-সেবা",
+      subtitleLine1: "প্রতিষ্ঠানিক উপহার ও কাস্টমাইজড শিল্পজাত সামগ্রী",
+      subtitleLine2: "সারাদেশে নিরাপদ ও নির্ভরযোগ্য ডেলিভারি!",
+      ctaText: "Order E-Sheba",
+      ctaLink: "/e-sheba",
+      showBadge: true,
+    },
+  ], []);
+
+  const nextSlide = React.useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  }, [heroSlides.length]);
+
+  const prevSlide = React.useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  }, [heroSlides.length]);
+
+  // Auto-advance carousel every 6 seconds
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      nextSlide();
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [nextSlide]);
+
+  const activeSlide = heroSlides[currentSlide] || heroSlides[0];
+
   return (
     <div className="w-full bg-[#F8F9FA] pb-16">
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (Exact Match to Client Mockup) */}
+      {/* 1. HERO SECTION (Exact Match to Client Design & Background Image) */}
       {/* ========================================================================= */}
       <section className="w-full bg-[#FAF6EB] border-b border-[#EDE8DC] relative overflow-hidden">
-        <div className="relative w-full max-w-[1524px] mx-auto aspect-[1024/300] min-h-[200px] sm:min-h-[270px] md:min-h-[320px] lg:min-h-[380px]">
-          {/* Panoramic High-Res Hero Banner */}
+        <div className="relative w-full max-w-[1524px] mx-auto aspect-[1024/302] min-h-[220px] sm:min-h-[270px] md:min-h-[320px] lg:min-h-[380px] xl:min-h-[440px] select-none">
+          {/* Panoramic High-Res Hero Background Image */}
           <Image
-            src="/images/client-mockup/hero-banner-exact.png"
-            alt="বাংলার ঐতিহ্য, আপনার প্রয়োজন - SHOILPIKKABBO"
+            src={activeSlide.bgImage}
+            alt={`${activeSlide.titleLine1} ${activeSlide.titleLine2} - SHOILPIKKABBO`}
             fill
             priority
-            className="object-cover sm:object-fill"
+            className="object-cover sm:object-fill transition-all duration-700"
             sizes="(max-width: 1524px) 100vw, 1524px"
           />
 
-          {/* Clickable Action on "Shop Now →" Button Area */}
-          <Link
-            href="/shop"
-            className="absolute left-[7.6%] bottom-[7.2%] w-[11.5%] h-[10.5%] min-w-[110px] min-h-[32px] rounded-full hover:ring-2 hover:ring-[#E0592A]/60 transition-all cursor-pointer z-10"
-            title="Shop Now"
-            aria-label="Shop Now"
-          />
+          {/* Left Content Overlay: Exact typography, badges, icons & CTA */}
+          <div className="absolute left-[7.5%] sm:left-[8%] top-0 bottom-0 flex flex-col justify-center max-w-[52%] sm:max-w-[46%] z-10">
+            {/* Top Pill Tag */}
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-0.5 sm:py-1 rounded-full bg-[#084035] text-white text-[9.5px] sm:text-xs md:text-[13px] font-semibold w-fit tracking-wide shadow-xs mb-1 sm:mb-2 md:mb-2.5">
+              <span>Handmade</span>
+              <span className="text-white/60">•</span>
+              <span>Eco Friendly</span>
+              <span className="text-white/60">•</span>
+              <span>Local Products</span>
+            </div>
+
+            {/* Main Bengali Headline */}
+            <h1 className="font-bengali font-bold sm:font-black tracking-tight leading-[1.12]">
+              <span className="block text-[#083D33] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px]">
+                {activeSlide.titleLine1}
+              </span>
+              <span className="block text-[#E0592A] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] mt-0.5 sm:mt-1">
+                {activeSlide.titleLine2}
+              </span>
+            </h1>
+
+            {/* Subtitle Description */}
+            <p className="font-bengali font-medium text-[#143D34] text-[10.5px] sm:text-xs md:text-sm lg:text-[15.5px] xl:text-[16.5px] leading-snug mt-1.5 sm:mt-2.5 md:mt-3 max-w-sm sm:max-w-md">
+              <span>{activeSlide.subtitleLine1}</span>
+              <br />
+              <span>{activeSlide.subtitleLine2}</span>
+            </p>
+
+            {/* 3 Value Proposition Features */}
+            <div className="flex items-center gap-2.5 sm:gap-4 md:gap-6 mt-2 sm:mt-3 md:mt-4 text-[#083D33]">
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M1 4h3v2H1V4zm0 4h5v2H1V8zm0 4h3v2H1v-2zm17 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-10 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm14-5v-4l-3-4H8v10h1.18a3 3 0 0 1 5.64 0h1.36a3 3 0 0 1 5.64 0H23v-2h-1zM9.5 8h4.5v3H9.5V8zm7.5 1l2 2.5h-2V9z"/>
+                </svg>
+                <span>Fast Delivery</span>
+              </div>
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                </svg>
+                <span>Quality Products</span>
+              </div>
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                <Handshake className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
+                <span>Reliable Service</span>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className="mt-2.5 sm:mt-3.5 md:mt-4 lg:mt-5">
+              <Link
+                href={activeSlide.ctaLink}
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] hover:bg-[#C8481C] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)] transition-all hover:scale-105 cursor-pointer group"
+              >
+                <span>{activeSlide.ctaText}</span>
+                <span className="text-base transition-transform duration-200 group-hover:translate-x-1">→</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Top Right "Support Local Products ♡" Stamp */}
+          {activeSlide.showBadge && (
+            <div className="absolute right-[5%] sm:right-[6%] md:right-[7.5%] top-[7%] sm:top-[9%] md:top-[10%] z-10 pointer-events-none select-none">
+              <Image
+                src="/images/client-mockup/support-local-badge.png"
+                alt="Support Local Products"
+                width={115}
+                height={125}
+                className="w-14 sm:w-18 md:w-22 lg:w-26 xl:w-28 h-auto object-contain"
+                priority
+              />
+            </div>
+          )}
 
           {/* Interactive Carousel Left Arrow */}
           <button
             type="button"
-            onClick={() => setCurrentSlide((prev) => (prev === 0 ? 1 : 0))}
-            className="absolute left-[1.5%] sm:left-[1.8%] top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/90 hover:bg-white text-[#0D3B37] shadow-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer z-10"
+            onClick={prevSlide}
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
             aria-label="Previous slide"
           >
-            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
           </button>
 
           {/* Interactive Carousel Right Arrow */}
           <button
             type="button"
-            onClick={() => setCurrentSlide((prev) => (prev === 0 ? 1 : 0))}
-            className="absolute right-[1.5%] sm:right-[1.8%] top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/90 hover:bg-white text-[#0D3B37] shadow-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer z-10"
+            onClick={nextSlide}
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
             aria-label="Next slide"
           >
-            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
           </button>
 
-          {/* Interactive Pagination Dots matching screenshot */}
-          <div className="absolute bottom-[2%] sm:bottom-[2.5%] left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 z-10">
-            <button
-              type="button"
-              onClick={() => setCurrentSlide(0)}
-              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all cursor-pointer ${
-                currentSlide === 0 ? "bg-[#0D3B37] ring-1 ring-white" : "bg-[#0D3B37]"
-              }`}
-              aria-label="Slide 1"
-            />
-            <button
-              type="button"
-              onClick={() => setCurrentSlide(1)}
-              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all cursor-pointer ${
-                currentSlide === 1 ? "bg-[#E0592A] ring-1 ring-white" : "bg-[#E0592A]"
-              }`}
-              aria-label="Slide 2"
-            />
-            <button
-              type="button"
-              onClick={() => setCurrentSlide(2)}
-              className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#CBD5E1] hover:bg-gray-400 transition-all cursor-pointer"
-              aria-label="Slide 3"
-            />
-            <button
-              type="button"
-              onClick={() => setCurrentSlide(3)}
-              className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#CBD5E1] hover:bg-gray-400 transition-all cursor-pointer"
-              aria-label="Slide 4"
-            />
+          {/* Interactive Pagination Dots matching client design */}
+          <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 z-20">
+            {heroSlides.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => setCurrentSlide(idx)}
+                className={`transition-all duration-300 rounded-full cursor-pointer ${
+                  currentSlide === idx
+                    ? idx === 1
+                      ? "w-5 sm:w-6 h-2 sm:h-2.5 bg-[#E0592A] ring-1 ring-white/60"
+                      : "w-5 sm:w-6 h-2 sm:h-2.5 bg-[#0D3B37] ring-1 ring-white/60"
+                    : idx === 1
+                    ? "w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#E0592A]/60 hover:bg-[#E0592A]"
+                    : "w-2 h-2 sm:w-2.5 sm:h-2.5 bg-gray-300 hover:bg-gray-400"
+                }`}
+                aria-label={`Slide ${idx + 1}`}
+              />
+            ))}
           </div>
         </div>
       </section>
