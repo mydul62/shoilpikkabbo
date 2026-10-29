@@ -726,37 +726,44 @@ export function ClientMockupHome() {
       {/* ========================================================================= */}
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
-          {/* Card 1: Special Offer UP TO 50% OFF */}
-          <div className="relative bg-gradient-to-br from-[#E0592A] to-[#C94B20] rounded-3xl p-7 sm:p-8 text-white flex flex-col justify-between overflow-hidden shadow-md min-h-[250px] group">
-            <div className="space-y-1.5 z-10">
-              <span className="text-xs sm:text-sm font-bold text-white/90 uppercase tracking-wider">
-                Special Offer
-              </span>
-              <h3 className="text-3xl sm:text-4xl font-black text-white leading-tight">
-                UP TO 50% OFF
-              </h3>
-              <p className="text-sm text-white/90 font-medium">
-                On Selected Products
-              </p>
-            </div>
+          {/* Card 1: Special Offer UP TO 50% OFF (Exact Client Mockup & High-Res BG Asset) */}
+          <div className="relative bg-[#0B4632] rounded-3xl p-6 sm:p-7 lg:p-8 text-white flex flex-col justify-between overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] min-h-[260px] sm:min-h-[280px] group transition-all duration-300">
+            {/* Background: User's high-res asset with basket, green texture and top-left orange swoosh */}
+            <Image
+              src="/images/client-mockup/special-offer-banner-bg.png"
+              alt="Special Offer Up To 50% Off"
+              fill
+              priority
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover object-right group-hover:scale-103 transition-transform duration-500"
+            />
 
-            <div className="pt-5 z-10">
-              <Link
-                href="/offers"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white text-[#C94B20] hover:bg-[#FAF8F5] font-bold text-xs sm:text-sm rounded-full shadow-md transition-all hover:gap-2.5"
-              >
-                <span>Shop Now</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
+            {/* Left side text overlay matching client mockup */}
+            <div className="relative z-10 max-w-[62%] sm:max-w-[60%] flex flex-col justify-between h-full">
+              <div className="space-y-1 sm:space-y-1.5">
+                <span className="text-sm sm:text-base lg:text-lg font-bold text-white tracking-wide block drop-shadow-xs">
+                  Special Offer
+                </span>
+                <h3 className="text-2xl sm:text-[28px] lg:text-[32px] xl:text-[34px] font-black text-white leading-tight tracking-tight drop-shadow-xs">
+                  UP TO{" "}
+                  <span className="text-[#F59F05]">50%</span>{" "}
+                  OFF
+                </h3>
+                <p className="text-xs sm:text-sm lg:text-[15px] font-medium text-white/95 leading-snug drop-shadow-xs">
+                  On Selected Products
+                </p>
+              </div>
 
-            <div className="absolute right-2 bottom-2 w-36 h-32 sm:w-40 sm:h-36 opacity-95 pointer-events-none group-hover:scale-105 transition-transform duration-300">
-              <Image
-                src="/images/client-mockup/promo-special-offer.png"
-                alt="Special Offer"
-                fill
-                className="object-contain"
-              />
+              {/* Shop Now CTA Pill Button */}
+              <div className="pt-4 sm:pt-5">
+                <Link
+                  href="/offers"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 sm:px-7 sm:py-3 rounded-full bg-[#F26922] hover:bg-[#E0592A] active:scale-97 text-white font-bold text-xs sm:text-sm transition-all duration-300 shadow-[0_4px_14px_rgba(242,105,34,0.35)] hover:shadow-[0_6px_20px_rgba(242,105,34,0.45)] group/btn w-fit cursor-pointer"
+                >
+                  <span>Shop Now</span>
+                  <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                </Link>
+              </div>
             </div>
           </div>
 
