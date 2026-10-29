@@ -4,45 +4,97 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
-import { ArrowUpRight, Check } from "lucide-react";
+import { ArrowUpRight, Check, Package, Loader2, HelpCircle } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
-import { CLIENT_INFO } from "@/data/mock-data";
+import { formatPrice } from "@/lib/utils";
 
 function OrderConfirmationContent() {
   const searchParams = useSearchParams();
+  const orderNumber = searchParams?.get("order") || "";
 
-  const orderNumber = searchParams?.get("order") || "SK-261102-1042";
-  const fullName = searchParams?.get("name") || "Nusrat Rahman";
-  const firstName = fullName.split(" ")[0] || "Nusrat";
-  const phone = searchParams?.get("phone") || "01700 000000";
-  const email = searchParams?.get("email") || "nusrat@example.com";
-  const address = searchParams?.get("address") || "House 12, Road 7, Dhanmondi";
-  const district = searchParams?.get("district") || "Dhaka";
-  const postcode = searchParams?.get("postcode") || "1209";
-  const paymentMethod = searchParams?.get("payment") || "bKash";
+  const [order, setOrder] = React.useState<any | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(Boolean(orderNumber));
 
-  const orderDate = "2 November 2026";
-  const subtotal = 1900;
-  const discount = 150;
-  const deliveryCharge = 80;
-  const total = subtotal - discount + deliveryCharge; // 1830
+  React.useEffect(() => {
+    if (!orderNumber) {
+      setLoading(false);
+      return;
+    }
 
-  const items = [
-    {
-      id: "prod-jute-basket",
-      name: "Everyday jute basket",
-      quantity: 1,
-      price: 1450,
-      imageUrl: "/images/product-jute-basket.png",
-    },
-    {
-      id: "prod-woven-coasters",
-      name: "Woven coaster set",
-      quantity: 1,
-      price: 450,
-      imageUrl: "/images/product-woven-coasters.png",
-    },
-  ];
+    const fetchOrderDetails = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`http://localhost:5000/api/v1/orders/track/${encodeURIComponent(orderNumber)}`);
+        const json = await res.json();
+        if (json.success && json.data) {
+          setOrder(json.data);
+        }
+      } catch {
+        // Handled via fallback
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrderDetails();
+  }, [orderNumber]);
+
+  if (loading) {
+    return (
+      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-16 flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <Loader2 className="w-8 h-8 text-[#143527] animate-spin mx-auto" />
+          <p className="text-[13px] text-[#6F7771] font-light">
+            Retrieving order confirmation details...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // If directly navigated or order not found
+  if (!orderNumber || !order) {
+    return (
+      <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-16">
+        <div className="max-w-[720px] mx-auto px-4 sm:px-6 text-center">
+          <div className="bg-white border border-[#E8E2D8] rounded-[4px] p-8 sm:p-12 shadow-xs space-y-5">
+            <div className="w-12 h-12 rounded-full bg-[#EFECE6] text-[#143527] flex items-center justify-center mx-auto">
+              <Package className="w-6 h-6 stroke-[1.5]" />
+            </div>
+            <h1 className="font-serif text-2xl sm:text-3xl text-[#143527] font-normal">
+              Order Confirmation Desk
+            </h1>
+            <p className="text-[13.5px] text-[#556059] font-light leading-relaxed max-w-md mx-auto">
+              To review invoice details or tracking progress for an order, please visit our live tracking page with your order reference number.
+            </p>
+            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+              <Link
+                href="/track-order"
+                className="h-11 px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
+              >
+                <span>Track an order</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+              <Link
+                href="/shop"
+                className="h-11 px-6 bg-white hover:bg-[#F3EFE7] border border-[#D5CDC0] text-[#143527] text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
+              >
+                <span>Browse catalog</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const firstName = order.customerName ? order.customerName.split(" ")[0] : "Customer";
+  const orderDate = new Date(order.createdAt).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   return (
     <div className="bg-[#F7F4EE] min-h-[calc(100vh-280px)] py-10 sm:py-16">
@@ -60,7 +112,7 @@ function OrderConfirmationContent() {
               Thank you, {firstName}.
             </h1>
             <p className="text-[13.5px] sm:text-[14px] text-[#556059] font-light mt-1.5">
-              Your payment is verified and your order is confirmed.
+              Your order has been recorded and our workshop is preparing your parcel.
             </p>
           </div>
         </div>
@@ -72,7 +124,7 @@ function OrderConfirmationContent() {
               ORDER
             </span>
             <span className="text-[14.5px] text-white font-medium">
-              {orderNumber}
+              {order.orderNumber}
             </span>
           </div>
           <div>
@@ -85,18 +137,18 @@ function OrderConfirmationContent() {
           </div>
           <div>
             <span className="text-[10px] text-[#A3B8AA] uppercase tracking-wider block mb-1 font-light">
-              TOTAL PAID
+              TOTAL AMOUNT
             </span>
             <span className="text-[15.5px] text-white font-medium">
-              ৳{total.toLocaleString()}
+              {formatPrice(Number(order.totalAmount))}
             </span>
           </div>
           <div>
             <span className="text-[10px] text-[#A3B8AA] uppercase tracking-wider block mb-1 font-light">
-              PAYMENT
+              PAYMENT METHOD
             </span>
-            <span className="text-[13.5px] text-white font-light">
-              {paymentMethod} · Verified
+            <span className="text-[13.5px] text-white font-light capitalize">
+              {order.paymentMethod?.replace("_", " ").toLowerCase() || "Verified"}
             </span>
           </div>
         </div>
@@ -109,27 +161,29 @@ function OrderConfirmationContent() {
               A place to arrive.
             </h2>
             <div className="text-[13.5px] text-[#333E35] leading-relaxed font-light">
-              <p className="font-medium text-[#143527]">{fullName}</p>
-              <p>{address}</p>
+              <p className="font-medium text-[#143527]">{order.customerName}</p>
+              <p>{order.shippingAddress}</p>
               <p>
-                {district} {postcode} · {phone}
+                {order.city} {order.postalCode ? `· ${order.postalCode}` : ""} · {order.customerPhone}
               </p>
             </div>
 
             <div className="pt-2">
               <span className="inline-block bg-[#E5ECE6] text-[#143527] px-3 py-1 rounded-full text-[11.5px] font-medium border border-[#D5DDD6]">
-                Estimated delivery · 3–5 Nov 2026
+                Status · {order.orderStatus}
               </span>
             </div>
 
-            <p className="text-[12px] text-[#6F7771] font-light pt-2 leading-relaxed">
-              Order updates will be sent to {email}. Keep your order number for tracking.
-            </p>
+            {order.customerEmail && (
+              <p className="text-[12px] text-[#6F7771] font-light pt-2 leading-relaxed">
+                Order updates will be sent to {order.customerEmail}. Keep your order number for tracking.
+              </p>
+            )}
 
-            {/* Buttons - Stacked vertically */}
+            {/* Buttons */}
             <div className="pt-3 flex flex-col items-start gap-2.5">
               <Link
-                href={`/track-order?order=${orderNumber}`}
+                href={`/track-order?order=${order.orderNumber}`}
                 className="h-10 px-6 bg-[#143527] hover:bg-[#1B4332] text-white text-[13px] font-medium rounded-[3px] inline-flex items-center gap-2 transition-colors cursor-pointer"
               >
                 <span>Track my order</span>
@@ -146,73 +200,54 @@ function OrderConfirmationContent() {
             </div>
           </div>
 
-          {/* Right Column: Your finds (6 cols) */}
+          {/* Right Column: Ordered Items (6 cols) */}
           <div className="md:col-span-6">
             <h2 className="font-serif text-[24px] text-[#143527] font-normal mb-5">
-              Your finds
+              Your artisanal selections
             </h2>
 
             <div className="space-y-4">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center gap-4 py-1"
-                >
-                  <div className="relative w-16 h-16 rounded-[3px] overflow-hidden bg-[#EBE7DF] shrink-0 border border-[#E0D9CD]">
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.name}
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                    />
+              {order.items?.map((item: any) => (
+                <div key={item.id} className="flex items-center gap-4 py-2 border-b border-[#E8E2D8] last:border-b-0">
+                  <div className="w-12 h-12 rounded-[3px] bg-[#FAF7F2] border border-[#E8E2D8] flex items-center justify-center shrink-0 text-[#143527]">
+                    <Package className="w-5 h-5 stroke-[1.5]" />
                   </div>
-                  <div>
-                    <h4 className="text-[13.5px] font-medium text-[#143527]">
-                      {item.name}
-                    </h4>
-                    <p className="text-[12px] text-[#6F7771] font-light mt-0.5">
-                      Quantity {item.quantity} · ৳{item.price.toLocaleString()}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-[13.5px] font-medium text-[#143527] truncate">
+                      {item.productName}
+                    </h3>
+                    <p className="text-[12px] text-[#7A837C] font-light">
+                      Qty: {item.quantity} · {formatPrice(Number(item.unitPrice))} each
                     </p>
                   </div>
+                  <span className="text-[13.5px] font-semibold text-[#143527] shrink-0">
+                    {formatPrice(Number(item.totalPrice))}
+                  </span>
                 </div>
               ))}
             </div>
 
-            <div className="border-t border-[#E8E2D8] mt-6 pt-3 text-[12px] text-[#6F7771] font-light">
-              <p>
-                Subtotal ৳{subtotal.toLocaleString()} · Discount -৳{discount.toLocaleString()} · Delivery ৳{deliveryCharge.toLocaleString()}
-              </p>
-              <p className="mt-2 text-[#8C948E] text-[11.5px]">
-                Need to make a change? Contact support with your order number as soon as possible.
-              </p>
+            {/* Price breakdown */}
+            <div className="mt-6 pt-4 border-t border-[#E8E2D8] space-y-2 text-[12.5px] text-[#556059] font-light">
+              <div className="flex justify-between">
+                <span>Subtotal</span>
+                <span>{formatPrice(Number(order.subtotal))}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Delivery</span>
+                <span>{formatPrice(Number(order.deliveryCharge || order.shippingCost || 0))}</span>
+              </div>
+              {Number(order.discountAmount) > 0 && (
+                <div className="flex justify-between text-[#B85D38]">
+                  <span>Discount</span>
+                  <span>-{formatPrice(Number(order.discountAmount))}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-[15px] font-semibold text-[#143527] pt-2 border-t border-[#143527]/10">
+                <span>Total</span>
+                <span>{formatPrice(Number(order.totalAmount))}</span>
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Bottom Support Bar */}
-        <div className="border-t border-[#E8E2D8] mt-16 pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-[12px] text-[#6F7771] font-light">
-          <span>We're here for the next step.</span>
-          <div className="flex items-center gap-4 text-[12px]">
-            <a
-              href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#143527] hover:text-[#B85D38] font-medium inline-flex items-center gap-1 transition-colors"
-            >
-              <span>WhatsApp</span>
-              <ArrowUpRight className="w-3 h-3" />
-            </a>
-            <span className="text-[#B0AAA0]">·</span>
-            <a
-              href={CLIENT_INFO.messengerUrl || "https://m.me/shoilpikkabbo"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#143527] hover:text-[#B85D38] font-medium inline-flex items-center gap-1 transition-colors"
-            >
-              <span>Facebook Messenger</span>
-              <ArrowUpRight className="w-3 h-3" />
-            </a>
           </div>
         </div>
       </div>
@@ -226,9 +261,7 @@ export default function OrderConfirmationPage() {
       <React.Suspense
         fallback={
           <div className="min-h-[500px] flex items-center justify-center bg-[#F7F4EE]">
-            <p className="text-[13px] text-[#6F7771] font-light">
-              Loading order confirmation...
-            </p>
+            <Loader2 className="w-8 h-8 text-[#143527] animate-spin" />
           </div>
         }
       >

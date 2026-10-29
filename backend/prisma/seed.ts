@@ -23,7 +23,6 @@ async function main() {
   // -----------------------------------------------------------------
   const adminPass = await bcrypt.hash("admin1234", 10);
   const staffPass = await bcrypt.hash("staff1234", 10);
-  const customerPass = await bcrypt.hash("demo1234", 10);
 
   const admin = await prisma.user.upsert({
     where: { phone: "01731214379" },
@@ -49,43 +48,7 @@ async function main() {
     },
   });
 
-  const customer1 = await prisma.user.upsert({
-    where: { phone: "01712345678" },
-    update: { passwordHash: customerPass },
-    create: {
-      name: "Tanvir Ahmed",
-      phone: "01712345678",
-      email: "tanvir.ahmed@example.com",
-      passwordHash: customerPass,
-      role: Role.CUSTOMER,
-    },
-  });
-
-  const customer2 = await prisma.user.upsert({
-    where: { phone: "01898765432" },
-    update: { passwordHash: customerPass },
-    create: {
-      name: "Dr. Farhana Yasmin",
-      phone: "01898765432",
-      email: "dr.farhana@example.com",
-      passwordHash: customerPass,
-      role: Role.CUSTOMER,
-    },
-  });
-
-  const customer3 = await prisma.user.upsert({
-    where: { phone: "01811223344" },
-    update: { passwordHash: customerPass },
-    create: {
-      name: "Engr. Rafiqul Islam",
-      phone: "01811223344",
-      email: "engr.rafiq@texbd.com",
-      passwordHash: customerPass,
-      role: Role.CUSTOMER,
-    },
-  });
-
-  console.log("✓ Provisioned Admin, Staff, and Customer users.");
+  console.log("✓ Provisioned Admin and Staff accounts.");
 
   // -----------------------------------------------------------------
   // 2. Categories (All 10 Categories from Master Spec)
@@ -650,385 +613,21 @@ async function main() {
   console.log("✓ Seeded active coupons (WELCOME10, SHOILPIK15, FESTIVE20, FLAT200).");
 
   // -----------------------------------------------------------------
-  // 6. Orders and Payments (Audit Queue & Lifecycles)
+  // 6. Ensure clean operational state (NO demo orders, inquiries or dummy data)
   // -----------------------------------------------------------------
-  const pTeaSet = productMap.get("handcrafted-terracotta-ceramic-tea-set");
-  const pJuteRug = productMap.get("natural-braided-golden-jute-floor-rug");
-  const pCorpGift = productMap.get("executive-leatherette-corporate-gift-box-set");
-  const pBlackSeed = productMap.get("pure-cold-pressed-kalijira-oil-250ml");
-
-  // Order 1: Verified bKash payment - Processing
-  if (pTeaSet) {
-    await prisma.order.upsert({
-      where: { orderNumber: "SK-2026-101" },
-      update: {},
-      create: {
-        orderNumber: "SK-2026-101",
-        userId: customer1.id,
-        customerName: "Tanvir Ahmed",
-        customerPhone: "01712345678",
-        customerEmail: "tanvir.ahmed@example.com",
-        shippingAddress: "House 42, Road 11, Block C, Banani",
-        city: "Dhaka",
-        postalCode: "1213",
-        subtotal: 1550,
-        deliveryCharge: 70,
-        discountAmount: 0,
-        totalAmount: 1620,
-        orderStatus: OrderStatus.PROCESSING,
-        paymentStatus: PaymentStatus.PAID,
-        paymentMethod: PaymentMethod.BKASH_MANUAL,
-        transactionId: "BK9X7782A",
-        items: {
-          create: [
-            {
-              productId: pTeaSet.id,
-              productName: pTeaSet.name,
-              unitPrice: 1550,
-              quantity: 1,
-              totalPrice: 1550,
-            },
-          ],
-        },
-        payments: {
-          create: [
-            {
-              method: PaymentMethod.BKASH_MANUAL,
-              transactionId: "BK9X7782A",
-              senderPhone: "01712345678",
-              amount: 1620,
-              status: VerificationStatus.VERIFIED,
-              verifiedByUserId: admin.id,
-              verifiedAt: new Date(Date.now() - 3600000 * 4),
-              verificationNotes: "bKash statement matched TrxID BK9X7782A.",
-            },
-          ],
-        },
-        trackingEvents: {
-          create: [
-            {
-              status: OrderStatus.PENDING,
-              description: "Customer placed order with bKash manual payment.",
-              timestamp: new Date(Date.now() - 3600000 * 5),
-            },
-            {
-              status: OrderStatus.PROCESSING,
-              description: "Payment verified by finance admin. Packaging in progress.",
-              timestamp: new Date(Date.now() - 3600000 * 4),
-            },
-          ],
-        },
-      },
-    });
-  }
-
-  // Order 2: PENDING bKash payment in the Admin Audit Queue
-  if (pCorpGift) {
-    await prisma.order.upsert({
-      where: { orderNumber: "SK-2026-102" },
-      update: {},
-      create: {
-        orderNumber: "SK-2026-102",
-        userId: customer2.id,
-        customerName: "Dr. Farhana Yasmin",
-        customerPhone: "01898765432",
-        customerEmail: "dr.farhana@example.com",
-        shippingAddress: "Plot 18, Block D, Bashundhara R/A",
-        city: "Dhaka",
-        postalCode: "1229",
-        subtotal: 2890,
-        deliveryCharge: 70,
-        discountAmount: 0,
-        totalAmount: 2960,
-        orderStatus: OrderStatus.PENDING,
-        paymentStatus: PaymentStatus.PENDING,
-        paymentMethod: PaymentMethod.BKASH_MANUAL,
-        transactionId: "BK8Z1299P",
-        deliveryNotes: "Please deliver between 4 PM to 7 PM.",
-        items: {
-          create: [
-            {
-              productId: pCorpGift.id,
-              productName: pCorpGift.name,
-              unitPrice: 2890,
-              quantity: 1,
-              totalPrice: 2890,
-            },
-          ],
-        },
-        payments: {
-          create: [
-            {
-              method: PaymentMethod.BKASH_MANUAL,
-              transactionId: "BK8Z1299P",
-              senderPhone: "01898765432",
-              amount: 2960,
-              status: VerificationStatus.PENDING,
-            },
-          ],
-        },
-        trackingEvents: {
-          create: [
-            {
-              status: OrderStatus.PENDING,
-              description: "Order received. Awaiting admin manual payment audit.",
-              timestamp: new Date(Date.now() - 1800000),
-            },
-          ],
-        },
-      },
-    });
-  }
-
-  // Order 3: PENDING BRAC Bank Transfer in the Admin Audit Queue
-  if (pJuteRug && pBlackSeed) {
-    await prisma.order.upsert({
-      where: { orderNumber: "SK-2026-103" },
-      update: {},
-      create: {
-        orderNumber: "SK-2026-103",
-        userId: customer3.id,
-        customerName: "Engr. Rafiqul Islam",
-        customerPhone: "01811223344",
-        customerEmail: "engr.rafiq@texbd.com",
-        shippingAddress: "House 12, Road 4, Sector 7, Uttara",
-        city: "Dhaka",
-        postalCode: "1230",
-        subtotal: 2800,
-        deliveryCharge: 70,
-        discountAmount: 0,
-        totalAmount: 2870,
-        orderStatus: OrderStatus.PENDING,
-        paymentStatus: PaymentStatus.PENDING,
-        paymentMethod: PaymentMethod.BANK_TRANSFER,
-        transactionId: "BRAC-TX-990145",
-        deliveryNotes: "Sent payment via BRAC Bank Internet Banking to Shoilpikkabbo account.",
-        items: {
-          create: [
-            {
-              productId: pJuteRug.id,
-              productName: pJuteRug.name,
-              unitPrice: 2150,
-              quantity: 1,
-              totalPrice: 2150,
-            },
-            {
-              productId: pBlackSeed.id,
-              productName: pBlackSeed.name,
-              unitPrice: 650,
-              quantity: 1,
-              totalPrice: 650,
-            },
-          ],
-        },
-        payments: {
-          create: [
-            {
-              method: PaymentMethod.BANK_TRANSFER,
-              transactionId: "BRAC-TX-990145",
-              bankReference: "BRAC Bank Ref: 981240182",
-              senderPhone: "01811223344",
-              amount: 2870,
-              status: VerificationStatus.PENDING,
-            },
-          ],
-        },
-        trackingEvents: {
-          create: [
-            {
-              status: OrderStatus.PENDING,
-              description: "Customer submitted BRAC Bank transfer reference.",
-              timestamp: new Date(Date.now() - 900000),
-            },
-          ],
-        },
-      },
-    });
-  }
-
-  // Order 4: Shipped Cash on Delivery Order
-  if (pJuteRug) {
-    await prisma.order.upsert({
-      where: { orderNumber: "SK-2026-104" },
-      update: {},
-      create: {
-        orderNumber: "SK-2026-104",
-        customerName: "Mahmudul Hasan",
-        customerPhone: "01911445566",
-        customerEmail: "mahmud.hasan@outlook.com",
-        shippingAddress: "Flat 4B, Shams Mansion, GEC Circle",
-        city: "Chittagong",
-        postalCode: "4000",
-        subtotal: 2150,
-        deliveryCharge: 130, // Outside Dhaka
-        discountAmount: 0,
-        totalAmount: 2280,
-        orderStatus: OrderStatus.SHIPPED,
-        paymentStatus: PaymentStatus.PENDING,
-        paymentMethod: PaymentMethod.CASH_ON_DELIVERY,
-        deliveryNotes: "Call 30 mins before arrival.",
-        items: {
-          create: [
-            {
-              productId: pJuteRug.id,
-              productName: pJuteRug.name,
-              unitPrice: 2150,
-              quantity: 1,
-              totalPrice: 2150,
-            },
-          ],
-        },
-        payments: {
-          create: [
-            {
-              method: PaymentMethod.CASH_ON_DELIVERY,
-              amount: 2280,
-              status: VerificationStatus.PENDING,
-            },
-          ],
-        },
-        trackingEvents: {
-          create: [
-            {
-              status: OrderStatus.PENDING,
-              description: "COD order registered and confirmed.",
-              timestamp: new Date(Date.now() - 86400000 * 2),
-            },
-            {
-              status: OrderStatus.CONFIRMED,
-              description: "Customer telephone confirmation completed.",
-              timestamp: new Date(Date.now() - 86400000 * 2 + 3600000),
-            },
-            {
-              status: OrderStatus.SHIPPED,
-              description: "Handed over to courier hub for Chittagong delivery.",
-              timestamp: new Date(Date.now() - 86400000),
-            },
-          ],
-        },
-      },
-    });
-  }
-
-  // Order 5: Delivered Order
-  if (pTeaSet) {
-    await prisma.order.upsert({
-      where: { orderNumber: "SK-2026-100" },
-      update: {},
-      create: {
-        orderNumber: "SK-2026-100",
-        customerName: "Syeda Mariam",
-        customerPhone: "01788990011",
-        shippingAddress: "House 5, Road 8, Dhanmondi",
-        city: "Dhaka",
-        postalCode: "1205",
-        subtotal: 1550,
-        deliveryCharge: 70,
-        discountAmount: 155, // 10% coupon
-        totalAmount: 1465,
-        couponCode: "WELCOME10",
-        orderStatus: OrderStatus.DELIVERED,
-        paymentStatus: PaymentStatus.PAID,
-        paymentMethod: PaymentMethod.NAGAD_MANUAL,
-        transactionId: "NG901284K",
-        items: {
-          create: [
-            {
-              productId: pTeaSet.id,
-              productName: pTeaSet.name,
-              unitPrice: 1550,
-              quantity: 1,
-              totalPrice: 1550,
-            },
-          ],
-        },
-        payments: {
-          create: [
-            {
-              method: PaymentMethod.NAGAD_MANUAL,
-              transactionId: "NG901284K",
-              senderPhone: "01788990011",
-              amount: 1465,
-              status: VerificationStatus.VERIFIED,
-              verifiedByUserId: admin.id,
-              verifiedAt: new Date(Date.now() - 86400000 * 3),
-              verificationNotes: "Verified via Nagad merchant notification.",
-            },
-          ],
-        },
-        trackingEvents: {
-          create: [
-            {
-              status: OrderStatus.DELIVERED,
-              description: "Package safely handed to customer. Signature collected.",
-              timestamp: new Date(Date.now() - 86400000 * 1),
-            },
-          ],
-        },
-      },
-    });
-  }
-
-  console.log("✓ Seeded realistic order and payment lifecycle flows with pending audit queues.");
-
-  // -----------------------------------------------------------------
-  // 7. Special E-Sheba Inquiries (Service Inquiry Desk)
-  // -----------------------------------------------------------------
-  const inquiries = [
-    {
-      serviceType: "Corporate Bulk Procurement & Gift Sets",
-      customerName: "Navid Hossain",
-      customerPhone: "01755667788",
-      customerEmail: "navid@texgroup-bd.com",
-      organization: "TexGroup Industrial Consortium",
-      requirements: "Need 250 units of customized executive jute conference bags embossed with our annual AGM logo, alongside 250 bamboo vacuum flasks.",
-      status: InquiryStatus.NEW,
-    },
-    {
-      serviceType: "Artisanal Decor & Terracotta Interior Fitments",
-      customerName: "Sabrina Rahman",
-      customerPhone: "01811443322",
-      customerEmail: "sabrina.r@greenleafresorts.com",
-      organization: "Green Leaf Eco Resorts",
-      requirements: "Requirement for 40 handmade terracotta amphora vases and outdoor handcrafted lamp fixtures for our Sreemangal eco-resort villas.",
-      status: InquiryStatus.IN_REVIEW,
-      adminNotes: "Client sent architectural sketches. Sourcing team in Dhamrai evaluating production timeline.",
-    },
-    {
-      serviceType: "Industrial Polymer Custom Crate Sourcing",
-      customerName: "Ashraful Haque",
-      customerPhone: "01922334455",
-      customerEmail: "ashraf@apexlogistics.com",
-      organization: "Apex Logistics & Warehousing",
-      requirements: "Inquiry for 500 units of heavy-duty 60L stacking crates with custom embossed barcode labeling for automated sorting belt.",
-      status: InquiryStatus.CONTACTED,
-      adminNotes: "Quotation sent via email on Oct 24. Follow-up meeting scheduled.",
-    },
-    {
-      serviceType: "Government Export Jute Packaging",
-      customerName: "Begum Dilruba",
-      customerPhone: "01677889900",
-      customerEmail: "dilruba@exportcouncil.gov.bd",
-      organization: "Export Promotion Consortium",
-      requirements: "Urgent procurement of 1,000 biodegradable jute exhibition bags for upcoming international trade fair.",
-      status: InquiryStatus.RESOLVED,
-      adminNotes: "Contract signed and batch delivered on Oct 20.",
-    },
-  ];
-
+  await prisma.deliveryTrackingEvent.deleteMany({});
+  await prisma.payment.deleteMany({});
+  await prisma.orderItem.deleteMany({});
+  await prisma.order.deleteMany({});
   await prisma.serviceInquiry.deleteMany({});
-  for (const inq of inquiries) {
-    await prisma.serviceInquiry.create({ data: inq });
-  }
-  console.log(`✓ Seeded ${inquiries.length} Special E-Sheba institutional inquiries.`);
-
-  // -----------------------------------------------------------------
-  // 8. Career Listings and Applications
-  // -----------------------------------------------------------------
   await prisma.careerApplication.deleteMany({});
-  await prisma.careerListing.deleteMany({});
+  console.log("✓ Verified zero demo orders, inquiries, or mock transactions in database.");
 
-  const qaJob = await prisma.careerListing.create({
+  // -----------------------------------------------------------------
+  // 7. Career Listings (Available positions without dummy applicants)
+  // -----------------------------------------------------------------
+  await prisma.careerListing.deleteMany({});
+  await prisma.careerListing.create({
     data: {
       title: "Quality Assurance Specialist (Handicraft & Textiles)",
       department: "Product Integrity & Sourcing",
@@ -1043,17 +642,6 @@ async function main() {
         "Willingness to travel to artisan clusters across Bangladesh.",
         "Strong attention to detail and craftsmanship aesthetics.",
       ],
-      applications: {
-        create: [
-          {
-            applicantName: "Faridul Alam",
-            applicantPhone: "01799887766",
-            applicantEmail: "faridul.alam@textilemail.com",
-            coverNote: "B.Sc in Textile Engineering from BUTEX with 3 years inspection experience at major buying house.",
-            status: "REVIEWING",
-          },
-        ],
-      },
     },
   });
 
@@ -1071,20 +659,9 @@ async function main() {
         "Excellent communication, presentation, and negotiation skills.",
         "Experience preparing formal RFPs and commercial proposals.",
       ],
-      applications: {
-        create: [
-          {
-            applicantName: "Nafisa Chowdhury",
-            applicantPhone: "01855443322",
-            applicantEmail: "nafisa.c@businesscorp.com",
-            coverNote: "5 years managing corporate gift accounts with top private banks and telecom operators.",
-            status: "SHORTLISTED",
-          },
-        ],
-      },
     },
   });
-  console.log("✓ Seeded Career Vacancies with candidate application pipelines.");
+  console.log("✓ Seeded active Career Vacancies.");
 
   // -----------------------------------------------------------------
   // 9. Site Settings (Verified Official Details)

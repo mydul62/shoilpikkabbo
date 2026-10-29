@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   User,
   Package,
@@ -10,15 +11,71 @@ import {
   LogOut,
   ChevronRight,
   ExternalLink,
+  ShoppingBag,
+  ShieldCheck,
+  Loader2,
 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MOCK_ORDERS } from "@/data/mock-data";
+import { useAuth } from "@/context/AuthContext";
 import { formatPrice } from "@/lib/utils";
 
 export default function AccountPage() {
+  const router = useRouter();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
   const [activeTab, setActiveTab] = React.useState<"orders" | "profile" | "addresses">("orders");
+  const [orders, setOrders] = React.useState<any[]>([]);
+  const [ordersLoading, setOrdersLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.push("/login?redirect=/account");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  React.useEffect(() => {
+    if (user?.phone) {
+      const fetchMyOrders = async () => {
+        try {
+          setOrdersLoading(true);
+          const res = await fetch(`http://localhost:5000/api/v1/orders/track?phone=${encodeURIComponent(user.phone)}`);
+          const json = await res.json();
+          if (json.success && Array.isArray(json.data)) {
+            setOrders(json.data);
+          }
+        } catch {
+          // Keep empty array
+        } finally {
+          setOrdersLoading(false);
+        }
+      };
+      fetchMyOrders();
+    }
+  }, [user]);
+
+  if (isLoading) {
+    return (
+      <StorefrontLayout>
+        <div className="min-h-[500px] flex items-center justify-center bg-[#F7F4EE]">
+          <Loader2 className="w-8 h-8 text-[#143527] animate-spin" />
+        </div>
+      </StorefrontLayout>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
+
+  const initials = user.name
+    ? user.name
+        .split(" ")
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join("")
+        .toUpperCase()
+    : "SK";
 
   return (
     <StorefrontLayout>
@@ -27,31 +84,40 @@ export default function AccountPage() {
         <div className="p-6 sm:p-8 rounded-3xl bg-forest-950 text-sand border border-forest-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="h-16 w-16 rounded-2xl bg-forest-800 text-gold-400 font-heading font-black text-2xl flex items-center justify-center border border-gold-600/30">
-              TA
+              {initials}
             </div>
             <div>
               <h1 className="font-heading font-extrabold text-xl sm:text-2xl text-white">
-                Tanvir Ahmed
+                {user.name}
               </h1>
               <p className="text-xs text-sand/70 mt-0.5">
-                01712345678 • tanvir.ahmed@example.com
+                {user.phone} {user.email ? `• ${user.email}` : ""}
               </p>
               <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-gold-600 text-charcoal-950 text-[10px] font-bold">
-                Loyal Customer
+                {user.role === "ADMIN" || user.role === "SUPER_ADMIN" ? "Administrator" : "Verified Customer"}
               </span>
             </div>
           </div>
 
-          <Link href="/login">
+          <div className="flex items-center gap-3">
+            {(user.role === "ADMIN" || user.role === "SUPER_ADMIN" || user.role === "STAFF") && (
+              <Link href="/admin">
+                <Button variant="secondary" size="sm" className="bg-sand text-forest-950 hover:bg-sand/90">
+                  <ShieldCheck className="h-3.5 w-3.5 mr-1.5" />
+                  Admin Dashboard
+                </Button>
+              </Link>
+            )}
             <Button
               variant="outline"
               size="sm"
-              className="border-sand/30 text-sand hover:bg-forest-900"
+              onClick={() => logout()}
+              className="border-sand/30 text-sand hover:bg-forest-900 cursor-pointer"
             >
               <LogOut className="h-3.5 w-3.5 mr-1.5" />
               Sign Out
             </Button>
-          </Link>
+          </div>
         </div>
 
         {/* Tab Navigation */}
@@ -64,7 +130,7 @@ export default function AccountPage() {
                 : "text-charcoal-600 hover:bg-sand"
             }`}
           >
-            Order History ({MOCK_ORDERS.length})
+            Order History ({orders.length})
           </button>
           <button
             onClick={() => setActiveTab("profile")}
@@ -94,140 +160,128 @@ export default function AccountPage() {
             <h2 className="font-heading font-bold text-lg text-charcoal-900">
               Recent Purchase Records
             </h2>
-            <div className="space-y-4">
-              {MOCK_ORDERS.map((order) => (
-                <div
-                  key={order.id}
-                  className="p-6 rounded-2xl border border-brand-border bg-white shadow-xs space-y-4"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-sand pb-4">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-extrabold text-forest-900">
-                          {order.orderNumber}
-                        </span>
-                        <Badge
-                          variant={
-                            order.orderStatus === "DELIVERED"
-                              ? "success"
-                              : order.orderStatus === "SHIPPED"
-                              ? "primary"
-                              : order.orderStatus === "PROCESSING"
-                              ? "warning"
-                              : "default"
-                          }
-                        >
-                          {order.orderStatus}
-                        </Badge>
+
+            {ordersLoading ? (
+              <div className="p-12 text-center bg-white rounded-2xl border border-brand-border">
+                <Loader2 className="w-8 h-8 text-forest-800 animate-spin mx-auto mb-2" />
+                <p className="text-xs text-charcoal-500">Retrieving your order records...</p>
+              </div>
+            ) : orders.length > 0 ? (
+              <div className="space-y-4">
+                {orders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="p-6 rounded-2xl border border-brand-border bg-white shadow-xs space-y-4"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-sand pb-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-extrabold text-forest-900">
+                            {order.orderNumber}
+                          </span>
+                          <Badge
+                            variant={
+                              order.orderStatus === "DELIVERED"
+                                ? "success"
+                                : order.orderStatus === "SHIPPED"
+                                ? "primary"
+                                : order.orderStatus === "PROCESSING"
+                                ? "warning"
+                                : "default"
+                            }
+                          >
+                            {order.orderStatus}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-charcoal-400 mt-1">
+                          Ordered on {new Date(order.createdAt).toLocaleDateString()} • Payment: {order.paymentMethod}
+                        </p>
                       </div>
-                      <p className="text-xs text-charcoal-400 mt-1">
-                        Ordered on {order.createdAt} • Payment: {order.paymentMethod} (
-                        {order.paymentStatus})
-                      </p>
+
+                      <div className="flex items-center gap-3">
+                        <span className="text-base font-black text-forest-900">
+                          {formatPrice(Number(order.totalAmount))}
+                        </span>
+                        <Link href={`/track-order?order=${order.orderNumber}`}>
+                          <Button variant="secondary" size="sm">
+                            <span>Track Delivery</span>
+                            <ExternalLink className="h-3 w-3 ml-1" />
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <span className="text-base font-black text-forest-900">
-                        {formatPrice(order.finalAmount)}
-                      </span>
-                      <Link href={`/track-order?order=${order.orderNumber}`}>
-                        <Button variant="secondary" size="sm">
-                          <span>Track Delivery</span>
-                          <ExternalLink className="h-3 w-3 ml-1" />
-                        </Button>
-                      </Link>
+                    <div className="divide-y divide-sand text-xs">
+                      {order.items?.map((item: any) => (
+                        <div key={item.id} className="py-2 flex items-center justify-between">
+                          <span className="font-semibold text-charcoal-800">
+                            {item.productName} × {item.quantity}
+                          </span>
+                          <span className="text-charcoal-600">
+                            {formatPrice(Number(item.totalPrice))}
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-
-                  <div className="divide-y divide-sand text-xs">
-                    {order.items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="py-2 flex items-center justify-between"
-                      >
-                        <span className="font-semibold text-charcoal-800">
-                          {item.productName} × {item.quantity}
-                        </span>
-                        <span className="font-bold text-forest-900">
-                          {formatPrice(item.price * item.quantity)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="pt-2 flex justify-between text-xs text-charcoal-500 border-t border-sand">
-                    <span>Shipping Address: {order.shippingAddress}, {order.city}</span>
-                    <span>Includes ৳{order.deliveryCharge} delivery charge</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-12 text-center bg-white rounded-2xl border border-brand-border space-y-4">
+                <ShoppingBag className="w-12 h-12 text-charcoal-300 stroke-[1.2] mx-auto" />
+                <h3 className="font-heading font-bold text-base text-charcoal-800">
+                  No orders placed yet
+                </h3>
+                <p className="text-xs text-charcoal-500 max-w-sm mx-auto leading-relaxed">
+                  When you purchase handcrafted heritage creations from SHOILPIKKABBO, your invoices, package tracking, and order history will appear here.
+                </p>
+                <Link href="/shop">
+                  <Button className="bg-forest-800 hover:bg-forest-900 text-white text-xs">
+                    Explore Handcrafted Collection
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
         {/* Profile Tab */}
         {activeTab === "profile" && (
-          <div className="p-6 rounded-2xl border border-brand-border bg-white shadow-xs max-w-xl space-y-4">
-            <h3 className="font-heading font-bold text-base text-charcoal-900 border-b border-sand pb-3">
-              Personal Information
-            </h3>
-            <div className="space-y-3 text-xs">
-              <div>
-                <label className="text-charcoal-500 block">Full Name</label>
-                <p className="font-bold text-charcoal-900 text-sm mt-0.5">Tanvir Ahmed</p>
+          <div className="p-6 rounded-2xl border border-brand-border bg-white shadow-xs space-y-6 max-w-2xl">
+            <h2 className="font-heading font-bold text-lg text-charcoal-900">
+              Account Credentials & Security
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div className="p-4 rounded-xl bg-sand/40 border border-sand">
+                <span className="text-charcoal-500 block mb-1">Full Name</span>
+                <span className="font-bold text-charcoal-900 text-sm">{user.name}</span>
               </div>
-              <div>
-                <label className="text-charcoal-500 block">Contact Phone</label>
-                <p className="font-bold text-charcoal-900 text-sm mt-0.5">01712345678</p>
+              <div className="p-4 rounded-xl bg-sand/40 border border-sand">
+                <span className="text-charcoal-500 block mb-1">Primary Phone</span>
+                <span className="font-bold text-charcoal-900 text-sm">{user.phone}</span>
               </div>
-              <div>
-                <label className="text-charcoal-500 block">Email Address</label>
-                <p className="font-bold text-charcoal-900 text-sm mt-0.5">tanvir.ahmed@example.com</p>
+              <div className="p-4 rounded-xl bg-sand/40 border border-sand">
+                <span className="text-charcoal-500 block mb-1">Email Address</span>
+                <span className="font-bold text-charcoal-900 text-sm">{user.email || "Not provided"}</span>
               </div>
-            </div>
-            <div className="pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => alert("Profile update saved.")}
-              >
-                Edit Profile Information
-              </Button>
+              <div className="p-4 rounded-xl bg-sand/40 border border-sand">
+                <span className="text-charcoal-500 block mb-1">Access Role</span>
+                <span className="font-bold text-charcoal-900 text-sm">{user.role}</span>
+              </div>
             </div>
           </div>
         )}
 
         {/* Addresses Tab */}
         {activeTab === "addresses" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-2xl border-2 border-forest-800/40 bg-forest-50/30 shadow-xs space-y-3 relative">
-              <span className="px-2 py-0.5 rounded-full bg-forest-800 text-white text-[10px] font-bold">
-                Default Shipping Address
-              </span>
-              <h4 className="font-heading font-bold text-sm text-charcoal-900">
-                Home (Banani, Dhaka)
-              </h4>
-              <p className="text-xs text-charcoal-600 leading-relaxed">
-                House 42, Road 11, Block D, Banani, Dhaka-1213
-              </p>
-              <p className="text-xs text-charcoal-600">
-                Phone: 01712345678
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl border border-dashed border-sand-dark bg-white shadow-xs flex flex-col items-center justify-center text-center p-8 space-y-2">
-              <MapPin className="h-8 w-8 text-charcoal-400" />
-              <p className="text-xs font-semibold text-charcoal-700">
-                Add Another Delivery Address
-              </p>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => alert("Address addition form opens.")}
-              >
-                Add Address
-              </Button>
-            </div>
+          <div className="p-8 text-center bg-white rounded-2xl border border-brand-border space-y-4">
+            <MapPin className="w-10 h-10 text-charcoal-300 stroke-[1.2] mx-auto" />
+            <h3 className="font-heading font-bold text-base text-charcoal-800">
+              No saved addresses yet
+            </h3>
+            <p className="text-xs text-charcoal-500 max-w-sm mx-auto leading-relaxed">
+              Your default delivery address will be securely remembered on your next checkout.
+            </p>
           </div>
         )}
       </div>

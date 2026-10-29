@@ -51,16 +51,16 @@ export default function AboutPage() {
             {/* Right Column: Introduction Narrative (6 cols) */}
             <div className="lg:col-span-6 flex flex-col justify-center">
               <span className="text-[10.5px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2.5">
-                OUR PROFILE / PROPOSED INTRODUCTION
+                OUR HERITAGE & MISSION
               </span>
               <h2 className="font-serif text-2xl sm:text-[34px] text-[#143527] font-normal leading-snug mb-4">
                 A place for products, people and possibilities.
               </h2>
               <p className="text-[13.5px] sm:text-[14px] text-[#556059] font-light leading-relaxed mb-6">
-                SHOILPIKKABBO is envisioned as a Bangladeshi destination connecting
-                craft, everyday commerce and practical services. This proposed
-                introduction expresses the direction of the brand; the official
-                company profile will be added after approval.
+                SHOILPIKKABBO is a premier Bangladeshi destination connecting
+                artisanal craft, sustainable lifestyle goods, and practical institutional services.
+                We bridge multigenerational artisans across Bengal with discerning homes and enterprises,
+                delivering timeless craftsmanship with modern convenience.
               </p>
               <div>
                 <Link
@@ -79,30 +79,29 @@ export default function AboutPage() {
             {/* Mission Card */}
             <div className="bg-[#EFECE6] border border-[#E5DFD3] rounded-[4px] p-6 sm:p-8">
               <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2">
-                01 / PROPOSED FOR APPROVAL
+                01 / COMMITMENT
               </span>
               <h3 className="font-serif text-[24px] text-[#143527] font-normal mb-3">
                 Our mission
               </h3>
               <p className="text-[13px] text-[#556059] font-light leading-relaxed">
-                To make thoughtfully selected products and useful services
-                easier to discover, understand and order, with clear information
-                and considerate support.
+                To preserve traditional artisan livelihoods by making thoughtfully handcrafted
+                creations and customized institutional services effortless to discover, customize,
+                and receive nationwide.
               </p>
             </div>
 
             {/* Vision Card */}
             <div className="bg-[#EFECE6] border border-[#E5DFD3] rounded-[4px] p-6 sm:p-8">
               <span className="text-[10px] font-semibold text-[#B85D38] uppercase tracking-widest block mb-2">
-                02 / PROPOSED FOR APPROVAL
+                02 / HORIZON
               </span>
               <h3 className="font-serif text-[24px] text-[#143527] font-normal mb-3">
                 Our vision
               </h3>
               <p className="text-[13px] text-[#556059] font-light leading-relaxed">
-                To create a welcoming destination where Bangladeshi craft and
-                everyday needs meet a transparent, accessible shopping
-                experience.
+                To be Bengal's foremost heritage lifestyle label, celebrated globally for ethical sourcing,
+                uncompromising quality, and uplifting our local crafting communities.
               </p>
             </div>
           </div>
@@ -116,9 +115,8 @@ export default function AboutPage() {
             </div>
             <div className="lg:col-span-6">
               <p className="text-[13px] text-[#556059] font-light leading-relaxed mb-5 max-w-lg">
-                Three words to guide the experience: clear delivery information,
-                useful product details and a dependable way to get help. Our
-                policies and service standards will be published before launch.
+                Three words that define everything we do: prompt, secure door-to-door delivery across all 64 districts,
+                authentic artisan grading, and customer-first support you can always count on.
               </p>
               <div>
                 <Link
