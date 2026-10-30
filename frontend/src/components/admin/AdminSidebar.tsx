@@ -23,6 +23,8 @@ import {
   X,
   Palette,
   ShieldCheck,
+  UserCheck,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/shared/Logo";
@@ -99,6 +101,13 @@ export function AdminSidebar({
           icon: Users,
           badge: null,
         },
+        {
+          label: "Team & Staff",
+          href: "/admin/staff",
+          icon: UserCheck,
+          badge: "Roles",
+          badgeVariant: "gold",
+        },
       ],
     },
     {
@@ -157,6 +166,12 @@ export function AdminSidebar({
           label: "Analytics",
           href: "/admin/analytics",
           icon: BarChart3,
+          badge: null,
+        },
+        {
+          label: "Profile & Security",
+          href: "/admin/profile",
+          icon: User,
           badge: null,
         },
         {

@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowUpRight, Lock, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useAuth } from "@/context/AuthContext";
+import { useSettings } from "@/context/SettingsContext";
 
 function LoginContent() {
   const router = useRouter();
@@ -14,9 +15,10 @@ function LoginContent() {
   const redirectPath = searchParams.get("redirect");
 
   const { login, isAuthenticated, user, isLoading: authLoading } = useAuth();
+  const { settings } = useSettings();
 
-  const [identifier, setIdentifier] = React.useState("01731214379");
-  const [password, setPassword] = React.useState("admin1234");
+  const [identifier, setIdentifier] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [rememberMe, setRememberMe] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -96,33 +98,15 @@ function LoginContent() {
                 </p>
               </div>
 
-              {/* Demo Accounts Preset Helper */}
-              <div className="p-5 rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-3">
-                <p className="text-xs font-bold text-[#0D3B37] uppercase tracking-wider">Quick Demo Accounts:</p>
-                <div className="flex flex-wrap gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIdentifier("01731214379");
-                      setPassword("admin1234");
-                      setErrorMessage(null);
-                    }}
-                    className="px-3.5 py-1.5 bg-[#FAF8F5] hover:bg-[#0D3B37] hover:text-white rounded-xl text-xs font-bold text-[#0D3B37] transition-all cursor-pointer"
-                  >
-                    Admin (01731214379)
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIdentifier("01712345678");
-                      setPassword("demo1234");
-                      setErrorMessage(null);
-                    }}
-                    className="px-3.5 py-1.5 bg-[#FAF8F5] hover:bg-[#0D3B37] hover:text-white rounded-xl text-xs font-bold text-[#0D3B37] transition-all cursor-pointer"
-                  >
-                    Customer (01712345678)
-                  </button>
+              {/* Security & Customer Guarantee Highlights */}
+              <div className="p-5 rounded-2xl bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] space-y-2.5 border border-gray-100">
+                <div className="flex items-center gap-2.5 text-[#0D3B37]">
+                  <Lock className="w-4 h-4 text-[#E0592A]" />
+                  <span className="text-xs font-bold uppercase tracking-wider">Secure Account Access</span>
                 </div>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  Your credentials and personal information are protected with encrypted SSL authentication. Access your order history, delivery tracking, and saved wishlist seamlessly.
+                </p>
               </div>
             </div>
 
@@ -168,7 +152,7 @@ function LoginContent() {
                     required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="01731214379 or you@example.com"
+                    placeholder="Enter phone number or email"
                     className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 focus:border-[#E0592A] focus:bg-white rounded-xl text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all"
                   />
                 </div>
@@ -183,7 +167,7 @@ function LoginContent() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••••"
+                      placeholder="Enter your password"
                       className="w-full h-11 px-4 pr-11 bg-[#FAF8F5] border border-gray-200 focus:border-[#E0592A] focus:bg-white rounded-xl text-sm text-gray-900 placeholder:text-gray-400 outline-none transition-all"
                     />
                     <button
@@ -215,7 +199,11 @@ function LoginContent() {
                   <button
                     type="button"
                     onClick={() =>
-                      alert("Password reset assistance: Please contact support at shoilpikkabbo@gmail.com or 01731214379.")
+                      alert(
+                        `For password reset assistance, please contact customer support at ${
+                          settings.contactEmail || "shoilpikkabbo@gmail.com"
+                        } or ${settings.contactPrimary || "+880 1731-214379"}.`
+                      )
                     }
                     className="hover:text-[#0D3B37] font-semibold cursor-pointer"
                   >

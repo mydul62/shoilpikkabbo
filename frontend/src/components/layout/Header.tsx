@@ -25,20 +25,113 @@ import {
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useSettings } from "@/context/SettingsContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { MOCK_PRODUCTS } from "@/data/mock-data";
 
-const SEARCH_CATEGORIES = [
-  { name: "Handicrafts", slug: "handicraft" },
-  { name: "Jute Items", slug: "jute-items" },
-  { name: "Polymer", slug: "polymer" },
-  { name: "Baby Items", slug: "baby-items" },
-  { name: "Corporate Gift Items", slug: "corporate-gift-items" },
-  { name: "Rudiment Garments", slug: "rudiment-garments" },
-  { name: "Industrial Solutions", slug: "industrial-solutions" },
-  { name: "Health & Beauty", slug: "health-and-beauty" },
-  { name: "Agriculture", slug: "agriculture" },
-  { name: "Special E-Sheba & Services", slug: "special-e-sheba", href: "/services" },
+export interface MegaMenuCategory {
+  name: string;
+  slug: string;
+  matchNames: string[];
+  subtitle: string;
+  tagline: string;
+  iconImg: string;
+  href?: string;
+  badge?: string;
+}
+
+export const MEGA_MENU_CATEGORIES: MegaMenuCategory[] = [
+  {
+    name: "Handicrafts",
+    slug: "handicraft",
+    matchNames: ["handicraft", "handicrafts", "artisan"],
+    subtitle: "Pottery, Nakshi Kantha & Brass",
+    tagline: "Authentic traditional crafts hand-molded by rural Bengali master artisans.",
+    iconImg: "/images/client-mockup/cat-handicrafts.png",
+    badge: "Heritage",
+  },
+  {
+    name: "Jute Items",
+    slug: "jute-items",
+    matchNames: ["jute", "jute items", "golden fiber"],
+    subtitle: "Bags, Baskets & Eco Living",
+    tagline: "Eco-friendly golden fiber products for modern sustainable living and home decor.",
+    iconImg: "/images/client-mockup/cat-jute.png",
+    badge: "Eco",
+  },
+  {
+    name: "Polymer",
+    slug: "polymer",
+    matchNames: ["polymer", "plastic", "containers"],
+    subtitle: "Jars, Bottles & Crates",
+    tagline: "Durable food-grade polymer utility ware, sports bottles and industrial containers.",
+    iconImg: "/images/client-mockup/cat-polymer.png",
+  },
+  {
+    name: "Baby Items",
+    slug: "baby-items",
+    matchNames: ["baby", "baby items", "kids"],
+    subtitle: "Swaddles, Bibs & Rattles",
+    tagline: "Ultra-soft combed cotton swaddles and handmade child-safe nursery essentials.",
+    iconImg: "/images/client-mockup/cat-baby.png",
+  },
+  {
+    name: "Corporate Gift Items",
+    slug: "corporate-gift-items",
+    matchNames: ["corporate", "corporate gift items", "executive gifts"],
+    subtitle: "Diaries, Flasks & Gift Boxes",
+    tagline: "Sophisticated executive gifting sets with custom logo engraving and premium boxes.",
+    iconImg: "/images/client-mockup/cat-corporate.png",
+    badge: "Custom",
+  },
+  {
+    name: "Rudiment Garments",
+    slug: "rudiment-garments",
+    matchNames: ["garments", "rudiment garments", "apparel", "clothing"],
+    subtitle: "Cotton Tees, Polo & Knitwear",
+    tagline: "Export-quality combed cotton everyday apparel, tees, polo shirts and hoodies.",
+    iconImg: "/images/client-mockup/cat-garments.png",
+  },
+  {
+    name: "Industrial Solutions",
+    slug: "industrial-solutions",
+    matchNames: ["industrial", "industrial solutions", "safety"],
+    subtitle: "Safety Gear, Helmets & Spares",
+    tagline: "Certified protective industrial gear, eye safety glasses, and workplace equipment.",
+    iconImg: "/images/client-mockup/cat-industrial.png",
+  },
+  {
+    name: "Health & Beauty",
+    slug: "health-and-beauty",
+    matchNames: ["health", "beauty", "health & beauty", "cosmetics"],
+    subtitle: "Organic Skincare & Herbal Glow",
+    tagline: "Pure natural remedies, herbal beauty formulations and glow-enhancing serums.",
+    iconImg: "/images/client-mockup/cat-beauty.png",
+  },
+  {
+    name: "Agriculture",
+    slug: "agriculture",
+    matchNames: ["agriculture", "farming", "organic honey"],
+    subtitle: "Bio-Fertilizers & Pure Honey",
+    tagline: "Nutrient-rich organic vermicompost fertilizers and raw Sundarban bee honey.",
+    iconImg: "/images/client-mockup/cat-agriculture.png",
+  },
+  {
+    name: "Special E-Sheba & Services",
+    slug: "special-e-sheba",
+    matchNames: ["special e-sheba / services", "service", "sheba", "special-services"],
+    subtitle: "Institutional Orders & Inquiries",
+    tagline: "Bespoke corporate gifting, custom bulk procurement, and tailored client consultations.",
+    iconImg: "/images/client-mockup/cat-services.png",
+    href: "/services",
+    badge: "Bespoke",
+  },
 ];
+
+const SEARCH_CATEGORIES = MEGA_MENU_CATEGORIES.map((c) => ({
+  name: c.name,
+  slug: c.slug,
+  href: c.href,
+}));
 
 const SEARCH_QUICK_LINKS = [
   { title: "Special E-Sheba & Custom Services", href: "/services", keywords: "service sheba corporate order custom solution request" },
@@ -93,6 +186,7 @@ export function Header() {
     [pathname]
   );
   const { totalItemCount, setIsCartOpen } = useCart();
+  const { totalWishlistCount } = useWishlist();
   const { user, isAuthenticated, logout } = useAuth();
   const { settings } = useSettings();
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -101,7 +195,7 @@ export function Header() {
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = React.useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = React.useState(false);
-  const [lang, setLang] = React.useState<"en" | "bn">("bn");
+  const [activeMegaCategory, setActiveMegaCategory] = React.useState<string>("handicraft");
   const [catalogProducts, setCatalogProducts] = React.useState<any[]>(MOCK_PRODUCTS);
 
   const desktopSearchRef = React.useRef<HTMLDivElement>(null);
@@ -175,6 +269,7 @@ export function Header() {
         setIsMobileDropdownOpen(false);
         setIsMobileMenuOpen(false);
         setIsUserMenuOpen(false);
+        setIsCategoriesMenuOpen(false);
       }
     }
     window.addEventListener("keydown", handleKeyDown);
@@ -192,6 +287,26 @@ export function Header() {
       document.body.style.overflow = "";
     }
   }, [isMobileMenuOpen]);
+
+  // Current active category and filtered products for Flyout Mega-Menu
+  const currentMegaCategory = React.useMemo(() => {
+    return (
+      MEGA_MENU_CATEGORIES.find((c) => c.slug === activeMegaCategory) ||
+      MEGA_MENU_CATEGORIES[0]
+    );
+  }, [activeMegaCategory]);
+
+  const activeCategoryProducts = React.useMemo(() => {
+    if (!currentMegaCategory) return [];
+    const matches = currentMegaCategory.matchNames.map((m) => m.toLowerCase());
+    return catalogProducts
+      .filter((p) => {
+        const pCat = (p.categoryName || "").toLowerCase();
+        const pName = (p.name || "").toLowerCase();
+        return matches.some((m) => pCat.includes(m) || pName.includes(m));
+      })
+      .slice(0, 3);
+  }, [catalogProducts, currentMegaCategory]);
 
   // Compute live global search results
   const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -467,41 +582,15 @@ export function Header() {
             )}
           </div>
 
-          {/* Right Links & Language Toggle */}
+          {/* Right Links */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link
               href="/track-order"
-              className="hidden sm:flex items-center gap-1.5 hover:text-orange-300 transition-colors text-xs sm:text-[13px] text-white/90 font-medium"
+              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors text-xs sm:text-[13px] text-white/90 font-medium"
             >
               <Truck className="w-3.5 h-3.5 text-white/90" />
               <span>Track Order</span>
             </Link>
-            <span className="hidden sm:inline text-white/30">|</span>
-            {/* Language Toggle Pill */}
-            <div className="inline-flex items-center bg-white/10 rounded-md p-0.5 border border-white/10">
-              <button
-                type="button"
-                onClick={() => setLang("bn")}
-                className={`px-2 py-0.5 rounded text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
-                  lang === "bn"
-                    ? "bg-[#E0592A] text-white shadow-xs"
-                    : "text-white/70 hover:text-white"
-                }`}
-              >
-                বাংলা
-              </button>
-              <button
-                type="button"
-                onClick={() => setLang("en")}
-                className={`px-1.5 py-0.5 rounded text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
-                  lang === "en"
-                    ? "bg-[#E0592A] text-white shadow-xs"
-                    : "text-white/70 hover:text-white"
-                }`}
-              >
-                EN
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -540,7 +629,7 @@ export function Header() {
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={settings.logoUrl}
-                  alt={lang === "bn" && settings.storeNameBn ? settings.storeNameBn : settings.storeName}
+                  alt={settings.storeNameBn || settings.storeName}
                   className="h-11 sm:h-13 md:h-14 w-auto max-w-[260px] object-contain hover:opacity-95 transition-opacity"
                 />
               ) : (
@@ -694,11 +783,26 @@ export function Header() {
 
             {/* Wishlist Link */}
             <Link
-              href="/shop"
-              className="hidden sm:flex items-center gap-2 text-sm text-gray-700 hover:text-[#E0592A] transition-colors font-semibold group"
-              title="Wishlist"
+              href="/wishlist"
+              className="flex items-center gap-2 text-sm text-gray-700 hover:text-[#E0592A] transition-colors font-semibold group relative cursor-pointer"
+              title="View Wishlist"
+              aria-label="Wishlist"
             >
-              <Heart className="w-5 h-5 text-[#0D3B37] group-hover:text-[#E0592A] transition-colors" strokeWidth={1.8} />
+              <div className="relative flex items-center">
+                <Heart
+                  className={`w-5 h-5 transition-colors ${
+                    totalWishlistCount > 0
+                      ? "text-[#E0592A] fill-[#E0592A]"
+                      : "text-[#0D3B37] group-hover:text-[#E0592A]"
+                  }`}
+                  strokeWidth={1.8}
+                />
+                {totalWishlistCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-[#E0592A] text-white text-[10px] font-bold w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs">
+                    {totalWishlistCount}
+                  </span>
+                )}
+              </div>
               <span className="hidden lg:inline">Wishlist</span>
             </Link>
 
@@ -772,31 +876,263 @@ export function Header() {
       {/* 3. Navigation Bar (All Categories Button + Centered Links - Hidden on small devices) */}
       <nav className="hidden md:block border-b border-gray-100 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-6 sm:gap-8 lg:gap-10 py-2.5">
-          {/* All Categories Dropdown Button */}
+          {/* All Categories Dropdown Button & Flyout Mega-Menu (Option 2: Daraz / Amazon Style) */}
           <div className="relative shrink-0" ref={categoriesMenuRef}>
             <button
               type="button"
               onClick={() => setIsCategoriesMenuOpen(!isCategoriesMenuOpen)}
-              className="flex items-center gap-2.5 px-5 py-2.5 bg-[#E0592A] hover:bg-[#C94B20] text-white rounded-xl font-bold text-sm tracking-wide transition-colors shadow-xs cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 bg-[#E0592A] hover:bg-[#C94B20] text-white rounded-xl font-bold text-sm tracking-wide transition-all shadow-xs cursor-pointer select-none"
+              aria-expanded={isCategoriesMenuOpen}
             >
               <Menu className="w-4 h-4 stroke-[2.2]" />
               <span>All Categories</span>
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${
+                  isCategoriesMenuOpen ? "rotate-180" : ""
+                }`}
+              />
             </button>
 
-            {/* Dropdown Menu */}
+            {/* Flyout Mega-Menu Dropdown */}
             {isCategoriesMenuOpen && (
-              <div className="absolute left-0 top-full mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-2.5 z-50 animate-in fade-in zoom-in-95 duration-150">
-                {SEARCH_CATEGORIES.map((cat) => (
-                  <Link
-                    key={cat.slug}
-                    href={cat.href || `/shop?category=${cat.slug}`}
-                    onClick={() => setIsCategoriesMenuOpen(false)}
-                    className="flex items-center justify-between px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#FAF8F3] hover:text-[#E0592A] transition-colors"
-                  >
-                    <span>{cat.name}</span>
-                    <ArrowRight className="w-4 h-4 text-gray-300" />
-                  </Link>
-                ))}
+              <div className="absolute left-0 top-full mt-2 w-[860px] lg:w-[920px] xl:w-[960px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.16)] border border-gray-100 overflow-hidden flex z-50 animate-in fade-in zoom-in-95 duration-150">
+                {/* Left Column: Categories List */}
+                <div className="w-[295px] shrink-0 bg-[#FAF9F6] border-r border-gray-100 p-2 flex flex-col justify-between">
+                  <div className="space-y-0.5">
+                    {MEGA_MENU_CATEGORIES.map((cat) => {
+                      const isActive = activeMegaCategory === cat.slug;
+                      return (
+                        <Link
+                          key={cat.slug}
+                          href={cat.href || `/shop?category=${cat.slug}`}
+                          onMouseEnter={() => setActiveMegaCategory(cat.slug)}
+                          onClick={() => setIsCategoriesMenuOpen(false)}
+                          className={`group flex items-center justify-between px-2.5 py-1.5 rounded-xl transition-all duration-150 ${
+                            isActive
+                              ? "bg-white text-[#E0592A] shadow-[0_2px_8px_rgba(224,89,42,0.12)] border border-[#E0592A]/25"
+                              : "text-gray-700 hover:bg-white/70 hover:text-[#E0592A] border border-transparent"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div
+                              className={`w-7 h-7 rounded-lg flex items-center justify-center p-1 shrink-0 transition-colors ${
+                                isActive
+                                  ? "bg-[#FFF4EE] border border-[#E0592A]/30"
+                                  : "bg-white border border-gray-200/60 group-hover:border-[#E0592A]/30"
+                              }`}
+                            >
+                              <Image
+                                src={cat.iconImg}
+                                alt={cat.name}
+                                width={22}
+                                height={22}
+                                className="object-contain"
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span
+                                  className={`text-[12.5px] font-bold truncate leading-tight ${
+                                    isActive ? "text-[#E0592A]" : "text-gray-800"
+                                  }`}
+                                >
+                                  {cat.name}
+                                </span>
+                                {cat.badge && (
+                                  <span
+                                    className={`text-[8.5px] px-1.5 py-0.2 rounded-full font-bold uppercase tracking-wide ${
+                                      isActive
+                                        ? "bg-[#E0592A] text-white"
+                                        : "bg-[#E0592A]/10 text-[#E0592A]"
+                                    }`}
+                                  >
+                                    {cat.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10.5px] text-gray-400 font-normal truncate mt-0.5">
+                                {cat.subtitle}
+                              </p>
+                            </div>
+                          </div>
+                          <ArrowRight
+                            className={`w-3.5 h-3.5 shrink-0 transition-transform ${
+                              isActive
+                                ? "text-[#E0592A] translate-x-0.5"
+                                : "text-gray-300 group-hover:text-[#E0592A]"
+                            }`}
+                          />
+                        </Link>
+                      );
+                    })}
+                  </div>
+
+                  {/* Left Column Bottom Action */}
+                  <div className="pt-2 mt-2 border-t border-gray-200/60">
+                    <Link
+                      href="/shop"
+                      onClick={() => setIsCategoriesMenuOpen(false)}
+                      className="flex items-center justify-between px-3 py-2 text-xs font-bold text-[#143527] bg-white rounded-xl hover:bg-[#143527] hover:text-white transition-colors border border-gray-200/80 shadow-xs"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Package className="w-3.5 h-3.5 text-[#E0592A]" />
+                        <span>Browse All Products</span>
+                      </div>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Right Column: Dynamic Preview Panel */}
+                <div className="flex-1 p-5 lg:p-6 bg-white flex flex-col justify-between min-h-[490px]">
+                  {/* Category Header */}
+                  <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
+                    <div className="min-w-0 pr-4">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-lg lg:text-xl font-extrabold text-gray-900 tracking-tight truncate">
+                          {currentMegaCategory.name}
+                        </h3>
+                        {currentMegaCategory.badge && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E0592A]/10 text-[#E0592A] uppercase">
+                            {currentMegaCategory.badge}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">
+                        {currentMegaCategory.tagline}
+                      </p>
+                    </div>
+                    <Link
+                      href={currentMegaCategory.href || `/shop?category=${currentMegaCategory.slug}`}
+                      onClick={() => setIsCategoriesMenuOpen(false)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-[#E0592A] bg-[#FFF4EE] hover:bg-[#E0592A] hover:text-white transition-colors shrink-0"
+                    >
+                      <span>Explore All</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+
+                  {/* Body Content */}
+                  {currentMegaCategory.slug === "special-e-sheba" ? (
+                    <div className="my-auto py-2 space-y-3.5">
+                      {/* Institutional Custom Banner */}
+                      <div className="rounded-2xl p-4 lg:p-5 bg-gradient-to-br from-[#143527] via-[#0E281C] to-[#0A1B13] text-white relative overflow-hidden shadow-md">
+                        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="space-y-1.5 max-w-md">
+                            <span className="inline-block px-2.5 py-0.5 bg-[#E0592A] text-white text-[10px] font-extrabold rounded-full uppercase tracking-wider">
+                              Institutional & Corporate Solutions
+                            </span>
+                            <h4 className="text-base lg:text-lg font-bold text-white leading-snug">
+                              Need Bespoke Corporate Gifts or Bulk Sourcing?
+                            </h4>
+                            <p className="text-xs text-emerald-100/80 leading-relaxed">
+                              Custom logo branding on jute & leatherette, direct artisan procurement with bulk wholesale rates, and dedicated support.
+                            </p>
+                          </div>
+                          <Link
+                            href="/services"
+                            onClick={() => setIsCategoriesMenuOpen(false)}
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#E0592A] hover:bg-[#C94B20] text-white text-xs font-bold rounded-xl transition-all shadow-md shrink-0 self-start sm:self-center"
+                          >
+                            <span>Service Inquiry</span>
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </Link>
+                        </div>
+                      </div>
+
+                      {/* 3 Featured Products in this Category */}
+                      <div className="grid grid-cols-3 gap-3">
+                        {activeCategoryProducts.map((prod) => (
+                          <Link
+                            key={prod.id}
+                            href={`/products/${prod.slug}`}
+                            onClick={() => setIsCategoriesMenuOpen(false)}
+                            className="group/prod flex items-center gap-2.5 p-2 rounded-xl border border-gray-100 hover:border-[#E0592A]/40 hover:bg-[#FAF8F3] transition-all bg-white shadow-xs"
+                          >
+                            <div className="w-12 h-12 rounded-lg bg-gray-50 overflow-hidden relative shrink-0 border border-gray-100">
+                              <Image
+                                src={prod.imageUrl || "/images/product-jute-basket.png"}
+                                alt={prod.name}
+                                fill
+                                className="object-cover group-hover/prod:scale-105 transition-transform duration-200"
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-xs font-bold text-gray-800 truncate group-hover/prod:text-[#E0592A] transition-colors">
+                                {prod.name}
+                              </p>
+                              <p className="text-[11px] font-extrabold text-[#E0592A] mt-0.5">
+                                ৳{Number(prod.price).toLocaleString()}
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="my-auto py-2">
+                      <div className="grid grid-cols-3 gap-3.5">
+                        {activeCategoryProducts.map((prod) => {
+                          const discount =
+                            prod.salePrice && prod.price > prod.salePrice
+                              ? Math.round(((prod.price - prod.salePrice) / prod.price) * 100)
+                              : null;
+                          return (
+                            <Link
+                              key={prod.id}
+                              href={`/products/${prod.slug}`}
+                              onClick={() => setIsCategoriesMenuOpen(false)}
+                              className="group/card flex flex-col rounded-xl p-2.5 border border-gray-100 hover:border-[#E0592A]/30 hover:shadow-lg transition-all duration-200 bg-white"
+                            >
+                              <div className="relative aspect-square w-full rounded-lg bg-[#F8F7F4] overflow-hidden mb-2 border border-gray-100/70">
+                                <Image
+                                  src={prod.imageUrl || "/images/product-jute-basket.png"}
+                                  alt={prod.name}
+                                  fill
+                                  className="object-cover group-hover/card:scale-105 transition-transform duration-300"
+                                />
+                                {discount && (
+                                  <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 bg-[#EF4444] text-white text-[9.5px] font-black rounded-md shadow-xs">
+                                    -{discount}%
+                                  </span>
+                                )}
+                              </div>
+                              <h5 className="text-xs font-bold text-gray-800 line-clamp-2 leading-snug group-hover/card:text-[#E0592A] transition-colors mb-1 min-h-[32px]">
+                                {prod.name}
+                              </h5>
+                              <div className="flex items-center gap-1.5 mt-auto">
+                                <span className="text-xs font-black text-[#E0592A]">
+                                  ৳{Number(prod.salePrice || prod.price).toLocaleString()}
+                                </span>
+                                {prod.salePrice && prod.price > prod.salePrice && (
+                                  <span className="text-[10.5px] text-gray-400 line-through">
+                                    ৳{Number(prod.price).toLocaleString()}
+                                  </span>
+                                )}
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Trust Footer Strip */}
+                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <span>100% Authentic Handcrafted</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Truck className="w-3.5 h-3.5 text-[#E0592A]" />
+                      <span>Nationwide Delivery</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Verified Quality Guarantee</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -867,7 +1203,7 @@ export function Header() {
                 />
               ) : (
                 <span className="font-serif text-lg font-normal tracking-[0.14em] text-[#143527] uppercase">
-                  {lang === "bn" && settings.storeNameBn ? settings.storeNameBn : settings.storeName}
+                  {settings.storeNameBn || settings.storeName}
                 </span>
               )}
             </Link>
@@ -938,6 +1274,28 @@ export function Header() {
                 <span>Sign in to your account</span>
               </Link>
             )}
+
+            {/* Mobile Wishlist Shortcut */}
+            <Link
+              href="/wishlist"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center justify-between p-3 bg-[#F7F4EE] hover:bg-white rounded-xl border border-[#EAE3D5] text-sm font-semibold text-[#143527] hover:text-[#E0592A] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <Heart className={`w-4 h-4 ${totalWishlistCount > 0 ? "text-[#E0592A] fill-[#E0592A]" : "text-[#143527]"}`} />
+                <span>My Wishlist</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                {totalWishlistCount > 0 ? (
+                  <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#E0592A] text-white">
+                    {totalWishlistCount}
+                  </span>
+                ) : (
+                  <span className="text-xs text-[#8C948E]">Empty</span>
+                )}
+                <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
+              </div>
+            </Link>
 
             {/* Main Navigation (1:1 with Desktop Navbar) */}
             <div>
@@ -1020,17 +1378,9 @@ export function Header() {
             )}
           </div>
 
-          {/* Drawer Footer with Language & Help */}
-          <div className="p-5 border-t border-[#EAE3D5] bg-[#F7F4EE] flex items-center justify-between text-xs text-[#555A54]">
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-[#143527]">Language:</span>
-              <button
-                onClick={() => setLang(lang === "en" ? "bn" : "en")}
-                className="font-medium px-2 py-1 rounded bg-white border border-[#D5CDC0] text-[#143527] cursor-pointer hover:border-[#143527] transition-colors"
-              >
-                {lang === "en" ? "EN (English)" : "বাংলা"}
-              </button>
-            </div>
+          {/* Drawer Footer with Store Name & Help Link */}
+          <div className="p-4 border-t border-[#EAE3D5] bg-[#F7F4EE] flex items-center justify-between text-xs text-[#555A54]">
+            <span className="font-semibold text-[#143527]">{settings.storeName}</span>
             <Link
               href="/contact"
               onClick={() => setIsMobileMenuOpen(false)}

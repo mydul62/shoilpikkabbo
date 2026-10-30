@@ -7,6 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { ArrowUpRight, Plus, Check, X, SlidersHorizontal, ChevronLeft, ChevronRight, Sparkles, Star, Heart, ShoppingCart } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { MOCK_PRODUCTS, MOCK_CATEGORIES, Product } from "@/data/mock-data";
 
 const OFFICIAL_CATEGORIES = [
@@ -26,6 +27,7 @@ function ShopContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { addToCart, setIsCartOpen } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
   const initialCat = searchParams.get("category");
   const initialQ = searchParams.get("q") || "";
@@ -44,14 +46,6 @@ function ShopContent() {
   const [isMobileFilterOpen, setIsMobileFilterOpen] = React.useState<boolean>(false);
   const [addedProductId, setAddedProductId] = React.useState<string | null>(null);
   const [liveCategories, setLiveCategories] = React.useState<any[]>([]);
-  const [wishlist, setWishlist] = React.useState<Record<string, boolean>>({});
-
-  const toggleWishlist = (productId: string) => {
-    setWishlist((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-  };
 
   // Sync with searchParams
   React.useEffect(() => {
@@ -328,7 +322,7 @@ function ShopContent() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Column: Filter your finds Sidebar (Sticky on Large Devices when scrolling) */}
           <aside
-            className={`lg:col-span-3 lg:block lg:sticky lg:top-[145px] lg:max-h-[calc(100vh-165px)] lg:overflow-y-auto scrollbar-thin ${
+            className={`lg:col-span-3 lg:block lg:sticky lg:top-[170px] lg:self-start lg:max-h-[calc(100vh-190px)] lg:overflow-y-auto scrollbar-thin z-20 ${
               isMobileFilterOpen
                 ? "block bg-white p-6 sm:p-7 rounded-3xl shadow-xl mb-6 lg:mb-0"
                 : "hidden bg-white p-6 sm:p-7 rounded-3xl shadow-[0_2px_14px_rgba(0,0,0,0.03)]"
@@ -532,7 +526,7 @@ function ShopContent() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-7 mb-10 sm:mb-12">
                 {paginatedProducts.map((prod) => {
-                  const isWishlisted = Boolean(wishlist[prod.id]);
+                  const isWishlisted = isInWishlist(prod.id);
                   const isAdded = addedProductId === prod.id;
                   const discountPct =
                     prod.salePrice && prod.salePrice > prod.price
@@ -559,10 +553,24 @@ function ShopContent() {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          toggleWishlist(prod.id);
+                          toggleWishlist({
+                            id: prod.id,
+                            name: prod.name,
+                            slug: prod.slug || prod.id,
+                            categoryName: prod.category?.name || prod.categoryName,
+                            price: Number(prod.price) || 0,
+                            salePrice: prod.salePrice ? Number(prod.salePrice) : undefined,
+                            imageUrl:
+                              prod.images?.[0]?.url ||
+                              prod.imageUrl ||
+                              "/images/client-mockup/cat-handicrafts.png",
+                            stock: prod.stock,
+                            rating: prod.rating,
+                            reviewCount: prod.reviewCount,
+                          });
                         }}
                         className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
-                        title="Save to Wishlist"
+                        title={isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
                         aria-label="Save to Wishlist"
                       >
                         <Heart
@@ -594,9 +602,9 @@ function ShopContent() {
                           {prod.categoryName}
                         </p>
 
-                        {/* Product Name */}
-                        <Link href={`/products/${prod.slug}`}>
-                          <h3 className="text-sm sm:text-[15.5px] font-semibold text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 mt-0.5 leading-snug">
+                        {/* Product Name - Fixed 2-line height */}
+                        <Link href={`/products/${prod.slug}`} title={prod.name}>
+                          <h3 className="text-sm sm:text-[15.5px] font-semibold text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 mt-0.5 leading-snug h-10 overflow-hidden">
                             {prod.name}
                           </h3>
                         </Link>
@@ -630,15 +638,15 @@ function ShopContent() {
                         </div>
                       </div>
 
-                      {/* Full-width Add to Cart Button */}
+                      {/* Full-width Add to Cart Button (Transparent outline initially, solid on hover) */}
                       <div className="pt-3">
                         <button
                           type="button"
                           onClick={() => handleQuickAdd(prod)}
-                          className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                          className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
                             isAdded
-                              ? "bg-emerald-600 text-white"
-                              : "bg-[#0D3B37] hover:bg-[#E0592A] text-white active:scale-95"
+                              ? "bg-emerald-600 text-white border border-emerald-600 shadow-sm"
+                              : "bg-transparent text-[#0D3B37] border border-[#0D3B37]/35 hover:bg-[#0D3B37] hover:text-white hover:border-[#0D3B37] hover:shadow-md active:scale-98"
                           }`}
                         >
                           {isAdded ? (
@@ -648,7 +656,7 @@ function ShopContent() {
                             </>
                           ) : (
                             <>
-                              <ShoppingCart className="w-3.5 h-3.5" />
+                              <ShoppingCart className="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
                               <span>Add to Cart</span>
                             </>
                           )}

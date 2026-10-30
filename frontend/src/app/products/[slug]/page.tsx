@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
 import { MOCK_PRODUCTS, Product } from "@/data/mock-data";
 import { productsApi } from "@/lib/api";
 
@@ -50,7 +51,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = React.useState<number>(1);
   const [isAdded, setIsAdded] = React.useState<boolean>(false);
   const [isCopied, setIsCopied] = React.useState<boolean>(false);
-  const [wishlist, setWishlist] = React.useState<Record<string, boolean>>({});
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [liveRecommended, setLiveRecommended] = React.useState<any[]>([]);
   const [addedCrossSellId, setAddedCrossSellId] = React.useState<string | null>(
     null
@@ -199,10 +200,6 @@ export default function ProductDetailPage() {
     }
   };
 
-  const toggleWishlist = (id: string) => {
-    setWishlist((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
   const handleCrossSellAdd = (item: any) => {
     addToCart(
       {
@@ -286,17 +283,30 @@ export default function ProductDetailPage() {
 
               <button
                 type="button"
-                onClick={() => toggleWishlist(product.id)}
+                onClick={() =>
+                  toggleWishlist({
+                    id: product.id,
+                    name: product.name,
+                    slug: product.slug || product.id,
+                    categoryName: (product as any).category?.name || product.categoryName || "Artisanal",
+                    price: Number(product.price) || 0,
+                    salePrice: product.salePrice ? Number(product.salePrice) : undefined,
+                    imageUrl: (product as any).images?.[0]?.url || product.imageUrl || selectedImage,
+                    stock: product.stock,
+                    rating: product.rating,
+                    reviewCount: product.reviewCount,
+                  })
+                }
                 className={`p-2 rounded-xl bg-white border border-[#EAE3D5] transition-all shadow-2xs cursor-pointer ${
-                  wishlist[product.id]
+                  isInWishlist(product.id)
                     ? "text-[#E0592A] border-[#E0592A]"
                     : "text-gray-400 hover:text-[#E0592A]"
                 }`}
-                title="Add to Wishlist"
+                title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
               >
                 <Heart
                   className={`w-4 h-4 ${
-                    wishlist[product.id] ? "fill-[#E0592A]" : ""
+                    isInWishlist(product.id) ? "fill-[#E0592A]" : ""
                   }`}
                 />
               </button>
@@ -794,7 +804,7 @@ export default function ProductDetailPage() {
             {/* Product Cards Grid: Matching Storefront Card Design */}
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
               {liveRecommended.map((item) => {
-                const isWishlisted = Boolean(wishlist[item.id]);
+                const isWishlisted = isInWishlist(item.id);
                 const isItemAdded = addedCrossSellId === item.id;
                 const itemRegular = Number(item.price) || 0;
                 const itemSale = item.salePrice ? Number(item.salePrice) : undefined;
@@ -832,10 +842,21 @@ export default function ProductDetailPage() {
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        toggleWishlist(item.id);
+                        toggleWishlist({
+                          id: item.id,
+                          name: item.name,
+                          slug: item.slug || item.id,
+                          categoryName: item.category?.name || item.categoryName,
+                          price: Number(item.price) || 0,
+                          salePrice: item.salePrice ? Number(item.salePrice) : undefined,
+                          imageUrl: itemImg,
+                          stock: item.stock,
+                          rating: item.rating,
+                          reviewCount: item.reviewCount,
+                        });
                       }}
                       className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
-                      title="Save to Wishlist"
+                      title={isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
                     >
                       <Heart
                         className={`w-4 h-4 transition-colors ${
@@ -866,10 +887,10 @@ export default function ProductDetailPage() {
                         {item.category?.name || "Artisanal"}
                       </p>
 
-                      {/* Product Title */}
+                      {/* Product Title - 2 lines max */}
                       <Link
                         href={`/products/${item.slug}`}
-                        className="block font-semibold text-xs sm:text-sm text-gray-900 hover:text-[#E0592A] transition-colors line-clamp-2 mt-0.5 cursor-pointer leading-snug"
+                        className="block font-semibold text-xs sm:text-sm text-gray-900 hover:text-[#E0592A] transition-colors line-clamp-2 mt-0.5 cursor-pointer leading-snug h-10 overflow-hidden"
                         title={item.name}
                       >
                         {item.name}
@@ -897,15 +918,15 @@ export default function ProductDetailPage() {
                       </div>
                     </div>
 
-                    {/* Quick Add to Cart Button */}
+                    {/* Quick Add to Cart Button (Transparent outline initially, solid on hover) */}
                     <div className="pt-3">
                       <button
                         type="button"
                         onClick={() => handleCrossSellAdd(item)}
-                        className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                        className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
                           isItemAdded
-                            ? "bg-emerald-600 text-white"
-                            : "bg-[#0D3B37] hover:bg-[#E0592A] text-white active:scale-95"
+                            ? "bg-emerald-600 text-white border border-emerald-600 shadow-sm"
+                            : "bg-transparent text-[#0D3B37] border border-[#0D3B37]/35 hover:bg-[#0D3B37] hover:text-white hover:border-[#0D3B37] hover:shadow-md active:scale-98"
                         }`}
                       >
                         {isItemAdded ? (

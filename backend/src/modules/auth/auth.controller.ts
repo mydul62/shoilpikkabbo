@@ -73,4 +73,31 @@ export class AuthController {
       return next(err);
     }
   }
+
+  static async updateProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await AuthService.updateProfile(req.user!.userId, req.body);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Personal info updated successfully.",
+        data: user,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async changePassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await AuthService.changePassword(req.user!.userId, req.body);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: result.message,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
 }

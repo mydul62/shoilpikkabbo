@@ -50,6 +50,10 @@ export const authApi = {
   logout: () =>
     apiFetch("/auth/logout", { method: "POST" }),
   getMe: (token?: string) => apiFetch("/auth/me", { token }),
+  updateProfile: (body: { name?: string; phone?: string; email?: string }, token?: string) =>
+    apiFetch("/auth/profile", { method: "PATCH", body: JSON.stringify(body), token }),
+  changePassword: (body: { currentPassword: string; newPassword: string }, token?: string) =>
+    apiFetch("/auth/change-password", { method: "POST", body: JSON.stringify(body), token }),
 };
 
 // 2. Categories API
@@ -222,6 +226,7 @@ export const paymentsApi = {
 
 // 6. Coupons API
 export const couponsApi = {
+  getPublic: () => apiFetch<any[]>("/coupons/public"),
   validate: (code: string, subtotal: number) =>
     apiFetch("/coupons/validate", {
       method: "POST",
@@ -284,6 +289,12 @@ export const settingsApi = {
   getAll: () => apiFetch("/settings"),
   update: (body: Record<string, string>, token?: string) =>
     apiFetch("/settings", { method: "PATCH", body: JSON.stringify(body), token }),
+  testEmail: (targetEmail: string, token?: string) =>
+    apiFetch("/settings/test-email", {
+      method: "POST",
+      body: JSON.stringify({ targetEmail }),
+      token,
+    }),
 };
 
 // 10. Visual Page Builder (Omnichannel CMS Pages Editor) API
@@ -403,5 +414,18 @@ export const uploadApi = {
 
   deleteFile: (publicId: string, token?: string) =>
     apiFetch(`/upload/${encodeURIComponent(publicId)}`, { method: "DELETE", token }),
+};
+
+// 17. Staff & Team Management API
+export const staffApi = {
+  getAll: (token?: string) => apiFetch<any[]>("/staff", { token }),
+  create: (body: { name: string; phone: string; email?: string; role: "ADMIN" | "STAFF"; password: string }, token?: string) =>
+    apiFetch<any>("/staff", { method: "POST", body: JSON.stringify(body), token }),
+  updateRole: (id: string, role: "ADMIN" | "STAFF", token?: string) =>
+    apiFetch<any>(`/staff/${id}/role`, { method: "PATCH", body: JSON.stringify({ role }), token }),
+  resetPassword: (id: string, newPassword: string, token?: string) =>
+    apiFetch<any>(`/staff/${id}/reset-password`, { method: "POST", body: JSON.stringify({ newPassword }), token }),
+  delete: (id: string, token?: string) =>
+    apiFetch<any>(`/staff/${id}`, { method: "DELETE", token }),
 };
 

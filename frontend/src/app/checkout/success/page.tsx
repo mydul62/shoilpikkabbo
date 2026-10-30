@@ -3,11 +3,11 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { CheckCircle2, PackageCheck, ArrowRight, Truck, ShieldCheck, PhoneCall } from "lucide-react";
+import { CheckCircle2, PackageCheck, ArrowRight, Truck, ShieldCheck, PhoneCall, Loader2 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const { clearCart } = useCart();
 
@@ -24,7 +24,8 @@ export default function CheckoutSuccessPage() {
     clearCart();
 
     if (orderNumber) {
-      fetch(`http://localhost:5000/api/v1/orders/track/${orderNumber}`)
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+      fetch(`${API_BASE}/orders/track/${encodeURIComponent(orderNumber)}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.success && data.data) {
@@ -157,5 +158,26 @@ export default function CheckoutSuccessPage() {
         </div>
       </div>
     </StorefrontLayout>
+  );
+}
+
+function CheckoutSuccessLoading() {
+  return (
+    <StorefrontLayout>
+      <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-16 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-[#0D3B37] mx-auto mb-3" />
+          <p className="text-sm font-medium text-gray-500">পেমেন্ট স্ট্যাটাস যাচাই করা হচ্ছে...</p>
+        </div>
+      </div>
+    </StorefrontLayout>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <React.Suspense fallback={<CheckoutSuccessLoading />}>
+      <CheckoutSuccessContent />
+    </React.Suspense>
   );
 }

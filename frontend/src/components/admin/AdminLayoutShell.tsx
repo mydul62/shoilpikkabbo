@@ -68,6 +68,10 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
         return "Careers";
       case "analytics":
         return "Analytics";
+      case "staff":
+        return "Team & Staff";
+      case "profile":
+        return "Profile & Security";
       case "settings":
         return "Website Settings";
       case "pages":
@@ -172,13 +176,17 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
               <ExternalLink className="h-3.5 w-3.5" />
             </Link>
 
-            {/* Admin Profile */}
-            <div className="flex items-center gap-2.5 pl-2 border-l border-brand-border">
-              <div className="h-8 w-8 rounded-full bg-forest-800 text-gold-400 font-heading font-bold text-xs flex items-center justify-center shadow-xs">
+            {/* Admin Profile Link */}
+            <Link
+              href="/admin/profile"
+              title="Manage Profile & Security Settings"
+              className="flex items-center gap-2.5 pl-2 border-l border-brand-border hover:opacity-80 transition-opacity cursor-pointer group"
+            >
+              <div className="h-8 w-8 rounded-full bg-forest-800 group-hover:bg-forest-900 text-gold-400 font-heading font-bold text-xs flex items-center justify-center shadow-xs">
                 {initials}
               </div>
               <div className="hidden md:flex flex-col text-left">
-                <span className="text-xs font-bold text-charcoal-900 leading-none">
+                <span className="text-xs font-bold text-charcoal-900 leading-none group-hover:text-forest-800 transition-colors">
                   {user.name}
                 </span>
                 <span className="text-[10px] text-emerald-700 font-medium flex items-center gap-0.5 mt-0.5">
@@ -186,7 +194,7 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
                   {user.role}
                 </span>
               </div>
-            </div>
+            </Link>
           </div>
         </header>
 

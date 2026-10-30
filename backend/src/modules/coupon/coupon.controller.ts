@@ -32,6 +32,20 @@ export class CouponController {
     }
   }
 
+  static async getPublic(req: Request, res: Response, next: NextFunction) {
+    try {
+      const coupons = await CouponService.getPublic();
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Active coupons retrieved.",
+        data: coupons,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
   static async create(req: Request, res: Response, next: NextFunction) {
     try {
       const coupon = await CouponService.create({

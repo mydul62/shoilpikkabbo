@@ -75,12 +75,14 @@ jobs:
     needs: [ci-frontend, ci-backend]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Deploy to Vercel (Production)
-        if: "${{ secrets.VERCEL_TOKEN != '' }}"
+        if: env.VERCEL_TOKEN != ''
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -90,7 +92,7 @@ jobs:
           working-directory: frontend
 
       - name: Vercel Native Git Integration Notification
-        if: "${{ secrets.VERCEL_TOKEN == '' }}"
+        if: env.VERCEL_TOKEN == ''
         run: |
           echo "=========================================================================="
           echo "CI Checks passed successfully!"

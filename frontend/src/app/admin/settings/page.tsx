@@ -90,7 +90,21 @@ export default function AdminSettingsPage() {
     header_announcement_enabled: "true",
     store_logo_url: "",
     payment_instructions_note: "Send payment via Send Money or Make Payment. Paste your TrxID in the box below to authorize fulfillment.",
+    smtp_enabled: "false",
+    smtp_host: "smtp.gmail.com",
+    smtp_port: "465",
+    smtp_secure: "true",
+    smtp_user: "",
+    smtp_pass: "",
+    smtp_from_name: "SHOILPIKKABBO - শিল্পকাব্য",
+    smtp_from_email: "shoilpikkabbo@gmail.com",
+    smtp_receiver_email: "shoilpikkabbo@gmail.com",
   });
+
+  // Email Box Test State
+  const [testEmailTarget, setTestEmailTarget] = React.useState("");
+  const [testingEmail, setTestingEmail] = React.useState(false);
+  const [showSmtpPassword, setShowSmtpPassword] = React.useState(false);
 
   // Modern Toast Alert
   const [alertToast, setAlertToast] = React.useState<AlertToastState | null>(null);
@@ -146,6 +160,15 @@ export default function AdminSettingsPage() {
           header_announcement_enabled: d["header_announcement_enabled"] ?? "true",
           store_logo_url: d["store_logo_url"] || "",
           payment_instructions_note: d["payment_instructions_note"] || "Send payment via Send Money or Make Payment. Paste your TrxID in the box below to authorize fulfillment.",
+          smtp_enabled: d["smtp_enabled"] || "false",
+          smtp_host: d["smtp_host"] || "smtp.gmail.com",
+          smtp_port: d["smtp_port"] || "465",
+          smtp_secure: d["smtp_secure"] || "true",
+          smtp_user: d["smtp_user"] || "",
+          smtp_pass: d["smtp_pass"] || "",
+          smtp_from_name: d["smtp_from_name"] || "SHOILPIKKABBO - শিল্পকাব্য",
+          smtp_from_email: d["smtp_from_email"] || "shoilpikkabbo@gmail.com",
+          smtp_receiver_email: d["smtp_receiver_email"] || "shoilpikkabbo@gmail.com",
         };
         setForm(loaded);
         setInitialForm(loaded);
@@ -206,6 +229,51 @@ export default function AdminSettingsPage() {
     if (Object.keys(initialForm).length > 0) {
       setForm(initialForm as any);
       showAlert("warning", "Changes Reverted", "Form restored to last saved state.");
+    }
+  };
+
+  const handleSendTestEmail = async () => {
+    const target =
+      testEmailTarget.trim() ||
+      form.smtp_receiver_email.trim() ||
+      form.contact_email.trim();
+    if (!target) {
+      showAlert(
+        "error",
+        "Target Email Required",
+        "Please enter an email address to receive the test email."
+      );
+      return;
+    }
+    if (!form.smtp_host || !form.smtp_user || !form.smtp_pass) {
+      showAlert(
+        "warning",
+        "Incomplete SMTP Credentials",
+        "Please enter SMTP Host, Username/Email, and Password/App Password first, then save."
+      );
+      return;
+    }
+
+    try {
+      setTestingEmail(true);
+      const res = await settingsApi.testEmail(target);
+      if (res.success) {
+        showAlert(
+          "success",
+          "Test Email Dispatched",
+          res.message || `Test email successfully sent to ${target}!`
+        );
+      } else {
+        showAlert(
+          "error",
+          "SMTP Test Failed",
+          res.message || "Could not authenticate with SMTP server. Please verify credentials."
+        );
+      }
+    } catch (err: any) {
+      showAlert("error", "SMTP Error", err?.message || "Failed to test SMTP connection.");
+    } finally {
+      setTestingEmail(false);
     }
   };
 
@@ -880,6 +948,223 @@ export default function AdminSettingsPage() {
                 />
               </div>
             </div>
+
+            {/* 8. EMAIL BOX SETUP (SMTP & NOTIFICATIONS) */}
+            <div
+              id="email_box"
+              className="p-6 rounded-3xl border border-brand-border bg-white shadow-xs space-y-6"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-sand pb-4 gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-[#0D3B37] flex items-center justify-center font-bold shrink-0">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-heading font-extrabold text-base text-charcoal-900">
+                        8. Email Box setup (SMTP & Alerts)
+                      </h2>
+                      <Badge
+                        variant={form.smtp_enabled === "true" ? "success" : "outline"}
+                        className={
+                          form.smtp_enabled === "true"
+                            ? "bg-emerald-600 text-white text-[10px]"
+                            : "bg-gray-100 text-gray-600 text-[10px]"
+                        }
+                      >
+                        {form.smtp_enabled === "true" ? "Service Active" : "Service Paused"}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-charcoal-500 mt-0.5">
+                      Configure your SMTP mail server credentials to receive customer service inquiries and dispatch notifications.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Enable/Disable Toggle */}
+                <div className="flex items-center gap-2 bg-[#FAF8F5] px-3.5 py-1.5 rounded-xl border border-sand shrink-0">
+                  <label className="text-xs font-bold text-charcoal-700 cursor-pointer">
+                    Enable SMTP:
+                  </label>
+                  <input
+                    type="checkbox"
+                    checked={form.smtp_enabled === "true"}
+                    onChange={(e) =>
+                      setForm({ ...form, smtp_enabled: e.target.checked ? "true" : "false" })
+                    }
+                    className="w-4 h-4 accent-[#0D3B37] rounded cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              {/* Host & Port Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-charcoal-800">
+                    SMTP Host / Server <span className="text-rose-500">*</span>
+                  </label>
+                  <Input
+                    value={form.smtp_host}
+                    onChange={(e) => setForm({ ...form, smtp_host: e.target.value })}
+                    className="h-10 text-xs"
+                    placeholder="e.g. smtp.gmail.com or mail.yourdomain.com"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-charcoal-800">
+                    SMTP Port <span className="text-rose-500">*</span>
+                  </label>
+                  <Input
+                    value={form.smtp_port}
+                    onChange={(e) => setForm({ ...form, smtp_port: e.target.value })}
+                    className="h-10 text-xs"
+                    placeholder="e.g. 465 (SSL) or 587 (TLS)"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-charcoal-800">Security Protocol</label>
+                  <select
+                    value={form.smtp_secure}
+                    onChange={(e) => setForm({ ...form, smtp_secure: e.target.value })}
+                    className="w-full h-10 px-3 bg-white border border-brand-border rounded-xl text-xs text-charcoal-900 focus:outline-none focus:border-[#0D3B37]"
+                  >
+                    <option value="true">SSL (Port 465 - Recommended for Gmail)</option>
+                    <option value="false">TLS / STARTTLS (Port 587)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Credentials Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-charcoal-800">
+                    SMTP Username / Email <span className="text-rose-500">*</span>
+                  </label>
+                  <Input
+                    value={form.smtp_user}
+                    onChange={(e) => setForm({ ...form, smtp_user: e.target.value })}
+                    className="h-10 text-xs"
+                    placeholder="e.g. shoilpikkabbo@gmail.com"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-charcoal-800">
+                    SMTP Password / App Password <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type={showSmtpPassword ? "text" : "password"}
+                      value={form.smtp_pass}
+                      onChange={(e) => setForm({ ...form, smtp_pass: e.target.value })}
+                      className="h-10 text-xs pr-10"
+                      placeholder="e.g. 16-character App Password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowSmtpPassword(!showSmtpPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-charcoal-400 hover:text-charcoal-700 cursor-pointer"
+                    >
+                      {showSmtpPassword ? (
+                        <Eye className="w-4 h-4 text-[#E0592A]" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sender & Receiver Routing */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-charcoal-800">Sender From Name</label>
+                  <Input
+                    value={form.smtp_from_name}
+                    onChange={(e) => setForm({ ...form, smtp_from_name: e.target.value })}
+                    className="h-10 text-xs"
+                    placeholder="e.g. SHOILPIKKABBO - শিল্পকাব্য"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-charcoal-800">Sender From Email</label>
+                  <Input
+                    value={form.smtp_from_email}
+                    onChange={(e) => setForm({ ...form, smtp_from_email: e.target.value })}
+                    className="h-10 text-xs"
+                    placeholder="e.g. shoilpikkabbo@gmail.com"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-[#E0592A]">
+                    Inquiry Receiver Email <span className="text-rose-500">*</span>
+                  </label>
+                  <Input
+                    value={form.smtp_receiver_email}
+                    onChange={(e) => setForm({ ...form, smtp_receiver_email: e.target.value })}
+                    className="h-10 text-xs border-[#E0592A]/40 focus:border-[#E0592A]"
+                    placeholder="e.g. shoilpikkabbo@gmail.com"
+                  />
+                  <p className="text-[10.5px] text-charcoal-500">
+                    Customer briefs submitted on "Tell us what you have in mind" arrive here.
+                  </p>
+                </div>
+              </div>
+
+              {/* Gmail Setup Instructions Note */}
+              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 text-amber-900 text-xs space-y-1">
+                <p className="font-bold flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#E0592A]" />
+                  <span>Quick Setup Guide for Gmail Users:</span>
+                </p>
+                <p className="text-[11.5px] text-amber-800 leading-relaxed">
+                  If using Gmail, enter <strong>smtp.gmail.com</strong> as Host and <strong>465</strong> as Port. Enable 2-Step Verification in your Google Account &rarr; Security &rarr; App Passwords, generate a 16-character App Password, and paste it in the Password field above.
+                </p>
+              </div>
+
+              {/* Live SMTP Connection & Test Email Box */}
+              <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#EAE3D5] space-y-3">
+                <div>
+                  <h4 className="text-xs font-bold text-[#0D3B37] uppercase tracking-wider">
+                    Verify Mail Connection (Test Email)
+                  </h4>
+                  <p className="text-[11px] text-charcoal-500">
+                    Save your settings first, then dispatch a live test email to verify your SMTP setup.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-2.5">
+                  <Input
+                    value={testEmailTarget}
+                    onChange={(e) => setTestEmailTarget(e.target.value)}
+                    placeholder={form.smtp_receiver_email || "Enter test recipient email"}
+                    className="h-10 text-xs flex-1 bg-white"
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleSendTestEmail}
+                    disabled={testingEmail}
+                    className="h-10 px-5 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-xs font-bold rounded-xl transition-all shadow-xs shrink-0 cursor-pointer disabled:opacity-50"
+                  >
+                    {testingEmail ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                        <span>Sending Test...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-3.5 h-3.5 mr-1.5" />
+                        <span>Send Test Email</span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* RIGHT 4 COLUMNS: STICKY LIVE PREVIEWS & QUICK NAVIGATOR */}
@@ -898,6 +1183,7 @@ export default function AdminSettingsPage() {
                   { id: "shipping", label: "Shipping Rates & Free Delivery", icon: Truck },
                   { id: "social", label: "Social & Chat Links", icon: Share2 },
                   { id: "office", label: "Headquarters & Office", icon: MapPin },
+                  { id: "email_box", label: "Email Box setup", icon: Mail },
                 ].map((item) => {
                   const Icon = item.icon;
                   return (

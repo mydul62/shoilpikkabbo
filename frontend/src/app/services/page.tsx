@@ -19,7 +19,7 @@ import {
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { CLIENT_INFO } from "@/data/mock-data";
 import { useSettings } from "@/context/SettingsContext";
-import { pagesApi } from "@/lib/api";
+import { pagesApi, inquiriesApi } from "@/lib/api";
 
 export default function ServicesPage() {
   const { settings } = useSettings();
@@ -106,18 +106,18 @@ export default function ServicesPage() {
 
     try {
       setIsSubmitting(true);
-      await fetch("http://localhost:5000/api/v1/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          serviceType: formData.serviceArea || "Special E-Sheba Service Brief",
-          customerName: formData.name,
-          customerPhone: formData.contact,
-          customerEmail: formData.contact.includes("@") ? formData.contact : undefined,
-          requirements: `${formData.quantityBudget ? `Budget/Qty: ${formData.quantityBudget} | ` : ""}${formData.preferredDate ? `Target Date: ${formData.preferredDate} | ` : ""}${formData.requirements}`,
-        }),
+      const res = await inquiriesApi.create({
+        serviceType: formData.serviceArea || "Special E-Sheba Service Brief",
+        customerName: formData.name.trim(),
+        customerPhone: formData.contact.trim(),
+        customerEmail: formData.contact.includes("@") ? formData.contact.trim() : undefined,
+        requirements: `${formData.quantityBudget ? `Budget/Qty: ${formData.quantityBudget} | ` : ""}${formData.preferredDate ? `Target Date: ${formData.preferredDate} | ` : ""}${formData.requirements.trim()}`,
       });
-      setIsSubmitted(true);
+      if (res.success || res.data) {
+        setIsSubmitted(true);
+      } else {
+        alert(res.message || "Could not submit inquiry. Please try again.");
+      }
     } catch (err) {
       console.warn("Inquiry submission warning:", err);
       setIsSubmitted(true);

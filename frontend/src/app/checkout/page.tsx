@@ -3,7 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, Check, ShieldCheck } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { ArrowUpRight, Check, ShieldCheck, AlertCircle, Loader2, Tag } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart, defaultInitialItems } from "@/context/CartContext";
 import { useSettings } from "@/context/SettingsContext";
@@ -216,7 +217,11 @@ export const POPULAR_DISTRICT_AREAS: Record<string, string[]> = {
   ],
 };
 
-export default function CheckoutPage() {
+function CheckoutContent() {
+  const searchParams = useSearchParams();
+  const errorParam = searchParams.get("error");
+  const orderNumberParam = searchParams.get("orderNumber");
+
   const { settings } = useSettings();
   const { user, isAuthenticated } = useAuth();
   const {
@@ -228,6 +233,8 @@ export default function CheckoutPage() {
     shippingCity,
     setShippingCity,
     appliedCoupon,
+    applyCoupon,
+    removeCoupon,
     clearCart,
   } = useCart();
 
@@ -237,26 +244,52 @@ export default function CheckoutPage() {
   const displayDelivery = deliveryCharge;
   const displayTotal = total;
 
+  // Coupon state & handlers
+  const [couponInput, setCouponInput] = React.useState("");
+  const [couponFeedback, setCouponFeedback] = React.useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+
+  const handleApplyCoupon = () => {
+    const clean = couponInput.trim().toUpperCase();
+    if (!clean) return;
+    const res = applyCoupon(clean);
+    if (res.success) {
+      setCouponFeedback({ type: "success", message: res.message });
+      setCouponInput("");
+    } else {
+      setCouponFeedback({ type: "error", message: res.message });
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    removeCoupon();
+    setCouponFeedback(null);
+  };
+
   // Form states initialized empty for actual customers (no manual payments, no postcode)
   const [formData, setFormData] = React.useState({
     fullName: "",
     phone: "",
     email: "",
     address: "",
-    district: "Dhaka",
+    district: shippingCity === "Outside Dhaka" ? "Chattogram" : "Dhaka",
     area: "",
     customArea: "",
     deliveryNotes: "",
-    paymentMethod: "SSLCommerz" as "SSLCommerz" | "COD",
+    paymentMethod: (settings.sslcommerzEnabled === false ? "COD" : "SSLCommerz") as "SSLCommerz" | "COD",
     agreedToTerms: true,
   });
 
-  // Switch default payment method if SSLCommerz is disabled in admin settings
+  // Switch payment method dynamically based on store settings
   React.useEffect(() => {
     if (settings.sslcommerzEnabled === false && formData.paymentMethod === "SSLCommerz") {
       setFormData((prev) => ({ ...prev, paymentMethod: "COD" }));
+    } else if (settings.codEnabled === false && formData.paymentMethod === "COD") {
+      setFormData((prev) => ({ ...prev, paymentMethod: "SSLCommerz" }));
     }
-  }, [settings.sslcommerzEnabled]);
+  }, [settings.sslcommerzEnabled, settings.codEnabled]);
 
   // Automatically autofill contact info if customer is logged in
   React.useEffect(() => {
@@ -298,10 +331,24 @@ export default function CheckoutPage() {
         ? formData.customArea.trim() || formData.area
         : formData.area.trim();
 
-    if (!formData.fullName.trim() || !formData.phone.trim() || !formData.address.trim()) {
+    const cleanPhone = formData.phone.trim().replace(/\s+/g, "");
+
+    if (!formData.fullName.trim() || !cleanPhone || !formData.address.trim()) {
       alert("অনুগ্রহ করে আপনার নাম, মোবাইল নম্বর এবং সম্পূর্ণ ডেলিভারি ঠিকানা পূরণ করুন।");
       return;
     }
+
+    // Bangladeshi phone number validation
+    if (!cleanPhone.match(/^(?:\+88|88)?01[3-9]\d{8}$/)) {
+      alert("অনুগ্রহ করে সঠিক ১১ ডিজিটের বাংলাদেশি মোবাইল নম্বর প্রদান করুন (যেমন: 017XXXXXXXX)।");
+      return;
+    }
+
+    if ((formData.area === "Other Area (অন্যান্য এলাকা)" || formData.area === "Other Area (অন্যান্য)") && !formData.customArea.trim()) {
+      alert("অনুগ্রহ করে আপনার নির্দিষ্ট এলাকা বা থানার নাম লিখুন।");
+      return;
+    }
+
     if (!resolvedArea) {
       alert("অনুগ্রহ করে আপনার এরিয়া / থানা নির্বাচন অথবা উল্লেখ করুন।");
       return;
@@ -321,25 +368,27 @@ export default function CheckoutPage() {
     let orderNum = `SK-${Date.now().toString().slice(-6)}`;
     const now = new Date();
     const placedDate = `${now.getDate()} ${now.toLocaleString("default", { month: "long" })} ${now.getFullYear()}`;
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
     try {
-      // First try to fetch a real product ID from database if current items are demo IDs
-      let realProdId = "8ce7884f-c692-4787-a4ab-42df2d1de152";
+      // First try to fetch real product IDs from database
+      let validProductIds: string[] = [];
       try {
-        const prodRes = await fetch("http://localhost:5000/api/v1/products?limit=1");
+        const prodRes = await fetch(`${API_BASE}/products?limit=50`);
         const prodData = await prodRes.json();
-        if (prodData?.data?.[0]?.id) {
-          realProdId = prodData.data[0].id;
+        if (prodData?.data && Array.isArray(prodData.data)) {
+          validProductIds = prodData.data.map((p: any) => p.id).filter(Boolean);
         }
       } catch (e) {
-        // use default
+        // use fallback
       }
 
+      const defaultFallbackId = validProductIds[0] || "8ce7884f-c692-4787-a4ab-42df2d1de152";
       const activeItems = items.length > 0 ? items : displayItems;
       const orderPayload = {
         userId: user?.id,
         customerName: formData.fullName.trim(),
-        customerPhone: formData.phone.trim().replace(/\s+/g, ""),
+        customerPhone: cleanPhone,
         customerEmail: formData.email.trim() || undefined,
         shippingAddress: [formData.address.trim(), resolvedArea].filter(Boolean).join(", "),
         city: formData.district || "Dhaka",
@@ -347,31 +396,45 @@ export default function CheckoutPage() {
         paymentMethod: paymentMap[formData.paymentMethod] || "ONLINE_GATEWAY",
         transactionId: `TRX-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
         couponCode: appliedCoupon?.code,
-        items: activeItems.map((item) => ({
-          productId: item.product.id?.length === 36 ? item.product.id : realProdId,
-          quantity: item.quantity,
-        })),
+        items: activeItems.map((item) => {
+          const isRealId = validProductIds.includes(item.product.id) || item.product.id?.length === 36;
+          return {
+            productId: isRealId ? item.product.id : defaultFallbackId,
+            quantity: item.quantity,
+          };
+        }),
       };
 
-      const res = await fetch("http://localhost:5000/api/v1/orders", {
+      const res = await fetch(`${API_BASE}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderPayload),
       });
       const resJson = await res.json();
 
-      if (resJson.success && resJson.data?.orderNumber) {
+      if (!res.ok || !resJson.success) {
+        throw new Error(resJson.message || "অর্ডার প্রক্রিয়াকরণে সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।");
+      }
+
+      if (resJson.data?.orderNumber) {
         orderNum = resJson.data.orderNumber;
       }
 
       // If SSLCommerz Online Payment was selected and a gateway URL was returned, redirect immediately
-      if (formData.paymentMethod === "SSLCommerz" && resJson.data?.paymentUrl) {
-        clearCart();
-        window.location.href = resJson.data.paymentUrl;
-        return;
+      if (formData.paymentMethod === "SSLCommerz") {
+        if (resJson.data?.paymentUrl) {
+          // Note: Cart will be cleared on /checkout/success after verified callback
+          window.location.href = resJson.data.paymentUrl;
+          return;
+        } else {
+          alert(`আপনার অর্ডারটি (#${orderNum}) সিস্টেমে গ্রহণ করা হয়েছে, কিন্তু অনলাইন পেমেন্ট গেটওয়েতে সংযোগ করা যায়নি। আমাদের প্রতিনিধি আপনার সাথে শীঘ্রই যোগাযোগ করবেন।`);
+        }
       }
-    } catch (err) {
-      console.warn("Backend order creation warning:", err);
+    } catch (err: any) {
+      console.error("Backend order creation error:", err);
+      alert(err.message || "অর্ডার তৈরি করতে সমস্যা হয়েছে। অনুগ্রহ করে পুনরায় চেষ্টা করুন।");
+      setIsSubmitting(false);
+      return;
     }
 
     setCompletedOrder({
@@ -386,7 +449,7 @@ export default function CheckoutPage() {
       address: formData.address.trim(),
       district: formData.district,
       area: resolvedArea,
-      phone: formData.phone.trim(),
+      phone: cleanPhone,
       email: formData.email.trim(),
       paymentMethod: formData.paymentMethod === "SSLCommerz" ? "অনলাইন পেমেন্ট (SSLCommerz)" : "ক্যাশ অন ডেলিভারি (Cash on Delivery)",
       appliedCouponCode: appliedCoupon?.code,
@@ -524,7 +587,7 @@ export default function CheckoutPage() {
                     >
                       <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0 p-2 border border-gray-100">
                         <Image
-                          src={item.product.imageUrl}
+                          src={item.product.imageUrl || "/images/client-mockup/cat-handicrafts.png"}
                           alt={item.product.name}
                           fill
                           sizes="64px"
@@ -586,6 +649,51 @@ export default function CheckoutPage() {
   }
 
   if (items.length === 0) {
+    if (errorParam) {
+      return (
+        <StorefrontLayout>
+          <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-16 flex items-center justify-center">
+            <div className="max-w-lg mx-auto text-center px-6 py-8 bg-white rounded-3xl shadow-[0_2px_14px_rgba(0,0,0,0.03)] border border-amber-200/80">
+              <div className="w-16 h-16 rounded-3xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4">
+                <AlertCircle className="w-8 h-8" />
+              </div>
+              <span className="text-xs font-bold text-amber-700 uppercase tracking-wider block mb-1">
+                পেমেন্ট স্ট্যাটাস
+              </span>
+              <h2 className="text-2xl font-black text-[#0D3B37]">
+                {errorParam === "payment_cancelled"
+                  ? "অনলাইন পেমেন্টটি বাতিল করা হয়েছে"
+                  : "অনলাইন পেমেন্ট সম্পন্ন হয়নি"}
+              </h2>
+              <p className="text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed">
+                {orderNumberParam
+                  ? `আপনার অর্ডার নং #${orderNumberParam}-এর জন্য অনলাইন গেটওয়ে লেনদেন সম্পন্ন করা যায়নি। আপনি সরাসরি অর্ডার ট্র্যাক করতে পারেন অথবা কাস্টমার কেয়ারে যোগাযোগ করে ক্যাশ অন ডেলিভারিতে রূপান্তর করতে পারেন।`
+                  : "আপনার অনলাইন পেমেন্টটি সম্পন্ন করা যায়নি। আপনি শপে ফিরে গিয়ে পুনরায় পছন্দের পণ্য অর্ডার করতে পারেন।"}
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                {orderNumberParam && (
+                  <Link
+                    href={`/track-order?order=${orderNumberParam}`}
+                    className="w-full sm:w-auto h-11 px-6 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-xs sm:text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 transition-all shadow-md"
+                  >
+                    <span>অর্ডার ট্র্যাক করুন</span>
+                    <ArrowUpRight className="w-4 h-4" />
+                  </Link>
+                )}
+                <Link
+                  href="/shop"
+                  className="w-full sm:w-auto h-11 px-6 bg-[#FAF8F5] hover:bg-gray-100 text-gray-800 text-xs sm:text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 transition-colors"
+                >
+                  <span>শপে ফিরে যান</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </StorefrontLayout>
+      );
+    }
+
     return (
       <StorefrontLayout>
         <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-16 flex items-center justify-center">
@@ -627,7 +735,7 @@ export default function CheckoutPage() {
           </nav>
 
           {/* Headline */}
-          <div className="mb-8 sm:mb-10">
+          <div className="mb-6 sm:mb-8">
             <h1 className="text-3xl sm:text-4xl text-[#0D3B37] font-black tracking-tight leading-tight">
               Checkout & Order Placement
             </h1>
@@ -635,6 +743,24 @@ export default function CheckoutPage() {
               Please provide your recipient details to ensure prompt delivery across Bangladesh.
             </p>
           </div>
+
+          {/* Payment Warning Banner if redirected back with error */}
+          {errorParam && (
+            <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3 shadow-xs">
+              <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="text-xs sm:text-sm">
+                <p className="font-bold">
+                  {errorParam === "payment_cancelled"
+                    ? "অনলাইন পেমেন্টটি সম্পন্ন হয়নি বা বাতিল করা হয়েছে"
+                    : "অনলাইন পেমেন্ট সম্পন্ন হতে ব্যর্থ হয়েছে"}
+                  {orderNumberParam ? ` (পূর্বের অর্ডার #${orderNumberParam})` : ""}
+                </p>
+                <p className="text-amber-800 text-xs mt-0.5">
+                  আপনি চাইলে নিচে "ক্যাশ অন ডেলিভারি (Cash on Delivery)" নির্বাচন করে কোনো অনলাইন পেমেন্ট ছাড়াই সরাসরি অর্ডার নিশ্চিত করতে পারেন, অথবা পুনরায় চেষ্টা করতে পারেন।
+                </p>
+              </div>
+            </div>
+          )}
 
           <form
             onSubmit={handleSubmitOrder}
@@ -1096,8 +1222,85 @@ export default function CheckoutPage() {
                       </span>
                     </div>
                   ))}
+                </div>
 
-                  <div className="flex justify-between text-gray-700 pt-1">
+                {/* Promo / Coupon Code Input Box */}
+                <div className="pt-3 border-t border-gray-100">
+                  {appliedCoupon ? (
+                    <div className="flex items-center justify-between p-3 rounded-2xl bg-emerald-50 border border-emerald-200">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-700 shrink-0">
+                          <Tag className="w-3.5 h-3.5" />
+                        </div>
+                        <div>
+                          <p className="font-extrabold text-[#0D3B37] text-xs tracking-wider">
+                            {appliedCoupon.code}
+                          </p>
+                          <p className="text-[11px] text-emerald-700 font-medium">
+                            {appliedCoupon.discountAmount
+                              ? `৳${appliedCoupon.discountAmount} ছাড় কার্যকর হয়েছে`
+                              : `${appliedCoupon.discountPercentage}% ছাড় প্রযোজ্য হয়েছে`}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleRemoveCoupon}
+                        className="text-xs font-bold text-red-600 hover:text-red-800 hover:bg-red-100/70 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex-1">
+                          <Tag className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                          <input
+                            type="text"
+                            placeholder="প্রোমো কোড (যেমন: WELCOME150)"
+                            value={couponInput}
+                            onChange={(e) => {
+                              setCouponInput(e.target.value.toUpperCase());
+                              setCouponFeedback(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleApplyCoupon();
+                              }
+                            }}
+                            className="w-full h-10 pl-8 pr-3 bg-[#FAF8F5] border border-gray-200 rounded-xl text-xs font-bold text-[#0D3B37] placeholder:text-gray-400 placeholder:font-normal uppercase tracking-wider focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleApplyCoupon}
+                          disabled={!couponInput.trim()}
+                          className="h-10 px-4 bg-[#0D3B37] hover:bg-[#E0592A] disabled:opacity-40 text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shrink-0 shadow-xs"
+                        >
+                          Apply
+                        </button>
+                      </div>
+
+                      {couponFeedback && (
+                        <p
+                          className={`text-xs pl-1 font-medium ${
+                            couponFeedback.type === "success"
+                              ? "text-emerald-700"
+                              : "text-red-600"
+                          }`}
+                        >
+                          {couponFeedback.message}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* Subtotal & Delivery Row */}
+                <div className="space-y-2.5 pt-3 border-t border-gray-100 text-sm">
+                  <div className="flex justify-between text-gray-700">
                     <span className="font-normal text-gray-600">Subtotal</span>
                     <span className="font-semibold text-[#0D3B37]">
                       ৳{displaySubtotal.toLocaleString()}
@@ -1105,8 +1308,11 @@ export default function CheckoutPage() {
                   </div>
 
                   {displayDiscount > 0 && (
-                    <div className="flex justify-between text-emerald-700 font-medium">
-                      <span>{appliedCoupon?.code || "ছাড় / Discount"}</span>
+                    <div className="flex justify-between items-center text-emerald-700 font-semibold bg-emerald-50/80 px-2.5 py-1.5 rounded-lg border border-emerald-100 text-xs">
+                      <span className="flex items-center gap-1.5">
+                        <Tag className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>ছাড় ({appliedCoupon?.code})</span>
+                      </span>
                       <span>
                         -৳{displayDiscount.toLocaleString()}
                       </span>
@@ -1139,16 +1345,23 @@ export default function CheckoutPage() {
                   disabled={isSubmitting}
                   className="w-full h-12 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-xl inline-flex items-center justify-center gap-2 mt-4 transition-colors cursor-pointer disabled:opacity-75 shadow-md"
                 >
-                  <span>
-                    {isSubmitting
-                      ? "প্রক্রিয়াধীন রয়েছে..."
-                      : formData.paymentMethod === "SSLCommerz"
-                      ? `Proceed to Payment (৳${displayTotal.toLocaleString()})`
-                      : formData.paymentMethod === "COD"
-                      ? "অর্ডার নিশ্চিত করুন (ক্যাশ অন ডেলিভারি)"
-                      : "অর্ডার কনফার্ম করুন"}
-                  </span>
-                  <ArrowUpRight className="w-4 h-4" />
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>প্রক্রিয়াধীন রয়েছে...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>
+                        {formData.paymentMethod === "SSLCommerz"
+                          ? `Proceed to Payment (৳${displayTotal.toLocaleString()})`
+                          : formData.paymentMethod === "COD"
+                          ? "অর্ডার নিশ্চিত করুন (ক্যাশ অন ডেলিভারি)"
+                          : "অর্ডার কনফার্ম করুন"}
+                      </span>
+                      <ArrowUpRight className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
 
                 {/* Disclaimer subtext */}
@@ -1168,5 +1381,26 @@ export default function CheckoutPage() {
         </div>
       </div>
     </StorefrontLayout>
+  );
+}
+
+function CheckoutLoading() {
+  return (
+    <StorefrontLayout>
+      <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-16 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-[#0D3B37] mx-auto mb-3" />
+          <p className="text-sm font-medium text-gray-500">লোডিং চেকআউট...</p>
+        </div>
+      </div>
+    </StorefrontLayout>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <React.Suspense fallback={<CheckoutLoading />}>
+      <CheckoutContent />
+    </React.Suspense>
   );
 }

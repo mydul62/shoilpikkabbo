@@ -7,5 +7,6 @@ const router = Router();
 
 router.get("/", SettingsController.getAll);
 router.patch("/", authenticate, authorize(Role.ADMIN), SettingsController.update);
+router.post("/test-email", authenticate, authorize(Role.ADMIN), SettingsController.testEmail);
 
 export const settingsRoutes = router;

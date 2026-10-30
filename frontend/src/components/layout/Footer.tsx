@@ -2,14 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Mail, Phone, CreditCard, Building2, Send, MapPin, Clock } from "lucide-react";
+import { Mail, Phone, Send, MapPin, Clock } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 
 export function Footer() {
   const { settings } = useSettings();
   const [newsletterEmail, setNewsletterEmail] = React.useState("");
   const [newsletterSubscribed, setNewsletterSubscribed] = React.useState(false);
-  const [lang, setLang] = React.useState<"bn" | "en">("bn");
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +30,7 @@ export function Footer() {
                 /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={settings.logoUrl}
-                  alt={lang === "bn" && settings.storeNameBn ? settings.storeNameBn : settings.storeName}
+                  alt={settings.storeNameBn || settings.storeName}
                   className="h-10 sm:h-12 w-auto max-w-[200px] object-contain hover:opacity-95 transition-opacity"
                 />
               ) : (
@@ -46,21 +45,20 @@ export function Footer() {
               )}
               <div className="flex flex-col">
                 <span className="font-extrabold text-[20px] sm:text-[22px] tracking-tight text-white leading-none">
-                  {lang === "bn" && settings.storeNameBn ? settings.storeNameBn : settings.storeName}
+                  {settings.storeNameBn || settings.storeName}
                 </span>
                 <span className="text-[10px] font-bold tracking-[0.2em] text-white/70 mt-1 uppercase">
-                  {lang === "bn" && settings.taglineBn ? settings.taglineBn : settings.tagline}
+                  {settings.taglineBn || settings.tagline}
                 </span>
               </div>
             </Link>
 
             <p className="text-sm text-white/80 font-normal leading-relaxed max-w-sm">
-              High quality products, trusted service, for a better tomorrow.
+              খাঁটি দেশীয় ঐতিহ্য, আধুনিক সেবা ও সর্বোচ্চ গুণগত মানের সমাহারে আপনার নির্ভরযোগ্য প্রতিষ্ঠান।
             </p>
 
             {/* Social Media Circles */}
             <div className="flex items-center gap-2.5 pt-2 flex-wrap">
-              {/* Facebook */}
               {settings.socialFacebook && (
                 <a
                   href={settings.socialFacebook}
@@ -73,7 +71,6 @@ export function Footer() {
                 </a>
               )}
 
-              {/* Messenger */}
               {settings.socialMessenger && (
                 <a
                   href={settings.socialMessenger}
@@ -86,7 +83,6 @@ export function Footer() {
                 </a>
               )}
 
-              {/* WhatsApp */}
               {settings.socialWhatsapp && (
                 <a
                   href={settings.socialWhatsapp}
@@ -99,7 +95,6 @@ export function Footer() {
                 </a>
               )}
 
-              {/* Instagram */}
               {settings.socialInstagram && (
                 <a
                   href={settings.socialInstagram}
@@ -112,7 +107,6 @@ export function Footer() {
                 </a>
               )}
 
-              {/* YouTube */}
               {settings.socialYoutube && (
                 <a
                   href={settings.socialYoutube}
@@ -132,7 +126,7 @@ export function Footer() {
             <h4 className="text-base font-bold text-white tracking-normal">
               Quick Links
             </h4>
-            <ul className="space-y-2.5 text-sm text-white/80">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
               <li>
                 <Link href="/" className="hover:text-[#E0592A] transition-colors">
                   Home
@@ -176,20 +170,15 @@ export function Footer() {
             <h4 className="text-base font-bold text-white tracking-normal">
               Customer Care
             </h4>
-            <ul className="space-y-2.5 text-sm text-white/80">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
               <li>
                 <Link href="/track-order" className="hover:text-[#E0592A] transition-colors">
                   Track Order
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="hover:text-[#E0592A] transition-colors">
-                  Shipping Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/refund" className="hover:text-[#E0592A] transition-colors">
-                  Return & Refund Policy
+                <Link href="/privacy" className="hover:text-[#E0592A] transition-colors">
+                  Privacy Policy
                 </Link>
               </li>
               <li>
@@ -198,125 +187,80 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-[#E0592A] transition-colors">
-                  Privacy Policy
+                <Link href="/contact" className="hover:text-[#E0592A] transition-colors">
+                  Support Center
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 4: Contact Us (Col 9-10) */}
+          {/* Column 4: Contact & Office Details (Col 9-10) */}
           <div className="lg:col-span-2 space-y-4">
             <h4 className="text-base font-bold text-white tracking-normal">
-              Contact Us
+              Contact & Office
             </h4>
-            <ul className="space-y-3 text-sm text-white/85">
-              <li className="flex items-start gap-2.5">
-                <Mail className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <a href={`mailto:${settings.contactEmail}`} className="hover:text-[#E0592A] transition-colors break-all">
-                  {settings.contactEmail}
-                </a>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Phone className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span className="leading-snug">
-                  {settings.contactPrimary}
-                  {settings.contactSecondary ? `, ${settings.contactSecondary}` : ""}
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <CreditCard className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>{settings.contactPayment || settings.paymentBkashNumber} (bKash / Nagad)</span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Building2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <div className="leading-snug">
-                  <p className="font-semibold">{settings.bankName}</p>
-                  {settings.bankAccountNumber && (
-                    <p className="text-xs text-white/70">A/C: {settings.bankAccountNumber}</p>
-                  )}
-                  {settings.bankBranch && (
-                    <p className="text-[11px] text-white/60">{settings.bankBranch}</p>
-                  )}
-                </div>
-              </li>
+            <ul className="space-y-2.5 text-xs sm:text-sm text-white/80">
+              {settings.contactPrimary && (
+                <li className="flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <a href={`tel:${settings.contactPrimary}`} className="hover:text-emerald-400 transition-colors">
+                    {settings.contactPrimary}
+                  </a>
+                </li>
+              )}
+              {settings.contactEmail && (
+                <li className="flex items-center gap-2">
+                  <Mail className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <a href={`mailto:${settings.contactEmail}`} className="hover:text-emerald-400 transition-colors truncate">
+                    {settings.contactEmail}
+                  </a>
+                </li>
+              )}
               {settings.officeAddress && (
-                <li className="flex items-start gap-2.5 pt-1 border-t border-white/10">
-                  <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span className="text-xs text-white/80 leading-relaxed">{settings.officeAddress}</span>
+                <li className="flex items-start gap-2 pt-1 border-t border-white/10">
+                  <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="text-xs text-white/75 leading-relaxed">{settings.officeAddress}</span>
                 </li>
               )}
               {settings.officeHours && (
-                <li className="flex items-start gap-2.5">
-                  <Clock className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <li className="flex items-start gap-2">
+                  <Clock className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
                   <span className="text-xs text-white/75">{settings.officeHours}</span>
                 </li>
               )}
             </ul>
           </div>
 
-          {/* Column 5: Newsletter & Language (Col 11-12) */}
-          <div className="lg:col-span-2 space-y-5">
-            <div>
-              <h4 className="text-base font-bold text-white tracking-normal mb-1">
-                Newsletter
-              </h4>
-              <p className="text-xs sm:text-sm text-white/70 mb-3">
-                Get the latest updates and offers.
+          {/* Column 5: Newsletter (Col 11-12) */}
+          <div className="lg:col-span-2 space-y-4">
+            <h4 className="text-base font-bold text-white tracking-normal mb-1">
+              Stay Updated
+            </h4>
+            <p className="text-xs text-white/70 mb-3">
+              Subscribe for exclusive artisan collections, offers, and eco-friendly updates.
+            </p>
+            <form onSubmit={handleNewsletterSubmit} className="relative flex items-center">
+              <input
+                type="email"
+                required
+                placeholder="Enter your email..."
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                className="w-full h-10 pl-3.5 pr-10 rounded-xl bg-white text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="absolute right-1 top-1 bottom-1 w-8 bg-[#0D3B37] hover:bg-[#E0592A] text-white rounded-lg flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Subscribe"
+              >
+                <Send className="w-3.5 h-3.5" />
+              </button>
+            </form>
+            {newsletterSubscribed && (
+              <p className="text-xs text-emerald-400 mt-1.5 font-medium">
+                ✓ Thank you for subscribing!
               </p>
-              <form onSubmit={handleNewsletterSubmit} className="relative flex items-center">
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter your email"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  className="w-full h-10 pl-3.5 pr-10 rounded-xl bg-white text-xs sm:text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-1 top-1 bottom-1 w-8 bg-[#0D3B37] hover:bg-[#E0592A] text-white rounded-lg flex items-center justify-center transition-colors cursor-pointer"
-                  title="Subscribe"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                </button>
-              </form>
-              {newsletterSubscribed && (
-                <p className="text-xs text-emerald-400 mt-1.5 font-medium">
-                  ✓ Thank you for subscribing!
-                </p>
-              )}
-            </div>
-
-            <div>
-              <h4 className="text-xs font-bold text-white/90 mb-2 uppercase tracking-wider">
-                Language
-              </h4>
-              <div className="inline-flex items-center gap-1 bg-[#061F1D] p-1 rounded-md">
-                <button
-                  type="button"
-                  onClick={() => setLang("bn")}
-                  className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
-                    lang === "bn"
-                      ? "bg-white text-[#092B28] shadow-xs"
-                      : "text-white/70 hover:text-white"
-                  }`}
-                >
-                  বাংলা
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLang("en")}
-                  className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
-                    lang === "en"
-                      ? "bg-white text-[#092B28] shadow-xs"
-                      : "text-white/70 hover:text-white"
-                  }`}
-                >
-                  English
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 

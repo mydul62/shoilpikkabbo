@@ -43,6 +43,16 @@ export class CouponService {
     });
   }
 
+  static async getPublic() {
+    return prisma.coupon.findMany({
+      where: {
+        isActive: true,
+        endDate: { gte: new Date() },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   static async create(data: {
     code: string;
     discountValue: number;

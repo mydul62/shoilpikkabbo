@@ -12,6 +12,7 @@ import { pageRoutes } from "./modules/page/page.route";
 import { bannerRoutes } from "./modules/banner/banner.route";
 import { careerRoutes } from "./modules/career/career.route";
 import { customerRoutes } from "./modules/customer/customer.route";
+import { staffRoutes } from "./modules/staff/staff.route";
 import { uploadRoutes } from "./modules/upload/upload.route";
 
 const router = Router();
@@ -29,6 +30,7 @@ router.use("/pages", pageRoutes);
 router.use("/banners", bannerRoutes);
 router.use("/careers", careerRoutes);
 router.use("/customers", customerRoutes);
+router.use("/staff", staffRoutes);
 router.use("/upload", uploadRoutes);
 
 export const appRouter = router;

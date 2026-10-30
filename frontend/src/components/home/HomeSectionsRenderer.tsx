@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/data/mock-data";
 import { useSettings } from "@/context/SettingsContext";
+import { useWishlist } from "@/context/WishlistContext";
 
 export interface HomeSectionData {
   id: string;
@@ -60,6 +61,7 @@ interface HomeSectionsRendererProps {
   addedProductId?: string | null;
   liveProducts?: any[];
   liveCategories?: any[];
+  liveBanners?: any[];
 }
 
 const CATEGORY_ICON_MAP: Record<string, string> = {
@@ -89,12 +91,22 @@ export function HomeSectionsRenderer({
   addedProductId,
   liveProducts = [],
   liveCategories = [],
+  liveBanners = [],
 }: HomeSectionsRendererProps) {
   const [hoveredSectionId, setHoveredSectionId] = React.useState<string | null>(null);
-  const [wishlist, setWishlist] = React.useState<Record<string, boolean>>({});
   const [forYouVisibleCount, setForYouVisibleCount] = React.useState<number>(10);
   const [isLoadingMoreForYou, setIsLoadingMoreForYou] = React.useState<boolean>(false);
   const [heroSlideIndex, setHeroSlideIndex] = React.useState<number>(0);
+  const [touchStartX, setTouchStartX] = React.useState<number | null>(null);
+
+  // Auto-advance hero carousel every 6s unless in editor mode
+  React.useEffect(() => {
+    if (isEditorMode) return;
+    const timer = setInterval(() => {
+      setHeroSlideIndex((prev) => prev + 1);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [isEditorMode]);
 
   // Safe settings access (prevents runtime ReferenceError when rendered in admin or without provider)
   let settings: any = {};
@@ -111,11 +123,32 @@ export function HomeSectionsRenderer({
   const products = liveProducts.length > 0 ? liveProducts : MOCK_PRODUCTS;
   const categories = liveCategories.length > 0 ? liveCategories : MOCK_CATEGORIES;
 
-  const toggleWishlist = (productId: string) => {
-    setWishlist((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
+  let wishlistCtx: any = null;
+  try {
+    wishlistCtx = useWishlist();
+  } catch {
+    wishlistCtx = null;
+  }
+
+  const isItemWishlisted = (id: string) => {
+    return wishlistCtx?.isInWishlist ? wishlistCtx.isInWishlist(id) : false;
+  };
+
+  const handleToggleWishlist = (prod: any) => {
+    if (wishlistCtx?.toggleWishlist) {
+      wishlistCtx.toggleWishlist({
+        id: prod.id,
+        name: prod.name,
+        slug: prod.slug || prod.id,
+        categoryName: getProductCategoryName(prod),
+        price: Number(prod.price) || 0,
+        salePrice: prod.salePrice ? Number(prod.salePrice) : undefined,
+        imageUrl: getProductImage(prod),
+        stock: prod.stock,
+        rating: prod.rating,
+        reviewCount: prod.reviewCount,
+      });
+    }
   };
 
   // Helper getters
@@ -205,65 +238,198 @@ export function HomeSectionsRenderer({
   };
 
   // =========================================================================
-  // 1. HOME: HERO CAROUSEL
+  // 1. HOME: HERO CAROUSEL (Dynamic Interactive Multi-Slide Hero Slider)
   // =========================================================================
+  const getHeroSlides = (p: Record<string, any>) => {
+    if (Array.isArray(p.slides) && p.slides.length > 0) {
+      return p.slides;
+    }
+
+    if (liveBanners && liveBanners.length > 0) {
+      return liveBanners.map((b: any, idx: number) => {
+        const titleParts = b.title?.includes(",") ? b.title.split(",") : [b.title, ""];
+        const fallbackBgs = [
+          "/images/client-mockup/hero-bg-exact.png",
+          "/images/client-mockup/hero-bg-green.png",
+          "/images/client-mockup/hero-bg-peach.png",
+          "/images/client-mockup/hero-bg-exact.png",
+        ];
+        return {
+          id: b.id || `banner-${idx}`,
+          bgImage: b.imageUrl || fallbackBgs[idx % fallbackBgs.length],
+          pill:
+            idx % 2 === 0
+              ? (p.pill || "Handmade  •  Eco Friendly  •  Local Products")
+              : "100% Authentic  •  Quality Assured",
+          titleLine1: titleParts[0]?.trim() || b.title,
+          titleLine2: titleParts[1]?.trim() || "",
+          subtitleLine1: b.subtitle || (p.subtitleLine1 || "দেশীয় পণ্য ও আধুনিক সেবার সমন্বয়ে"),
+          subtitleLine2: p.subtitleLine2 || "শিল্পকলা এখন আপনার হাতের কাছে!",
+          ctaText: p.ctaText || "Shop Now",
+          ctaLink: b.linkUrl || p.ctaLink || "/shop",
+          showBadge: idx === 0 || idx === 3,
+          badge1Text: p.badge1Text || "Fast Delivery",
+          badge2Text: p.badge2Text || "Quality Products",
+          badge3Text: p.badge3Text || "Reliable Service",
+        };
+      });
+    }
+
+    return [
+      {
+        id: "slide-1",
+        bgImage: p.bgImage || "/images/client-mockup/hero-bg-exact.png",
+        pill: p.pill || "Handmade  •  Eco Friendly  •  Local Products",
+        titleLine1: p.titleLine1 || "বাংলার ঐতিহ্য,",
+        titleLine2: p.titleLine2 || "আপনার প্রয়োজন",
+        subtitleLine1: p.subtitleLine1 || "দেশীয় পণ্য ও আধুনিক সেবার সমন্বয়ে",
+        subtitleLine2: p.subtitleLine2 || "শিল্পকলা এখন আপনার হাতের কাছে!",
+        ctaText: p.ctaText || "Shop Now",
+        ctaLink: p.ctaLink || "/shop",
+        showBadge: p.showLocalBadge !== false,
+        badge1Text: p.badge1Text || "Fast Delivery",
+        badge2Text: p.badge2Text || "Quality Products",
+        badge3Text: p.badge3Text || "Reliable Service",
+      },
+      {
+        id: "slide-2",
+        bgImage: "/images/client-mockup/hero-bg-green.png",
+        pill: "100% Natural  •  Pure Living  •  Sustainable",
+        titleLine1: "প্রকৃতির সান্নিধ্যে,",
+        titleLine2: "বিশুদ্ধ সমাহার",
+        subtitleLine1: "পরিবেশবান্ধব ও খাঁটি সামগ্রীর অনন্য কালেকশন",
+        subtitleLine2: "আপনার প্রতিদিনের জীবনের সেরা সঙ্গী!",
+        ctaText: "Explore More",
+        ctaLink: "/shop",
+        showBadge: false,
+        badge1Text: "100% Pure",
+        badge2Text: "Eco-Friendly",
+        badge3Text: "Verified Quality",
+      },
+      {
+        id: "slide-3",
+        bgImage: "/images/client-mockup/hero-bg-peach.png",
+        pill: "Artisanal Craft  •  Jute & Clay  •  Heritage",
+        titleLine1: "মাটির সুরভী,",
+        titleLine2: "ঐতিহ্যের কারুকাজ",
+        subtitleLine1: "হাতে বোনা পাটজাত পণ্য ও লোকশিল্পের ভাণ্ডার",
+        subtitleLine2: "বাঙালির ঘর সাজুক দেশীয় শিল্পে!",
+        ctaText: "View Crafts",
+        ctaLink: "/shop",
+        showBadge: false,
+        badge1Text: "Artisanal",
+        badge2Text: "Handcrafted",
+        badge3Text: "Local Pride",
+      },
+      {
+        id: "slide-4",
+        bgImage: "/images/client-mockup/hero-bg-exact.png",
+        pill: "Corporate Gifting  •  Custom Orders  •  Special E-Sheba",
+        titleLine1: "কর্পোরেট সলিউশন,",
+        titleLine2: "বিশেষ ই-সেবা",
+        subtitleLine1: "প্রতিষ্ঠানিক উপহার ও কাস্টমাইজড শিল্পজাত সামগ্রী",
+        subtitleLine2: "সারাদেশে নিরাপদ ও নির্ভরযোগ্য ডেলিভারি!",
+        ctaText: "Order E-Sheba",
+        ctaLink: "/services",
+        showBadge: true,
+        badge1Text: "Bulk Orders",
+        badge2Text: "Custom Branding",
+        badge3Text: "Prompt Delivery",
+      },
+    ];
+  };
+
   const renderHeroCarousel = (section: HomeSectionData) => {
     const p = section.props || {};
-    const bgImage = p.bgImage || "/images/client-mockup/hero-bg-exact.png";
-    const ctaLink = p.ctaLink || "/shop";
+    const slides = getHeroSlides(p);
+    const activeIndex = Math.abs(heroSlideIndex) % slides.length;
+    const activeSlide = slides[activeIndex] || slides[0];
+
+    const nextSlide = () => {
+      setHeroSlideIndex((prev) => prev + 1);
+    };
+
+    const prevSlide = () => {
+      setHeroSlideIndex((prev) => (prev - 1 + slides.length));
+    };
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+      setTouchStartX(e.touches[0].clientX);
+    };
+
+    const handleTouchEnd = (e: React.TouchEvent) => {
+      if (touchStartX === null) return;
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchStartX - touchEndX;
+      if (diff > 40) {
+        nextSlide();
+      } else if (diff < -40) {
+        prevSlide();
+      }
+      setTouchStartX(null);
+    };
 
     return (
-      <section className="w-full bg-[#FAF6EB] border-b border-[#EDE8DC] relative overflow-hidden select-none">
-        <div className="relative w-full max-w-[1524px] mx-auto aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[400px]">
+      <section
+        className="w-full bg-[#FAF6EB] border-b border-[#EDE8DC] relative overflow-hidden select-none"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className="relative w-full max-w-[1524px] mx-auto aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px]">
+          {/* Panoramic High-Res Hero Background Image with Smooth Cross-Fade */}
           <Image
-            src={bgImage}
-            alt="Hero Background"
+            key={activeSlide.bgImage}
+            src={activeSlide.bgImage}
+            alt={`${activeSlide.titleLine1 || ""} ${activeSlide.titleLine2 || ""} - SHOILPIKKABBO`}
             fill
             priority
-            className="object-cover object-right sm:object-fill"
+            className="object-cover object-right sm:object-fill transition-all duration-700"
+            sizes="(max-width: 1524px) 100vw, 1524px"
           />
 
-          {/* Subtle Mobile Gradient */}
+          {/* Subtle Mobile Gradient to ensure text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#FAF6EB]/95 via-[#FAF6EB]/80 to-transparent sm:from-transparent sm:via-transparent sm:to-transparent z-1 pointer-events-none" />
 
-          <div className="absolute left-4 sm:left-[8%] top-0 bottom-0 flex flex-col justify-center max-w-[72%] sm:max-w-[48%] z-10 py-3 sm:py-0">
-            {p.pill && (
-              <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 rounded-full bg-[#084035] text-white text-[9px] sm:text-xs font-semibold w-fit tracking-wide shadow-xs mb-1.5 sm:mb-2">
-                <span>{p.pill}</span>
+          {/* Left Content Overlay */}
+          <div className="absolute left-4 sm:left-[8%] top-0 bottom-0 flex flex-col justify-center max-w-[72%] sm:max-w-[46%] z-10 py-3 sm:py-0">
+            {activeSlide.pill && (
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-0.5 sm:py-1 rounded-full bg-[#084035] text-white text-[9px] sm:text-xs md:text-[13px] font-semibold w-fit tracking-wide shadow-xs mb-1 sm:mb-2 md:mb-2.5">
+                <span>{activeSlide.pill}</span>
               </div>
             )}
 
             <h1 className="font-bengali font-bold sm:font-black tracking-tight leading-[1.12]">
-              <span className="block text-[#083D33] text-lg sm:text-2xl md:text-3xl lg:text-4xl">
-                {p.titleLine1 || "বাংলার ঐতিহ্য,"}
+              <span className="block text-[#083D33] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px]">
+                {activeSlide.titleLine1}
               </span>
-              <span className="block text-[#E0592A] text-lg sm:text-2xl md:text-3xl lg:text-4xl mt-0.5">
-                {p.titleLine2 || "আপনার প্রয়োজন"}
+              <span className="block text-[#E0592A] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] mt-0.5 sm:mt-1">
+                {activeSlide.titleLine2}
               </span>
             </h1>
 
-            <p className="font-bengali font-medium text-[#143D34] text-[10.5px] sm:text-xs md:text-sm leading-snug mt-1 sm:mt-2.5 max-w-sm line-clamp-2 sm:line-clamp-none">
-              <span>{p.subtitleLine1 || "দেশীয় পণ্য ও আধুনিক সেবার সমন্বয়ে"}</span>
-              {p.subtitleLine2 && (
+            <p className="font-bengali font-medium text-[#143D34] text-[10.5px] sm:text-xs md:text-sm lg:text-[15.5px] xl:text-[16.5px] leading-snug mt-1 sm:mt-2.5 md:mt-3 max-w-sm sm:max-w-md line-clamp-2 sm:line-clamp-none">
+              <span>{activeSlide.subtitleLine1}</span>
+              {activeSlide.subtitleLine2 && (
                 <>
                   <br className="hidden sm:inline" />
-                  <span className="hidden sm:inline"> {p.subtitleLine2}</span>
+                  <span className="hidden sm:inline"> {activeSlide.subtitleLine2}</span>
                 </>
               )}
             </p>
 
-            <div className="hidden sm:flex items-center gap-2.5 sm:gap-4 mt-2 sm:mt-3 text-[#083D33]">
-              <div className="flex items-center gap-1 text-[9px] sm:text-[11px] font-bold">
-                <Truck className="w-3.5 h-3.5 shrink-0" />
-                <span>{p.badge1Text || "Fast Delivery"}</span>
+            {/* Value Proposition Features */}
+            <div className="hidden sm:flex items-center gap-2.5 sm:gap-4 md:gap-6 mt-2 sm:mt-3 md:mt-4 text-[#083D33]">
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
+                <span>{activeSlide.badge1Text || "Fast Delivery"}</span>
               </div>
-              <div className="flex items-center gap-1 text-[9px] sm:text-[11px] font-bold">
-                <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                <span>{p.badge2Text || "Quality Products"}</span>
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
+                <span>{activeSlide.badge2Text || "Quality Products"}</span>
               </div>
-              <div className="flex items-center gap-1 text-[9px] sm:text-[11px] font-bold">
-                <Handshake className="w-3.5 h-3.5 shrink-0" />
-                <span>{p.badge3Text || "Reliable Service"}</span>
+              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                <Handshake className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
+                <span>{activeSlide.badge3Text || "Reliable Service"}</span>
               </div>
             </div>
 
@@ -272,36 +438,95 @@ export function HomeSectionsRenderer({
               <span>দ্রুত ডেলিভারি • প্রিমিয়াম মান</span>
             </div>
 
-            <div className="mt-2.5 sm:mt-3.5">
+            {/* CTA Button */}
+            <div className="mt-2.5 sm:mt-3.5 md:mt-4 lg:mt-5">
               {isEditorMode ? (
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1.5 px-3.5 sm:px-6 py-1.5 sm:py-2.5 rounded-full bg-[#E0592A] text-white font-bold text-[11px] sm:text-xs shadow-md"
+                  className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)]"
                 >
-                  <span>{p.ctaText || "Shop Now"}</span>
-                  <span>→</span>
+                  <span>{activeSlide.ctaText || "Shop Now"}</span>
+                  <span className="text-xs sm:text-base">→</span>
                 </button>
               ) : (
                 <Link
-                  href={ctaLink}
-                  className="inline-flex items-center gap-1.5 px-3.5 sm:px-6 py-1.5 sm:py-2.5 rounded-full bg-[#E0592A] hover:bg-[#C8481C] text-white font-bold text-[11px] sm:text-xs shadow-md transition-all hover:scale-105 cursor-pointer"
+                  href={activeSlide.ctaLink || "/shop"}
+                  className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] hover:bg-[#C8481C] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)] transition-all hover:scale-105 cursor-pointer group"
                 >
-                  <span>{p.ctaText || "Shop Now"}</span>
-                  <span>→</span>
+                  <span>{activeSlide.ctaText || "Shop Now"}</span>
+                  <span className="text-xs sm:text-base transition-transform duration-200 group-hover:translate-x-1">→</span>
                 </Link>
               )}
             </div>
           </div>
 
-          {p.showLocalBadge !== false && (
-            <div className="absolute right-[3%] sm:right-[5%] top-[5%] sm:top-[8%] z-10 pointer-events-none">
+          {/* Top Right "Support Local Products ♡" Stamp */}
+          {activeSlide.showBadge && (
+            <div className="absolute right-[3%] sm:right-[6%] md:right-[7.5%] top-[5%] sm:top-[9%] md:top-[10%] z-10 pointer-events-none select-none">
               <Image
                 src="/images/client-mockup/support-local-badge.png"
-                alt="Support Local"
-                width={90}
-                height={100}
-                className="w-10 sm:w-20 h-auto object-contain"
+                alt="Support Local Products"
+                width={115}
+                height={125}
+                className="w-10 sm:w-18 md:w-22 lg:w-26 xl:w-28 h-auto object-contain drop-shadow-xs"
+                priority
               />
+            </div>
+          )}
+
+          {/* Interactive Carousel Left Arrow Button */}
+          {slides.length > 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                prevSlide();
+              }}
+              className="hidden sm:flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
+            </button>
+          )}
+
+          {/* Interactive Carousel Right Arrow Button */}
+          {slides.length > 1 && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                nextSlide();
+              }}
+              className="hidden sm:flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
+              aria-label="Next slide"
+            >
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
+            </button>
+          )}
+
+          {/* Interactive Pagination Dots */}
+          {slides.length > 1 && (
+            <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 z-20">
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setHeroSlideIndex(idx);
+                  }}
+                  className={`transition-all duration-300 rounded-full cursor-pointer ${
+                    activeIndex === idx
+                      ? idx === 1
+                        ? "w-4 sm:w-6 h-1.5 sm:h-2.5 bg-[#E0592A] ring-1 ring-white/60"
+                        : "w-4 sm:w-6 h-1.5 sm:h-2.5 bg-[#0D3B37] ring-1 ring-white/60"
+                      : idx === 1
+                      ? "w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-[#E0592A]/60 hover:bg-[#E0592A]"
+                      : "w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-gray-300 hover:bg-gray-400"
+                  }`}
+                  aria-label={`Slide ${idx + 1}`}
+                />
+              ))}
             </div>
           )}
         </div>
@@ -323,10 +548,10 @@ export function HomeSectionsRenderer({
               <LayoutGrid className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-[#0D3B37] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B37] tracking-tight">
                 {p.headline || "Shop by Category"}
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+              <p className="text-sm sm:text-[15px] text-gray-500 font-normal mt-0.5">
                 {p.subtitle || "Explore our wide range of products and services"}
               </p>
             </div>
@@ -339,14 +564,15 @@ export function HomeSectionsRenderer({
           ) : (
             <Link
               href="/shop"
-              className="text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors cursor-pointer group shrink-0"
             >
-              {p.ctaText || "View All Categories"} →
+              <span>{p.ctaText || "View All Categories"}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4 lg:gap-5">
           {categories.slice(0, 10).map((cat) => {
             const iconSrc =
               CATEGORY_ICON_MAP[cat.slug] ||
@@ -359,16 +585,16 @@ export function HomeSectionsRenderer({
 
             const cardInner = (
               <>
-                <div className="relative w-16 h-14 mb-2 flex items-center justify-center">
+                <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
                   <Image
                     src={iconSrc}
                     alt={cat.name}
                     width={64}
                     height={54}
-                    className="object-contain max-h-14 group-hover:scale-110 transition-transform duration-300"
+                    className="object-contain max-h-14 sm:max-h-16 group-hover:scale-108 transition-transform duration-300"
                   />
                 </div>
-                <span className="text-xs font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors">
+                <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
                   {cat.name}
                 </span>
               </>
@@ -378,7 +604,7 @@ export function HomeSectionsRenderer({
               return (
                 <div
                   key={cat.id || cat.slug}
-                  className="bg-white rounded-2xl p-4 flex flex-col items-center text-center shadow-xs border border-gray-100"
+                  className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100"
                 >
                   {cardInner}
                 </div>
@@ -389,7 +615,7 @@ export function HomeSectionsRenderer({
               <Link
                 key={cat.id || cat.slug}
                 href={href}
-                className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 flex flex-col items-center text-center shadow-xs border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all group cursor-pointer"
+                className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 group cursor-pointer"
               >
                 {cardInner}
               </Link>
@@ -397,25 +623,25 @@ export function HomeSectionsRenderer({
           })}
 
           {/* Quality Products Better Life Banner */}
-          <div className="col-span-2 relative rounded-2xl overflow-hidden shadow-xs min-h-[145px] flex items-center group">
+          <div className="col-span-2 relative rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] transition-all duration-300 min-h-[145px] sm:min-h-[155px] md:min-h-[165px] flex items-center group">
             <Image
               src={p.promoBgImage || "/images/client-mockup/quality-products-bg.png"}
               alt="Promo Banner"
               fill
-              className="object-cover object-right group-hover:scale-105 transition-transform duration-500"
+              className="object-cover object-right group-hover:scale-103 transition-transform duration-500"
             />
-            <div className="relative z-10 pl-5 pr-4 py-4 max-w-[60%] flex flex-col justify-center space-y-2">
-              <h3 className="text-white font-extrabold text-base sm:text-lg leading-tight whitespace-pre-line">
+            <div className="relative z-10 pl-5 sm:pl-6 md:pl-7 pr-4 py-4 max-w-[60%] sm:max-w-[55%] flex flex-col justify-center space-y-2 sm:space-y-3">
+              <h3 className="text-white font-extrabold text-base sm:text-lg md:text-xl lg:text-[22px] leading-tight tracking-tight drop-shadow-xs whitespace-pre-line">
                 {p.promoHeadline || "Quality Products\nBetter Life"}
               </h3>
               {isEditorMode ? (
-                <span className="px-3 py-1.5 bg-[#E0592A] text-white text-xs font-bold rounded-full w-fit">
+                <span className="px-3.5 sm:px-5 py-1.5 sm:py-2.5 bg-[#E0592A] text-white text-xs sm:text-sm font-bold rounded-full w-fit shadow-xs">
                   {p.promoCtaText || "Explore Categories"} →
                 </span>
               ) : (
                 <Link
                   href={p.promoCtaLink || "/shop"}
-                  className="px-3 py-1.5 bg-[#E0592A] hover:bg-[#C8481C] text-white text-xs font-bold rounded-full w-fit transition-transform hover:scale-105 cursor-pointer shadow-sm"
+                  className="px-3.5 sm:px-5 py-1.5 sm:py-2.5 bg-[#E0592A] hover:bg-[#C8481C] text-white text-xs sm:text-sm font-bold rounded-full w-fit transition-all hover:scale-105 cursor-pointer shadow-md"
                 >
                   {p.promoCtaText || "Explore Categories"} →
                 </Link>
@@ -437,16 +663,16 @@ export function HomeSectionsRenderer({
 
     return (
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        <div className="flex items-center justify-between pb-6">
+        <div className="flex items-center justify-between pb-6 sm:pb-7">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
               <Star className="w-5 h-5 fill-emerald-600 text-emerald-600" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-[#0D3B37] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B37] tracking-tight">
                 {p.headline || "Featured Products"}
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+              <p className="text-sm sm:text-[15px] text-gray-500 font-normal mt-0.5">
                 {p.subtitle || "Best selling and most popular products"}
               </p>
             </div>
@@ -459,27 +685,27 @@ export function HomeSectionsRenderer({
           ) : (
             <Link
               href="/shop"
-              className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group shrink-0 cursor-pointer"
             >
               <span>{p.ctaText || "View All Products"}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
           {items.map((prod) => {
             const imageSrc = getProductImage(prod);
             const price = Number(prod.price) || 0;
             const salePrice = prod.salePrice ? Number(prod.salePrice) : null;
             const isAdded = addedProductId === prod.id;
-            const isWishlisted = Boolean(wishlist[prod.id]);
+            const isWishlisted = isItemWishlisted(prod.id);
             const discountPct = getProductDiscount(prod);
 
             return (
               <div
                 key={prod.id}
-                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 relative group border border-gray-100"
+                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 relative group border border-gray-100 min-h-[320px]"
               >
                 {/* Wishlist Heart Button */}
                 <button
@@ -487,7 +713,7 @@ export function HomeSectionsRenderer({
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    toggleWishlist(prod.id);
+                    handleToggleWishlist(prod);
                   }}
                   className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
                   title="Save to Wishlist"
@@ -505,7 +731,7 @@ export function HomeSectionsRenderer({
                 <div>
                   {/* Product Image Link */}
                   {isEditorMode ? (
-                    <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 flex items-center justify-center p-2">
+                    <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 sm:mb-3.5 flex items-center justify-center p-3">
                       <Image
                         src={imageSrc}
                         alt={prod.name}
@@ -516,7 +742,7 @@ export function HomeSectionsRenderer({
                   ) : (
                     <Link
                       href={`/products/${prod.slug}`}
-                      className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 flex items-center justify-center p-2 group-hover:bg-[#F5F1E9] transition-colors block cursor-pointer"
+                      className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 sm:mb-3.5 flex items-center justify-center p-3 group-hover:bg-[#F5F1E9] transition-colors block cursor-pointer"
                     >
                       <Image
                         src={imageSrc}
@@ -529,54 +755,56 @@ export function HomeSectionsRenderer({
                   )}
 
                   {/* Category Name */}
-                  <p className="text-[11px] text-gray-400 font-medium truncate">
-                    {prod.category?.name || prod.categoryName || "Artisanal"}
-                  </p>
-
-                  {/* Product Title */}
-                  {isEditorMode ? (
-                    <p className="font-semibold text-xs sm:text-sm text-gray-900 line-clamp-2 mt-0.5">
-                      {prod.name}
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium truncate">
+                      {prod.category?.name || prod.categoryName || "Artisanal"}
                     </p>
-                  ) : (
-                    <Link
-                      href={`/products/${prod.slug}`}
-                      className="block font-semibold text-xs sm:text-sm text-gray-900 hover:text-[#E0592A] transition-colors line-clamp-2 mt-0.5 cursor-pointer leading-snug"
-                      title={prod.name}
-                    >
-                      {prod.name}
-                    </Link>
-                  )}
 
-                  {/* Rating */}
-                  <div className="flex items-center gap-1 text-xs text-amber-500 pt-1">
-                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    <span className="font-bold text-gray-700">
-                      {prod.rating ?? 4.8}
-                    </span>
-                    <span className="text-gray-400 text-[10.5px]">
-                      ({prod.reviewCount ?? 45})
-                    </span>
-                  </div>
-
-                  {/* Price & Discount */}
-                  <div className="flex items-center gap-2 flex-wrap pt-2">
-                    <span className="font-extrabold text-sm sm:text-base text-[#0D3B37]">
-                      ৳ {price.toLocaleString()}
-                    </span>
-                    {salePrice && (
-                      <span className="text-[11px] text-gray-400 line-through">
-                        ৳ {salePrice.toLocaleString()}
-                      </span>
+                    {/* Product Title - Fixed 2-line height for clean grid alignment */}
+                    {isEditorMode ? (
+                      <p className="font-semibold text-sm sm:text-[15px] text-gray-900 line-clamp-2 leading-snug h-10 overflow-hidden" title={prod.name}>
+                        {prod.name}
+                      </p>
+                    ) : (
+                      <Link
+                        href={`/products/${prod.slug}`}
+                        className="block font-semibold text-sm sm:text-[15px] text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 leading-snug h-10 overflow-hidden cursor-pointer"
+                        title={prod.name}
+                      >
+                        {prod.name}
+                      </Link>
                     )}
-                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
-                      {discountPct}% OFF
-                    </span>
+
+                    {/* Rating */}
+                    <div className="flex items-center gap-1 text-xs text-amber-500 pt-0.5">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <span className="font-bold text-gray-700">
+                        {prod.rating ?? 4.8}
+                      </span>
+                      <span className="text-gray-400">
+                        ({prod.reviewCount ?? 45})
+                      </span>
+                    </div>
+
+                    {/* Price & Discount - Prominent Large Font */}
+                    <div className="flex items-center gap-2 flex-wrap pt-1.5">
+                      <span className="font-extrabold text-base sm:text-lg text-[#0D3B37]">
+                        ৳ {price.toLocaleString()}
+                      </span>
+                      {salePrice && (
+                        <span className="text-xs sm:text-sm text-gray-400 line-through">
+                          ৳ {salePrice.toLocaleString()}
+                        </span>
+                      )}
+                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                        {discountPct}% OFF
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Real Add to Cart Button */}
-                <div className="pt-3">
+                {/* Real Add to Cart Button (Transparent outline initially, solid on hover) */}
+                <div className="pt-4">
                   <button
                     type="button"
                     disabled={isEditorMode}
@@ -587,10 +815,10 @@ export function HomeSectionsRenderer({
                         onQuickAdd(prod);
                       }
                     }}
-                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
                       isAdded
-                        ? "bg-emerald-600 text-white"
-                        : "bg-[#0D3B37] hover:bg-[#E0592A] text-white active:scale-95"
+                        ? "bg-emerald-600 text-white border border-emerald-600 shadow-sm"
+                        : "bg-transparent text-[#0D3B37] border border-[#0D3B37]/35 hover:bg-[#0D3B37] hover:text-white hover:border-[#0D3B37] hover:shadow-md active:scale-98"
                     }`}
                   >
                     {isAdded ? (
@@ -600,7 +828,7 @@ export function HomeSectionsRenderer({
                       </>
                     ) : (
                       <>
-                        <ShoppingCart className="w-3.5 h-3.5" />
+                        <ShoppingCart className="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
                         <span>Add to Cart</span>
                       </>
                     )}
@@ -803,16 +1031,16 @@ export function HomeSectionsRenderer({
 
     return (
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        <div className="flex items-center justify-between pb-6">
+        <div className="flex items-center justify-between pb-6 sm:pb-7">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
               <Sparkles className="w-5 h-5 fill-amber-500 text-amber-500" />
             </div>
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-[#0D3B37] tracking-tight">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#0D3B37] tracking-tight">
                 {p.headline || "For You"}
               </h2>
-              <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+              <p className="text-sm sm:text-[15px] text-gray-500 font-normal mt-0.5">
                 {p.subtitle || "Specially handpicked recommendations tailored for you"}
               </p>
             </div>
@@ -825,25 +1053,27 @@ export function HomeSectionsRenderer({
           ) : (
             <Link
               href="/shop"
-              className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group shrink-0 cursor-pointer"
             >
               <span>{p.ctaText || "View All"}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
           {items.map((prod) => {
             const imageSrc = getProductImage(prod);
             const price = Number(prod.price) || 0;
+            const salePrice = prod.salePrice ? Number(prod.salePrice) : null;
             const isAdded = addedProductId === prod.id;
-            const isWishlisted = Boolean(wishlist[prod.id]);
+            const isWishlisted = isItemWishlisted(prod.id);
+            const discountPct = getProductDiscount(prod);
 
             return (
               <div
                 key={prod.id}
-                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 relative group border border-gray-100"
+                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 relative group border border-gray-100 min-h-[320px]"
               >
                 {/* For You Tag Badge */}
                 <div className="absolute top-3 left-3 z-10">
@@ -858,7 +1088,7 @@ export function HomeSectionsRenderer({
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    toggleWishlist(prod.id);
+                    handleToggleWishlist(prod);
                   }}
                   className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
                   title="Save to Wishlist"
@@ -876,7 +1106,7 @@ export function HomeSectionsRenderer({
                 <div>
                   {/* Product Image Link */}
                   {isEditorMode ? (
-                    <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 flex items-center justify-center p-2">
+                    <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 sm:mb-3.5 flex items-center justify-center p-3">
                       <Image
                         src={imageSrc}
                         alt={prod.name}
@@ -887,7 +1117,7 @@ export function HomeSectionsRenderer({
                   ) : (
                     <Link
                       href={`/products/${prod.slug}`}
-                      className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 flex items-center justify-center p-2 group-hover:bg-[#F5F1E9] transition-colors block cursor-pointer"
+                      className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 sm:mb-3.5 flex items-center justify-center p-3 group-hover:bg-[#F5F1E9] transition-colors block cursor-pointer"
                     >
                       <Image
                         src={imageSrc}
@@ -900,33 +1130,56 @@ export function HomeSectionsRenderer({
                   )}
 
                   {/* Category Name */}
-                  <p className="text-[11px] text-gray-400 font-medium truncate">
-                    {prod.category?.name || prod.categoryName || "Artisanal"}
-                  </p>
-
-                  {/* Product Title */}
-                  {isEditorMode ? (
-                    <p className="font-semibold text-xs sm:text-sm text-gray-900 line-clamp-2 mt-0.5">
-                      {prod.name}
+                  <div className="space-y-1">
+                    <p className="text-xs text-gray-500 font-medium truncate">
+                      {prod.category?.name || prod.categoryName || "Artisanal"}
                     </p>
-                  ) : (
-                    <Link
-                      href={`/products/${prod.slug}`}
-                      className="block font-semibold text-xs sm:text-sm text-gray-900 hover:text-[#E0592A] transition-colors line-clamp-2 mt-0.5 cursor-pointer leading-snug"
-                      title={prod.name}
-                    >
-                      {prod.name}
-                    </Link>
-                  )}
 
-                  {/* Price */}
-                  <p className="font-extrabold text-sm sm:text-base text-[#0D3B37] mt-1.5">
-                    ৳ {price.toLocaleString()}
-                  </p>
+                    {/* Product Title - Fixed 2-line height for clean grid alignment */}
+                    {isEditorMode ? (
+                      <p className="font-semibold text-sm sm:text-[15px] text-gray-900 line-clamp-2 leading-snug h-10 overflow-hidden" title={prod.name}>
+                        {prod.name}
+                      </p>
+                    ) : (
+                      <Link
+                        href={`/products/${prod.slug}`}
+                        className="block font-semibold text-sm sm:text-[15px] text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 leading-snug h-10 overflow-hidden cursor-pointer"
+                        title={prod.name}
+                      >
+                        {prod.name}
+                      </Link>
+                    )}
+
+                    {/* Rating */}
+                    <div className="flex items-center gap-1 text-xs text-amber-500 pt-0.5">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <span className="font-bold text-gray-700">
+                        {prod.rating ?? 4.8}
+                      </span>
+                      <span className="text-gray-400">
+                        ({prod.reviewCount ?? 45})
+                      </span>
+                    </div>
+
+                    {/* Price & Discount - Prominent Large Font */}
+                    <div className="flex items-center gap-2 flex-wrap pt-1.5">
+                      <span className="font-extrabold text-base sm:text-lg text-[#0D3B37]">
+                        ৳ {price.toLocaleString()}
+                      </span>
+                      {salePrice && (
+                        <span className="text-xs sm:text-sm text-gray-400 line-through">
+                          ৳ {salePrice.toLocaleString()}
+                        </span>
+                      )}
+                      <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                        {discountPct}% OFF
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Real Add to Cart Button */}
-                <div className="pt-3">
+                {/* Real Add to Cart Button (Transparent outline initially, solid on hover) */}
+                <div className="pt-4">
                   <button
                     type="button"
                     disabled={isEditorMode}
@@ -937,10 +1190,10 @@ export function HomeSectionsRenderer({
                         onQuickAdd(prod);
                       }
                     }}
-                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
                       isAdded
-                        ? "bg-emerald-600 text-white"
-                        : "bg-[#0D3B37] hover:bg-[#E0592A] text-white active:scale-95"
+                        ? "bg-emerald-600 text-white border border-emerald-600 shadow-sm"
+                        : "bg-transparent text-[#0D3B37] border border-[#0D3B37]/35 hover:bg-[#0D3B37] hover:text-white hover:border-[#0D3B37] hover:shadow-md active:scale-98"
                     }`}
                   >
                     {isAdded ? (
@@ -950,7 +1203,7 @@ export function HomeSectionsRenderer({
                       </>
                     ) : (
                       <>
-                        <ShoppingCart className="w-3.5 h-3.5" />
+                        <ShoppingCart className="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
                         <span>Add to Cart</span>
                       </>
                     )}

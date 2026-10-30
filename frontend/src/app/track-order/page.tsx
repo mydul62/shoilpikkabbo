@@ -22,7 +22,7 @@ import { formatPrice } from "@/lib/utils";
 
 function TrackOrderContent() {
   const searchParams = useSearchParams();
-  const initialOrderParam = searchParams?.get("order") || "";
+  const initialOrderParam = searchParams?.get("order") || searchParams?.get("orderNumber") || "";
   const initialPhoneParam = searchParams?.get("phone") || "";
 
   const [orderQuery, setOrderQuery] = React.useState(initialOrderParam);

@@ -1,6 +1,7 @@
 import { prisma } from "../../config/prisma";
 import { InquiryStatus } from "@prisma/client";
 import { ApiError } from "../../utils/apiError";
+import { EmailService } from "../email/email.service";
 
 export class InquiryService {
   static async create(data: {
@@ -11,7 +12,7 @@ export class InquiryService {
     organization?: string;
     requirements: string;
   }) {
-    return prisma.serviceInquiry.create({
+    const inquiry = await prisma.serviceInquiry.create({
       data: {
         serviceType: data.serviceType,
         customerName: data.customerName,
@@ -22,6 +23,13 @@ export class InquiryService {
         status: InquiryStatus.NEW,
       },
     });
+
+    // Asynchronously dispatch email notification without blocking API response
+    EmailService.sendInquiryNotification(inquiry).catch((err) => {
+      console.warn("[InquiryService] Could not send inquiry email notification:", err);
+    });
+
+    return inquiry;
   }
 
   static async getAll(query: {

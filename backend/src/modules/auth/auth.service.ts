@@ -120,4 +120,89 @@ export class AuthService {
     }
     return user;
   }
+
+  static async updateProfile(
+    userId: string,
+    data: { name?: string; phone?: string; email?: string }
+  ) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new ApiError(404, "User not found.");
+    }
+
+    const updateData: any = {};
+    if (data.name && data.name.trim()) {
+      updateData.name = data.name.trim();
+    }
+
+    if (data.phone && data.phone.trim()) {
+      const cleanPhone = data.phone.trim();
+      if (cleanPhone !== user.phone) {
+        const existing = await prisma.user.findUnique({
+          where: { phone: cleanPhone },
+        });
+        if (existing) {
+          throw new ApiError(409, "This phone number is already in use by another account.");
+        }
+        updateData.phone = cleanPhone;
+      }
+    }
+
+    if (data.email !== undefined) {
+      const cleanEmail = data.email && data.email.trim() ? data.email.trim() : null;
+      if (cleanEmail && cleanEmail !== user.email) {
+        const existing = await prisma.user.findFirst({
+          where: { email: { equals: cleanEmail, mode: "insensitive" } },
+        });
+        if (existing) {
+          throw new ApiError(409, "This email address is already in use by another account.");
+        }
+      }
+      updateData.email = cleanEmail;
+    }
+
+    return prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+  }
+
+  static async changePassword(
+    userId: string,
+    data: { currentPassword: string; newPassword: string }
+  ) {
+    if (!data.currentPassword || !data.newPassword) {
+      throw new ApiError(400, "Please provide both current and new password.");
+    }
+
+    if (data.newPassword.length < 6) {
+      throw new ApiError(400, "New password must be at least 6 characters long.");
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new ApiError(404, "User not found.");
+    }
+
+    const isMatch = await bcrypt.compare(data.currentPassword, user.passwordHash);
+    if (!isMatch) {
+      throw new ApiError(400, "Current password does not match.");
+    }
+
+    const passwordHash = await bcrypt.hash(data.newPassword, 10);
+    await prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
+
+    return { message: "Password updated successfully." };
+  }
 }

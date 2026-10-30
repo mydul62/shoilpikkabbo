@@ -26,7 +26,8 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useSettings } from "@/context/SettingsContext";
-import { productsApi, categoriesApi, bannersApi } from "@/lib/api";
+import { useWishlist } from "@/context/WishlistContext";
+import { productsApi, categoriesApi, bannersApi, pagesApi } from "@/lib/api";
 import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/data/mock-data";
 
 // Fallback icon map for the 10 core categories
@@ -76,21 +77,24 @@ export function ClientMockupHome() {
   const [liveProducts, setLiveProducts] = React.useState<any[]>([]);
   const [liveCategories, setLiveCategories] = React.useState<any[]>([]);
   const [liveBanners, setLiveBanners] = React.useState<any[]>([]);
+  const [categoryPromoBg, setCategoryPromoBg] = React.useState<string>(
+    "/images/client-mockup/quality-products-bg.png"
+  );
   const [isLoading, setIsLoading] = React.useState(true);
-
-  const [wishlist, setWishlist] = React.useState<Record<string, boolean>>({});
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const [addedProductId, setAddedProductId] = React.useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = React.useState(0);
 
-  // Fetch live products, categories, and banners from PostgreSQL
+  // Fetch live products, categories, banners, and published CMS sections from PostgreSQL
   React.useEffect(() => {
     let mounted = true;
     async function loadData() {
       try {
-        const [prodRes, catRes, banRes] = await Promise.all([
-          productsApi.getAll({ limit: 100 }),
-          categoriesApi.getAll(),
-          bannersApi.getAll(true),
+        const [prodRes, catRes, banRes, pageRes] = await Promise.all([
+          productsApi.getAll({ limit: 100 }).catch(() => null),
+          categoriesApi.getAll().catch(() => null),
+          bannersApi.getAll(true).catch(() => null),
+          pagesApi.getPublished("home").catch(() => null),
         ]);
 
         if (!mounted) return;
@@ -104,6 +108,12 @@ export function ClientMockupHome() {
         if (banRes && banRes.success && Array.isArray(banRes.data) && banRes.data.length > 0) {
           setLiveBanners(banRes.data);
         }
+        if (pageRes && pageRes.success && Array.isArray((pageRes.data as any)?.sections)) {
+          const catSec = (pageRes.data as any).sections.find((s: any) => s.type === "categories_grid");
+          if (catSec?.props?.promoBgImage) {
+            setCategoryPromoBg(catSec.props.promoBgImage);
+          }
+        }
       } catch (err) {
         console.error("Error loading live storefront data:", err);
       } finally {
@@ -116,13 +126,6 @@ export function ClientMockupHome() {
       mounted = false;
     };
   }, []);
-
-  const toggleWishlist = (productId: string) => {
-    setWishlist((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-  };
 
   // Helper getters
   const getProductImage = (product: any): string => {
@@ -205,9 +208,9 @@ export function ClientMockupHome() {
     return allForYouProducts.slice(0, forYouVisibleCount);
   }, [allForYouProducts, forYouVisibleCount]);
 
-  // 3. Categories: Live from database
+  // 3. Categories: Live from database (capped at exactly 10 to keep the 6-col + 2-col promo banner layout intact)
   const categories = React.useMemo(() => {
-    return liveCategories;
+    return (liveCategories || []).slice(0, 10);
   }, [liveCategories]);
 
   // 4. Hero carousel slides: Dynamic from database with high-res presets
@@ -520,7 +523,7 @@ export function ClientMockupHome() {
           {isLoading ? (
             Array.from({ length: 4 }).map((_, i) => <CategoryCardSkeleton key={i} />)
           ) : (
-            categories.map((category) => {
+            categories.slice(0, 10).map((category) => {
               const iconSrc =
                 CATEGORY_ICON_MAP[category.slug] ||
                 (category.imageUrl?.startsWith("http") || category.imageUrl?.startsWith("/")
@@ -556,7 +559,7 @@ export function ClientMockupHome() {
           <div className="col-span-2 relative rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] transition-all duration-300 min-h-[145px] sm:min-h-[155px] md:min-h-[165px] flex items-center group">
             {/* High-Res Background Image with Nature Vegetables Basket & Curved Arc */}
             <Image
-              src="/images/client-mockup/quality-products-bg.png"
+              src={categoryPromoBg}
               alt="Quality Products Better Life - SHOILPIKKABBO"
               fill
               priority
@@ -618,7 +621,7 @@ export function ClientMockupHome() {
             Array.from({ length: 5 }).map((_, i) => <ProductCardSkeleton key={i} />)
           ) : featuredProducts.length > 0 ? (
             featuredProducts.map((product) => {
-              const isWishlisted = !!wishlist[product.id];
+              const isWishlisted = isInWishlist(product.id);
               const isAdded = addedProductId === product.id;
               const discountPct = getProductDiscount(product);
               const imageSrc = getProductImage(product);
@@ -632,9 +635,22 @@ export function ClientMockupHome() {
                 {/* Wishlist Button */}
                 <button
                   type="button"
-                  onClick={() => toggleWishlist(product.id)}
+                  onClick={() =>
+                    toggleWishlist({
+                      id: product.id,
+                      name: product.name,
+                      slug: product.slug || product.id,
+                      categoryName,
+                      price: Number(product.price) || 0,
+                      salePrice: product.salePrice ? Number(product.salePrice) : undefined,
+                      imageUrl: imageSrc,
+                      stock: product.stock,
+                      rating: product.rating,
+                      reviewCount: product.reviewCount,
+                    })
+                  }
                   className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
-                  title="Save to Wishlist"
+                  title={isWishlisted ? "Remove from Wishlist" : "Save to Wishlist"}
                   aria-label="Save to Wishlist"
                 >
                   <Heart
@@ -669,7 +685,7 @@ export function ClientMockupHome() {
 
                     <Link
                       href={`/products/${product.slug}`}
-                      className="block font-semibold text-sm sm:text-[15px] text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 leading-snug"
+                      className="block font-semibold text-sm sm:text-[15px] text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 leading-snug h-10 overflow-hidden"
                       title={product.name}
                     >
                       {product.name}
@@ -703,15 +719,15 @@ export function ClientMockupHome() {
                   </div>
                 </div>
 
-                {/* Add to Cart Button */}
+                {/* Add to Cart Button (Transparent outline initially, solid on hover) */}
                 <div className="pt-4">
                   <button
                     type="button"
                     onClick={() => handleAddToCart(product)}
-                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
                       isAdded
-                        ? "bg-emerald-600 text-white"
-                        : "bg-[#0D3B37] hover:bg-[#E0592A] text-white"
+                        ? "bg-emerald-600 text-white border border-emerald-600 shadow-sm"
+                        : "bg-transparent text-[#0D3B37] border border-[#0D3B37]/35 hover:bg-[#0D3B37] hover:text-white hover:border-[#0D3B37] hover:shadow-md active:scale-98"
                     }`}
                   >
                     {isAdded ? (
@@ -944,7 +960,7 @@ export function ClientMockupHome() {
             Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
           ) : displayedForYouProducts.length > 0 ? (
             displayedForYouProducts.map((product) => {
-              const isWishlisted = !!wishlist[product.id];
+              const isWishlisted = isInWishlist(product.id);
               const isAdded = addedProductId === product.id;
               const discountPct = getProductDiscount(product);
               const imageSrc = getProductImage(product);
@@ -958,7 +974,20 @@ export function ClientMockupHome() {
                 {/* Wishlist Button */}
                 <button
                   type="button"
-                  onClick={() => toggleWishlist(product.id)}
+                  onClick={() =>
+                    toggleWishlist({
+                      id: product.id,
+                      name: product.name,
+                      slug: product.slug || product.id,
+                      categoryName,
+                      price: Number(product.price) || 0,
+                      salePrice: product.salePrice ? Number(product.salePrice) : undefined,
+                      imageUrl: imageSrc,
+                      stock: product.stock,
+                      rating: product.rating,
+                      reviewCount: product.reviewCount,
+                    })
+                  }
                   className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
                   title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
                 >
@@ -999,7 +1028,7 @@ export function ClientMockupHome() {
                   {/* Product Title */}
                   <Link
                     href={`/products/${product.slug}`}
-                    className="block font-semibold text-sm sm:text-[15px] text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 leading-snug mb-1.5"
+                    className="block font-semibold text-sm sm:text-[15px] text-gray-900 group-hover:text-[#E0592A] transition-colors line-clamp-2 leading-snug h-10 overflow-hidden mb-1.5"
                     title={product.name}
                   >
                     {product.name}
@@ -1032,15 +1061,15 @@ export function ClientMockupHome() {
                   </div>
                 </div>
 
-                {/* Add to Cart Button */}
+                {/* Add to Cart Button (Transparent outline initially, solid on hover) */}
                 <div className="pt-4">
                   <button
                     type="button"
                     onClick={() => handleAddToCart(product)}
-                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
                       isAdded
-                        ? "bg-emerald-600 text-white"
-                        : "bg-[#0D3B37] hover:bg-[#E0592A] text-white"
+                        ? "bg-emerald-600 text-white border border-emerald-600 shadow-sm"
+                        : "bg-transparent text-[#0D3B37] border border-[#0D3B37]/35 hover:bg-[#0D3B37] hover:text-white hover:border-[#0D3B37] hover:shadow-md active:scale-98"
                     }`}
                   >
                     {isAdded ? (
