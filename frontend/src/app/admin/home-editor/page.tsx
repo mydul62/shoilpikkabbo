@@ -298,7 +298,7 @@ export default function AdminVisualPageEditor() {
         card3Tag: "Stay Connected",
         card3Headline: "Get in Touch",
         card3Note: "Chat with us anytime",
-        card3Image: "/images/client-mockup/promo-get-in-touch.png",
+        card3Image: "/images/client-mockup/stay-connected-bg.png",
       },
     },
     for_you_products: {

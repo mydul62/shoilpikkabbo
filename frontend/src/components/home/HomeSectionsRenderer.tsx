@@ -702,44 +702,79 @@ export function HomeSectionsRenderer({
             </div>
           </div>
 
-          {/* Card 3: Stay Connected */}
-          <div className="bg-[#FAF8F3] rounded-3xl p-6 flex items-center justify-between shadow-xs border border-gray-100 min-h-[240px] relative overflow-hidden">
-            <div className="space-y-2 z-10 max-w-[60%]">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block">
+          {/* Card 3: Stay Connected / Get in Touch (Exact Design Matching Client Mockup) */}
+          <div className="rounded-3xl p-6 sm:p-7 flex items-center justify-end shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] min-h-[250px] relative overflow-hidden group transition-all duration-300">
+            {/* Background Image: Support lady on left, soft nature bokeh on right */}
+            <Image
+              src={p.card3BgImage || p.card3Image || "/images/client-mockup/stay-connected-bg.png"}
+              alt="Customer Support - Stay Connected"
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover object-left group-hover:scale-103 transition-transform duration-500"
+            />
+
+            {/* Right-aligned text & button overlay matching user's exact mockup */}
+            <div className="relative z-10 flex flex-col items-start pl-2 sm:pl-4 max-w-[56%] sm:max-w-[54%] space-y-1">
+              <span className="text-xs sm:text-[13px] font-bold text-[#0D3B37] tracking-tight">
                 {p.card3Tag || "Stay Connected"}
               </span>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-[#0D3B37] leading-tight">
+              <h3 className="text-2xl sm:text-[26px] lg:text-[28px] font-black text-[#0D3B37] leading-tight tracking-tight">
                 {p.card3Headline || "Get in Touch"}
               </h3>
-              <div className="flex items-center gap-2 pt-1">
+
+              {/* Chat Buttons: WhatsApp & Messenger */}
+              <div className="flex items-center gap-3 pt-2 pb-1">
+                {/* WhatsApp */}
                 <a
-                  href="https://wa.me/8801731214379"
+                  href={p.card3Whatsapp || "https://wa.me/8801731214379"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center font-bold text-sm shadow-xs transition-transform hover:scale-110 cursor-pointer"
+                  className="w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-white shadow-[0_3px_10px_rgba(0,0,0,0.08)] hover:shadow-[0_6px_16px_rgba(37,211,102,0.3)] flex items-center justify-center hover:scale-108 active:scale-95 transition-all duration-200 cursor-pointer"
                   title="Chat on WhatsApp"
                 >
-                  ✆
+                  <svg className="w-7 h-7 sm:w-8 sm:h-8" viewBox="0 0 32 32" fill="none">
+                    <path
+                      d="M16 2C8.268 2 2 8.268 2 16c0 2.652.736 5.132 2.012 7.264L2.2 29.8l6.732-1.764A13.91 13.91 0 0 0 16 30c7.732 0 14-6.268 14-14S23.732 2 16 2z"
+                      fill="#25D366"
+                    />
+                    <path
+                      d="M23.1 19.924c-.392-.196-2.316-1.144-2.676-1.272-.36-.132-.62-.196-.88.196-.26.392-1.008 1.272-1.236 1.532-.228.26-.456.292-.848.096-.392-.196-1.656-.612-3.156-1.948-1.168-1.04-1.956-2.328-2.184-2.72-.228-.392-.024-.604.172-.8.176-.176.392-.456.588-.684.196-.228.26-.392.392-.652.132-.26.064-.488-.032-.684-.096-.196-.88-2.12-1.208-2.9-.32-.76-.644-.656-.88-.668-.228-.012-.488-.012-.748-.012-.26 0-.684.096-1.04.488-.36.392-1.376 1.344-1.376 3.28 0 1.936 1.408 3.808 1.604 4.068.196.26 2.772 4.232 6.716 5.932.936.404 1.668.644 2.24.828.94.3 1.796.256 2.472.156.756-.112 2.316-.948 2.64-1.864.328-.916.328-1.7.232-1.864-.096-.164-.356-.26-.748-.456z"
+                      fill="#ffffff"
+                    />
+                  </svg>
                 </a>
+
+                {/* Messenger */}
                 <a
-                  href="tel:+8801731214379"
-                  className="w-9 h-9 rounded-full bg-[#0084FF] hover:bg-[#0074e0] text-white flex items-center justify-center font-bold text-sm shadow-xs transition-transform hover:scale-110 cursor-pointer"
-                  title="Call Customer Care"
+                  href={p.card3Messenger || "https://m.me/shoilpikkabbo"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-white shadow-[0_3px_10px_rgba(0,0,0,0.08)] hover:shadow-[0_6px_16px_rgba(0,132,255,0.3)] flex items-center justify-center hover:scale-108 active:scale-95 transition-all duration-200 cursor-pointer"
+                  title="Chat on Messenger"
                 >
-                  💬
+                  <svg className="w-7 h-7 sm:w-8 sm:h-8" viewBox="0 0 36 36" fill="none">
+                    <defs>
+                      <linearGradient id="cardMessengerGradSection" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#00B2FF" />
+                        <stop offset="50%" stopColor="#006AFF" />
+                        <stop offset="100%" stopColor="#8000FF" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      d="M18 2C9.163 2 2 8.716 2 17c0 4.72 2.348 8.92 6.02 11.668-.192 1.492-.76 3.844-2.42 5.568 2.648-.124 5.372-1.4 6.944-2.384.816.22 1.672.34 2.556.34 8.837 0 16-6.716 16-15S26.837 2 18 2z"
+                      fill="url(#cardMessengerGradSection)"
+                    />
+                    <path
+                      d="M9.5 20.75l5.25-8.25 4 4 6-4-5.25 8.25-4-4-6 4z"
+                      fill="#ffffff"
+                    />
+                  </svg>
                 </a>
               </div>
-              <p className="text-[11px] text-gray-500">
+
+              <p className="text-xs sm:text-[13px] font-semibold text-[#0D3B37] tracking-tight">
                 {p.card3Note || "Chat with us anytime"}
               </p>
-            </div>
-            <div className="relative w-28 h-32 shrink-0">
-              <Image
-                src={p.card3Image || "/images/client-mockup/promo-get-in-touch.png"}
-                alt="Support"
-                fill
-                className="object-contain"
-              />
             </div>
           </div>
         </div>
