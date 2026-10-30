@@ -1,4 +1,10 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== "undefined" && window.location.hostname !== "localhost"
+    ? "https://shoilpikkabbo.onrender.com/api/v1"
+    : process.env.NODE_ENV === "production"
+    ? "https://shoilpikkabbo.onrender.com/api/v1"
+    : "http://localhost:5000/api/v1");
 
 interface FetchOptions extends RequestInit {
   token?: string;
