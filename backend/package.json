@@ -9,7 +9,8 @@
     "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "tsx prisma/seed.ts"
+    "prisma:seed": "tsx prisma/seed.ts",
+    "seed:products": "tsx src/scripts/seed-products-realistic.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
