@@ -36,6 +36,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/data/mock-data";
+import { useSettings } from "@/context/SettingsContext";
 
 export interface HomeSectionData {
   id: string;
@@ -94,6 +95,17 @@ export function HomeSectionsRenderer({
   const [forYouVisibleCount, setForYouVisibleCount] = React.useState<number>(10);
   const [isLoadingMoreForYou, setIsLoadingMoreForYou] = React.useState<boolean>(false);
   const [heroSlideIndex, setHeroSlideIndex] = React.useState<number>(0);
+
+  // Safe settings access (prevents runtime ReferenceError when rendered in admin or without provider)
+  let settings: any = {};
+  try {
+    const settingsContext = useSettings();
+    if (settingsContext?.settings) {
+      settings = settingsContext.settings;
+    }
+  } catch {
+    settings = {};
+  }
 
   // Fallback products and categories
   const products = liveProducts.length > 0 ? liveProducts : MOCK_PRODUCTS;
@@ -726,7 +738,7 @@ export function HomeSectionsRenderer({
               <div className="flex items-center gap-3 pt-2 pb-1">
                 {/* WhatsApp */}
                 <a
-                  href={p.card3Whatsapp || "https://wa.me/8801731214379"}
+                  href={p.card3Whatsapp || settings?.socialWhatsapp || "https://wa.me/8801731214379"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-white shadow-[0_3px_10px_rgba(0,0,0,0.08)] hover:shadow-[0_6px_16px_rgba(37,211,102,0.3)] flex items-center justify-center hover:scale-108 active:scale-95 transition-all duration-200 cursor-pointer"
@@ -746,7 +758,7 @@ export function HomeSectionsRenderer({
 
                 {/* Messenger */}
                 <a
-                  href={p.card3Messenger || "https://m.me/shoilpikkabbo"}
+                  href={p.card3Messenger || settings?.socialMessenger || "https://m.me/shoilpikkabbo"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-white shadow-[0_3px_10px_rgba(0,0,0,0.08)] hover:shadow-[0_6px_16px_rgba(0,132,255,0.3)] flex items-center justify-center hover:scale-108 active:scale-95 transition-all duration-200 cursor-pointer"
