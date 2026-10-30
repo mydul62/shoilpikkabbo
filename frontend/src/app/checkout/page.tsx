@@ -1048,7 +1048,23 @@ export default function CheckoutPage() {
                       className="mt-0.5 w-4 h-4 text-[#0D3B37] accent-[#0D3B37] rounded"
                     />
                     <span>
-                      I agree to the Terms, Privacy, Shipping and Return / refund policies.
+                      আমি ওয়েবসাইটটির{" "}
+                      <Link href="/terms" target="_blank" className="font-semibold text-[#0D3B37] underline hover:text-[#E0592A]">
+                        শর্তাবলী (Terms)
+                      </Link>
+                      ,{" "}
+                      <Link href="/privacy" target="_blank" className="font-semibold text-[#0D3B37] underline hover:text-[#E0592A]">
+                        গোপনীয়তা (Privacy)
+                      </Link>
+                      ,{" "}
+                      <Link href="/shipping" target="_blank" className="font-semibold text-[#0D3B37] underline hover:text-[#E0592A]">
+                        শিপিং
+                      </Link>{" "}
+                      এবং{" "}
+                      <Link href="/refund" target="_blank" className="font-semibold text-[#0D3B37] underline hover:text-[#E0592A]">
+                        রিটার্ন পলিসির
+                      </Link>{" "}
+                      সাথে একমত।
                     </span>
                   </label>
                 </section>
