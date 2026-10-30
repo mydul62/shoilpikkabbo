@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   Search,
   ShoppingBag,
@@ -62,6 +62,36 @@ function SearchParamsSync({ onSync }: { onSync: (q: string) => void }) {
 
 export function Header() {
   const router = useRouter();
+  const pathname = usePathname();
+
+  const NAV_LINKS = React.useMemo(
+    () => [
+      { label: "Home", href: "/", exact: true },
+      { label: "Offers", href: "/offers", badge: "Hot" },
+      { label: "Services", href: "/services" },
+      { label: "About Us", href: "/about" },
+      { label: "Career", href: "/careers", altHrefs: ["/career"] },
+      { label: "Contact Us", href: "/contact" },
+    ],
+    []
+  );
+
+  const isLinkActive = React.useCallback(
+    (item: { href: string; exact?: boolean; altHrefs?: string[] }) => {
+      if (!pathname) return false;
+      if (item.exact) {
+        return pathname === item.href;
+      }
+      if (pathname === item.href || pathname.startsWith(item.href + "/")) {
+        return true;
+      }
+      if (item.altHrefs && item.altHrefs.some((h) => pathname === h || pathname.startsWith(h + "/"))) {
+        return true;
+      }
+      return false;
+    },
+    [pathname]
+  );
   const { totalItemCount, setIsCartOpen } = useCart();
   const { user, isAuthenticated, logout } = useAuth();
   const { settings } = useSettings();
@@ -771,61 +801,29 @@ export function Header() {
             )}
           </div>
 
-          {/* Horizontal Menu Links matching Screenshot */}
-          <div className="hidden md:flex items-center gap-7 lg:gap-9 text-sm font-semibold text-gray-700">
-            <Link
-              href="/"
-              className="text-[#804A3E] hover:text-[#E0592A] transition-colors font-bold border-b-2 border-[#804A3E] pb-0.5"
-            >
-              Home
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => setIsCategoriesMenuOpen(!isCategoriesMenuOpen)}
-              className="flex items-center gap-1.5 text-gray-700 hover:text-[#E0592A] transition-colors cursor-pointer font-semibold"
-            >
-              <span>Categories</span>
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            </button>
-
-            <Link
-              href="/offers"
-              className="relative flex items-center gap-1.5 text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
-            >
-              <span>Offers</span>
-              <span className="px-1.5 py-0.2 bg-[#EF4444] text-white text-[9.5px] font-bold rounded-full uppercase leading-tight animate-pulse">
-                Hot
-              </span>
-            </Link>
-
-            <Link
-              href="/services"
-              className="text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
-            >
-              Services
-            </Link>
-
-            <Link
-              href="/about"
-              className="text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
-            >
-              About Us
-            </Link>
-
-            <Link
-              href="/careers"
-              className="text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
-            >
-              Career
-            </Link>
-
-            <Link
-              href="/contact"
-              className="text-gray-700 hover:text-[#E0592A] transition-colors font-semibold"
-            >
-              Contact Us
-            </Link>
+          {/* Horizontal Menu Links with Dynamic Active Route & Underline Indicator */}
+          <div className="hidden md:flex items-center gap-7 lg:gap-9 text-sm font-semibold">
+            {NAV_LINKS.map((item) => {
+              const active = isLinkActive(item);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`relative flex items-center gap-1.5 transition-all pb-1 border-b-2 ${
+                    active
+                      ? "text-[#804A3E] font-bold border-[#804A3E]"
+                      : "text-gray-700 hover:text-[#804A3E] hover:border-[#804A3E]/30 border-transparent font-semibold"
+                  }`}
+                >
+                  <span>{item.label}</span>
+                  {item.badge && (
+                    <span className="px-1.5 py-0.2 bg-[#EF4444] text-white text-[9.5px] font-bold rounded-full uppercase leading-tight animate-pulse">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </nav>
@@ -947,73 +945,31 @@ export function Header() {
                 Main Pages
               </p>
               <div className="flex flex-col space-y-1 text-[14.5px] font-medium text-[#143527]">
-                <Link
-                  href="/"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
-                >
-                  <span className="font-semibold">Home</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
-                </Link>
-
-                <Link
-                  href="/offers"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40 text-[#E0592A] font-semibold"
-                >
-                  <div className="flex items-center gap-2">
-                    <span>Offers</span>
-                    <span className="px-1.5 py-0.2 bg-[#EF4444] text-white text-[9px] font-bold rounded-full uppercase leading-tight animate-pulse">
-                      Hot
-                    </span>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#E0592A]" />
-                </Link>
-
-                <Link
-                  href="/services"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
-                >
-                  <span>Services</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
-                </Link>
-
-                <Link
-                  href="/track-order"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
-                >
-                  <span>Track Order</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
-                </Link>
-
-                <Link
-                  href="/about"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
-                >
-                  <span>About Us</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
-                </Link>
-
-                <Link
-                  href="/careers"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
-                >
-                  <span>Career</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
-                </Link>
-
-                <Link
-                  href="/contact"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
-                >
-                  <span>Contact Us</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
-                </Link>
+                {NAV_LINKS.map((item) => {
+                  const active = isLinkActive(item);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center justify-between py-2 px-2.5 rounded-lg transition-colors border-b border-[#EAE3D5]/40 ${
+                        active
+                          ? "bg-[#F2ECE1] text-[#804A3E] font-bold border-l-4 border-l-[#804A3E]"
+                          : "hover:bg-[#F2ECE1] text-[#143527]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span>{item.label}</span>
+                        {item.badge && (
+                          <span className="px-1.5 py-0.2 bg-[#EF4444] text-white text-[9px] font-bold rounded-full uppercase leading-tight animate-pulse">
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                      <ArrowRight className={`w-3.5 h-3.5 ${active ? "text-[#804A3E]" : "text-[#8C948E]"}`} />
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
