@@ -54,6 +54,8 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
         return "Orders";
       case "payments":
         return "Payments";
+      case "payment-setup":
+        return "Payment Setup & Gateways";
       case "customers":
         return "Customers";
       case "coupons":

@@ -3,10 +3,62 @@ import { ENV } from "../../config/env";
 import { OrderStatus, PaymentStatus, PaymentMethod, VerificationStatus } from "@prisma/client";
 
 export class SSLCommerzService {
-  private static getBaseUrl(): string {
-    return ENV.SSLCOMMERZ_IS_SANDBOX
-      ? "https://sandbox.sslcommerz.com"
-      : "https://securepay.sslcommerz.com";
+  /**
+   * Retrieves active SSLCommerz credentials from database SiteSettings,
+   * falling back to process.env if not explicitly set in dashboard.
+   */
+  public static async getConfig(): Promise<{
+    storeId: string;
+    storePass: string;
+    isSandbox: boolean;
+    baseUrl: string;
+    isEnabled: boolean;
+  }> {
+    try {
+      const settings = await prisma.siteSetting.findMany({
+        where: {
+          key: {
+            in: [
+              "sslcommerz_store_id",
+              "sslcommerz_store_pass",
+              "sslcommerz_is_sandbox",
+              "sslcommerz_enabled",
+            ],
+          },
+        },
+      });
+
+      const map: Record<string, string> = {};
+      for (const s of settings) map[s.key] = s.value;
+
+      const storeId = map["sslcommerz_store_id"] || ENV.SSLCOMMERZ_STORE_ID;
+      const storePass = map["sslcommerz_store_pass"] || ENV.SSLCOMMERZ_STORE_PASS;
+      const isSandbox =
+        map["sslcommerz_is_sandbox"] !== undefined
+          ? map["sslcommerz_is_sandbox"] === "true"
+          : ENV.SSLCOMMERZ_IS_SANDBOX;
+      const isEnabled = map["sslcommerz_enabled"] !== "false";
+
+      return {
+        storeId,
+        storePass,
+        isSandbox,
+        baseUrl: isSandbox
+          ? "https://sandbox.sslcommerz.com"
+          : "https://securepay.sslcommerz.com",
+        isEnabled,
+      };
+    } catch {
+      return {
+        storeId: ENV.SSLCOMMERZ_STORE_ID,
+        storePass: ENV.SSLCOMMERZ_STORE_PASS,
+        isSandbox: ENV.SSLCOMMERZ_IS_SANDBOX,
+        baseUrl: ENV.SSLCOMMERZ_IS_SANDBOX
+          ? "https://sandbox.sslcommerz.com"
+          : "https://securepay.sslcommerz.com",
+        isEnabled: true,
+      };
+    }
   }
 
   /**
@@ -25,9 +77,16 @@ export class SSLCommerzService {
     transactionId?: string | null;
   }): Promise<{ success: boolean; paymentUrl?: string; message?: string }> {
     try {
-      const baseUrl = this.getBaseUrl();
-      const initUrl = `${baseUrl}/gwprocess/v4/api.php`;
+      const config = await this.getConfig();
 
+      if (!config.isEnabled) {
+        return {
+          success: false,
+          message: "SSLCommerz payment gateway is currently disabled in store settings.",
+        };
+      }
+
+      const initUrl = `${config.baseUrl}/gwprocess/v4/api.php`;
       const tranId = order.transactionId || `SK_TXN_${order.orderNumber}_${Date.now()}`;
 
       // Update order with transactionId if needed
@@ -37,8 +96,8 @@ export class SSLCommerzService {
       });
 
       const params = new URLSearchParams();
-      params.append("store_id", ENV.SSLCOMMERZ_STORE_ID);
-      params.append("store_passwd", ENV.SSLCOMMERZ_STORE_PASS);
+      params.append("store_id", config.storeId);
+      params.append("store_passwd", config.storePass);
       params.append("total_amount", Number(order.totalAmount).toFixed(2));
       params.append("currency", "BDT");
       params.append("tran_id", tranId);
@@ -113,8 +172,8 @@ export class SSLCommerzService {
    */
   static async validatePayment(valId: string): Promise<any> {
     try {
-      const baseUrl = this.getBaseUrl();
-      const validateUrl = `${baseUrl}/validator/api/validationserverAPI.php?val_id=${valId}&store_id=${ENV.SSLCOMMERZ_STORE_ID}&store_passwd=${ENV.SSLCOMMERZ_STORE_PASS}&format=json`;
+      const config = await this.getConfig();
+      const validateUrl = `${config.baseUrl}/validator/api/validationserverAPI.php?val_id=${valId}&store_id=${config.storeId}&store_passwd=${config.storePass}&format=json`;
 
       console.log(`[SSLCommerz] Validating transaction with Val ID: ${valId}`);
       const response = await fetch(validateUrl, { method: "GET" });

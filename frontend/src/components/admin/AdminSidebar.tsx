@@ -22,6 +22,7 @@ import {
   LogOut,
   X,
   Palette,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/shared/Logo";
@@ -84,6 +85,13 @@ export function AdminSidebar({
           icon: CreditCard,
           badge: null,
           badgeVariant: "danger",
+        },
+        {
+          label: "Payment Setup",
+          href: "/admin/payment-setup",
+          icon: ShieldCheck,
+          badge: "Gateway",
+          badgeVariant: "gold",
         },
         {
           label: "Customers",

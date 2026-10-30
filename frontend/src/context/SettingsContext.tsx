@@ -35,6 +35,12 @@ export interface SiteSettings {
   headerAnnouncementEnabled: boolean;
   logoUrl: string;
   paymentInstructionsNote: string;
+  sslcommerzEnabled: boolean;
+  sslcommerzStoreId: string;
+  sslcommerzStorePass: string;
+  sslcommerzIsSandbox: boolean;
+  codEnabled: boolean;
+  codNote: string;
   raw: Record<string, string>;
 }
 
@@ -70,6 +76,12 @@ const DEFAULT_SETTINGS: SiteSettings = {
   headerAnnouncementEnabled: true,
   logoUrl: "",
   paymentInstructionsNote: "Send payment via Send Money or Make Payment. Paste your TrxID in the box below to authorize fulfillment.",
+  sslcommerzEnabled: true,
+  sslcommerzStoreId: "testbox",
+  sslcommerzStorePass: "qwerty",
+  sslcommerzIsSandbox: true,
+  codEnabled: true,
+  codNote: "পণ্য হাতে পেয়ে দেখে ডেলিভারিম্যানকে ক্যাশ টাকা পরিশোধ করুন।",
   raw: {},
 };
 
@@ -119,6 +131,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       headerAnnouncementEnabled: data["header_announcement_enabled"] !== "false",
       logoUrl: data["store_logo_url"] || "",
       paymentInstructionsNote: data["payment_instructions_note"] || DEFAULT_SETTINGS.paymentInstructionsNote,
+      sslcommerzEnabled: data["sslcommerz_enabled"] !== "false",
+      sslcommerzStoreId: data["sslcommerz_store_id"] || DEFAULT_SETTINGS.sslcommerzStoreId,
+      sslcommerzStorePass: data["sslcommerz_store_pass"] || DEFAULT_SETTINGS.sslcommerzStorePass,
+      sslcommerzIsSandbox: data["sslcommerz_is_sandbox"] !== "false",
+      codEnabled: data["cod_enabled"] !== "false",
+      codNote: data["cod_note"] || DEFAULT_SETTINGS.codNote,
       raw: data,
     };
   };
