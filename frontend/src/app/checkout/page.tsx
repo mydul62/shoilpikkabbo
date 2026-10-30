@@ -7,10 +7,12 @@ import { ArrowUpRight, Check, ShieldCheck } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart, defaultInitialItems } from "@/context/CartContext";
 import { useSettings } from "@/context/SettingsContext";
+import { useAuth } from "@/context/AuthContext";
 import { CLIENT_INFO } from "@/data/mock-data";
 
 export default function CheckoutPage() {
   const { settings } = useSettings();
+  const { user, isAuthenticated } = useAuth();
   const {
     items,
     subtotal,
@@ -29,19 +31,31 @@ export default function CheckoutPage() {
   const displayDelivery = deliveryCharge;
   const displayTotal = total;
 
-  // Form states with default realistic values matching client mockup
+  // Form states initialized empty for actual customers
   const [formData, setFormData] = React.useState({
-    fullName: "Nusrat Rahman",
-    phone: "01700 000000",
-    email: "nusrat@example.com",
-    address: "House 12, Road 7, Dhanmondi",
+    fullName: "",
+    phone: "",
+    email: "",
+    address: "",
     district: "Dhaka",
-    area: "Dhanmondi",
-    postcode: "1209",
-    deliveryNotes: "Call on arrival, please.",
+    area: "",
+    postcode: "",
+    deliveryNotes: "",
     paymentMethod: "SSLCommerz" as "SSLCommerz" | "COD" | "bKash" | "Nagad" | "Bank transfer - BRAC Bank",
     agreedToTerms: true,
   });
+
+  // Automatically autofill contact info if customer is logged in
+  React.useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.name || "",
+        phone: prev.phone || user.phone || "",
+        email: prev.email || user.email || "",
+      }));
+    }
+  }, [user]);
 
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -67,12 +81,12 @@ export default function CheckoutPage() {
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.phone || !formData.address) {
-      alert("Please fill in your name, contact phone, and delivery address.");
+    if (!formData.fullName.trim() || !formData.phone.trim() || !formData.address.trim()) {
+      alert("অনুগ্রহ করে আপনার নাম, মোবাইল নম্বর এবং সম্পূর্ণ ডেলিভারি ঠিকানা পূরণ করুন।");
       return;
     }
     if (!formData.agreedToTerms) {
-      alert("Please accept the Terms and Policies to proceed.");
+      alert("অর্ডার নিশ্চিত করতে অনুগ্রহ করে শর্তাবলী গ্রহণ করুন।");
       return;
     }
 
@@ -88,7 +102,7 @@ export default function CheckoutPage() {
 
     let orderNum = `SK-${Date.now().toString().slice(-6)}`;
     const now = new Date();
-    const placedDate = `${now.getDate()} November ${now.getFullYear()}`;
+    const placedDate = `${now.getDate()} ${now.toLocaleString("default", { month: "long" })} ${now.getFullYear()}`;
 
     try {
       // First try to fetch a real product ID from database if current items are demo IDs
@@ -105,13 +119,14 @@ export default function CheckoutPage() {
 
       const activeItems = items.length > 0 ? items : displayItems;
       const orderPayload = {
-        customerName: formData.fullName,
-        customerPhone: formData.phone.replace(/\s+/g, ""),
-        customerEmail: formData.email,
-        shippingAddress: `${formData.address}, ${formData.area || ""}`,
+        userId: user?.id,
+        customerName: formData.fullName.trim(),
+        customerPhone: formData.phone.trim().replace(/\s+/g, ""),
+        customerEmail: formData.email.trim() || undefined,
+        shippingAddress: [formData.address.trim(), formData.area.trim()].filter(Boolean).join(", "),
         city: formData.district || "Dhaka",
-        postalCode: formData.postcode,
-        deliveryNotes: formData.deliveryNotes,
+        postalCode: formData.postcode.trim() || undefined,
+        deliveryNotes: formData.deliveryNotes.trim() || undefined,
         paymentMethod: paymentMap[formData.paymentMethod] || "ONLINE_GATEWAY",
         transactionId: `TRX-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
         couponCode: appliedCoupon?.code,
@@ -150,15 +165,15 @@ export default function CheckoutPage() {
       discount: displayDiscount,
       deliveryCharge: displayDelivery,
       total: displayTotal,
-      fullName: formData.fullName,
-      address: formData.address,
+      fullName: formData.fullName.trim(),
+      address: formData.address.trim(),
       district: formData.district,
-      area: formData.area,
-      postcode: formData.postcode,
-      phone: formData.phone,
-      email: formData.email,
+      area: formData.area.trim(),
+      postcode: formData.postcode.trim(),
+      phone: formData.phone.trim(),
+      email: formData.email.trim(),
       paymentMethod: formData.paymentMethod,
-      appliedCouponCode: appliedCoupon?.code || (displayDiscount > 0 ? "WELCOME150" : undefined),
+      appliedCouponCode: appliedCoupon?.code,
     });
 
     clearCart();
@@ -168,7 +183,7 @@ export default function CheckoutPage() {
 
   // If order is completed, show the architectural Order Confirmation screen
   if (completedOrder) {
-    const firstName = completedOrder.fullName.split(" ")[0] || "Nusrat";
+    const firstName = completedOrder.fullName.split(" ")[0] || "Customer";
     return (
       <StorefrontLayout>
         <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-10 sm:py-16">
@@ -249,7 +264,14 @@ export default function CheckoutPage() {
                 </div>
 
                 <p className="text-xs text-gray-500 font-normal pt-2 leading-relaxed">
-                  Order notifications and tracking links will be delivered to {completedOrder.email}.
+                  অর্ডার সংক্রান্ত নোটিফিকেশন ও ডেলিভারি আপডেট{" "}
+                  <strong className="text-gray-700">{completedOrder.phone}</strong> নম্বরে
+                  {completedOrder.email ? (
+                    <>
+                      {" "}এবং <strong className="text-gray-700">{completedOrder.email}</strong> ঠিকানায়
+                    </>
+                  ) : null}{" "}
+                  পাঠানো হবে।
                 </p>
 
                 {/* Buttons */}
@@ -404,17 +426,27 @@ export default function CheckoutPage() {
           >
             {/* Left Column: Guest banner + 01 Contact + 02 Delivery + 03 Payment (7-8 cols) */}
             <div className="lg:col-span-8 space-y-8">
-              {/* Guest Notification Bar */}
-              <div className="bg-white rounded-2xl px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-gray-500 shadow-2xs gap-2">
-                <span>Checking out as a guest</span>
-                <Link
-                  href="/login"
-                  className="text-[#0D3B37] hover:text-[#E0592A] font-semibold inline-flex items-center gap-1 transition-colors"
-                >
-                  <span>Already a member? Sign in</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
+              {/* Guest / Logged-in Notification Bar */}
+              {isAuthenticated && user ? (
+                <div className="bg-emerald-50 border border-emerald-200/80 rounded-2xl px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-emerald-800 shadow-2xs gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span>লগইন করা আছেন: <strong>{user.name}</strong> ({user.phone})</span>
+                  </div>
+                  <span className="text-xs text-emerald-700 font-semibold">ভেরিফাইড কাস্টমার</span>
+                </div>
+              ) : (
+                <div className="bg-white rounded-2xl px-5 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-gray-500 shadow-2xs gap-2">
+                  <span>গেস্ট হিসেবে অর্ডার করছেন (Guest Checkout)</span>
+                  <Link
+                    href="/login"
+                    className="text-[#0D3B37] hover:text-[#E0592A] font-semibold inline-flex items-center gap-1 transition-colors"
+                  >
+                    <span>অ্যাকাউন্ট আছে? লগইন করুন</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              )}
 
               <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_14px_rgba(0,0,0,0.03)] space-y-8">
                 {/* 01 Contact details */}
@@ -434,11 +466,12 @@ export default function CheckoutPage() {
                       <input
                         required
                         type="text"
+                        placeholder="আপনার পূর্ণ নাম লিখুন"
                         value={formData.fullName}
                         onChange={(e) =>
                           setFormData({ ...formData, fullName: e.target.value })
                         }
-                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
                       />
                     </div>
                     <div>
@@ -448,27 +481,28 @@ export default function CheckoutPage() {
                       <input
                         required
                         type="tel"
+                        placeholder="01XXXXXXXXX"
                         value={formData.phone}
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
                         }
-                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                      Email address *
+                      Email address (ঐচ্ছিক)
                     </label>
                     <input
-                      required
                       type="email"
+                      placeholder="yourname@gmail.com (অর্ডার ও ইনভয়েস আপডেটের জন্য)"
                       value={formData.email}
                       onChange={(e) =>
                         setFormData({ ...formData, email: e.target.value })
                       }
-                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
                     />
                   </div>
                 </section>
@@ -489,11 +523,12 @@ export default function CheckoutPage() {
                     <input
                       required
                       type="text"
+                      placeholder="বাসা নং, রোড নং, এলাকা / গ্রাম / ল্যান্ডমার্ক লিখুন..."
                       value={formData.address}
                       onChange={(e) =>
                         setFormData({ ...formData, address: e.target.value })
                       }
-                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
                     />
                   </div>
 
@@ -511,67 +546,66 @@ export default function CheckoutPage() {
                         }}
                         className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
                       >
-                        <option value="Dhaka">Dhaka</option>
-                        <option value="Chattogram">Chattogram</option>
-                        <option value="Sylhet">Sylhet</option>
-                        <option value="Rajshahi">Rajshahi</option>
-                        <option value="Khulna">Khulna</option>
-                        <option value="Barishal">Barishal</option>
-                        <option value="Rangpur">Rangpur</option>
-                        <option value="Mymensingh">Mymensingh</option>
+                        <option value="Dhaka">Dhaka (ঢাকা)</option>
+                        <option value="Chattogram">Chattogram (চট্টগ্রাম)</option>
+                        <option value="Sylhet">Sylhet (সিলেট)</option>
+                        <option value="Rajshahi">Rajshahi (রাজশাহী)</option>
+                        <option value="Khulna">Khulna (খুলনা)</option>
+                        <option value="Barishal">Barishal (বরিশাল)</option>
+                        <option value="Rangpur">Rangpur (রংপুর)</option>
+                        <option value="Mymensingh">Mymensingh (ময়মনসিংহ)</option>
+                        <option value="Gazipur">Gazipur (গাজীপুর)</option>
+                        <option value="Narayanganj">Narayanganj (নারায়ণগঞ্জ)</option>
+                        <option value="Cumilla">Cumilla (কুমিল্লা)</option>
+                        <option value="Bogura">Bogura (বগুড়া)</option>
+                        <option value="Cox's Bazar">Cox's Bazar (কক্সবাজার)</option>
+                        <option value="Other">অন্যান্য জেলা / Other</option>
                       </select>
                     </div>
 
                     <div>
                       <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                        Area *
+                        Area / Thana
                       </label>
-                      <select
+                      <input
+                        type="text"
+                        placeholder="থানা / এরিয়া (যেমন: মিরপুর, ধানমন্ডি)"
                         value={formData.area}
                         onChange={(e) =>
                           setFormData({ ...formData, area: e.target.value })
                         }
-                        className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
-                      >
-                        <option value="Dhanmondi">Dhanmondi</option>
-                        <option value="Gulshan">Gulshan</option>
-                        <option value="Banani">Banani</option>
-                        <option value="Uttara">Uttara</option>
-                        <option value="Mirpur">Mirpur</option>
-                        <option value="Mohammadpur">Mohammadpur</option>
-                        <option value="Bashundhara">Bashundhara</option>
-                        <option value="Badda">Badda</option>
-                        <option value="Motijheel">Motijheel</option>
-                        <option value="Other">Other Area</option>
-                      </select>
+                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
+                      />
                     </div>
 
                     <div>
                       <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                        Postcode
+                        Postcode (ঐচ্ছিক)
                       </label>
                       <input
                         type="text"
+                        placeholder="পোস্টকোড"
                         value={formData.postcode}
                         onChange={(e) =>
                           setFormData({ ...formData, postcode: e.target.value })
                         }
-                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                      Delivery note (optional)
+                      Delivery note (ঐচ্ছিক)
                     </label>
                     <input
                       type="text"
+                      placeholder="ডেলিভারির সময় বা বিশেষ কোনো নির্দেশনা থাকলে লিখুন..."
                       value={formData.deliveryNotes}
                       onChange={(e) =>
                         setFormData({ ...formData, deliveryNotes: e.target.value })
                       }
-                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors"
+                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
                     />
                   </div>
 
@@ -946,7 +980,7 @@ export default function CheckoutPage() {
 
                   {displayDiscount > 0 && (
                     <div className="flex justify-between text-emerald-700 font-medium">
-                      <span>{appliedCoupon?.code || "WELCOME150"}</span>
+                      <span>{appliedCoupon?.code || "ছাড় / Discount"}</span>
                       <span>
                         -৳{displayDiscount.toLocaleString()}
                       </span>
