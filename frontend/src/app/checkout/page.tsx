@@ -10,6 +10,212 @@ import { useSettings } from "@/context/SettingsContext";
 import { useAuth } from "@/context/AuthContext";
 import { CLIENT_INFO } from "@/data/mock-data";
 
+// All 64 Districts of Bangladesh
+export const BANGLADESH_DISTRICTS = [
+  { en: "Dhaka", bn: "ঢাকা" },
+  { en: "Chattogram", bn: "চট্টগ্রাম" },
+  { en: "Gazipur", bn: "গাজীপুর" },
+  { en: "Narayanganj", bn: "নারায়ণগঞ্জ" },
+  { en: "Sylhet", bn: "সিলেট" },
+  { en: "Rajshahi", bn: "রাজশাহী" },
+  { en: "Khulna", bn: "খুলনা" },
+  { en: "Barishal", bn: "বরিশাল" },
+  { en: "Rangpur", bn: "রংপুর" },
+  { en: "Mymensingh", bn: "ময়মনসিংহ" },
+  { en: "Cumilla", bn: "কুমিল্লা" },
+  { en: "Bogura", bn: "বগুড়া" },
+  { en: "Cox's Bazar", bn: "কক্সবাজার" },
+  { en: "Bagerhat", bn: "বাগেরহাট" },
+  { en: "Bandarban", bn: "বান্দরবান" },
+  { en: "Barguna", bn: "বরগুনা" },
+  { en: "Bhola", bn: "ভোলা" },
+  { en: "Brahmanbaria", bn: "ব্রাহ্মণবাড়িয়া" },
+  { en: "Chandpur", bn: "চাঁদপুর" },
+  { en: "Chapainawabganj", bn: "চাঁপাইনবাবগঞ্জ" },
+  { en: "Chuadanga", bn: "চুয়াডাঙ্গা" },
+  { en: "Dinajpur", bn: "দিনাজপুর" },
+  { en: "Faridpur", bn: "ফরিদপুর" },
+  { en: "Feni", bn: "ফেনী" },
+  { en: "Gaibandha", bn: "গাইবান্ধা" },
+  { en: "Gopalganj", bn: "গোপালগঞ্জ" },
+  { en: "Habiganj", bn: "হবিগঞ্জ" },
+  { en: "Jamalpur", bn: "জামালপুর" },
+  { en: "Jashore", bn: "যশোর" },
+  { en: "Jhalokathi", bn: "ঝালকাঠি" },
+  { en: "Jhenaidah", bn: "ঝিনাইদহ" },
+  { en: "Joypurhat", bn: "জয়পুরহাট" },
+  { en: "Khagrachhari", bn: "খাগড়াছড়ি" },
+  { en: "Kishoreganj", bn: "কিশোরগঞ্জ" },
+  { en: "Kurigram", bn: "কুড়িগ্রাম" },
+  { en: "Kushtia", bn: "কুষ্টিয়া" },
+  { en: "Lakshmipur", bn: "লক্ষ্মীপুর" },
+  { en: "Lalmonirhat", bn: "লালমনিরহাট" },
+  { en: "Madaripur", bn: "মাদারীপুর" },
+  { en: "Magura", bn: "মাগুরা" },
+  { en: "Manikganj", bn: "মানিকগঞ্জ" },
+  { en: "Meherpur", bn: "মেহেরপুর" },
+  { en: "Moulvibazar", bn: "মৌলভীবাজার" },
+  { en: "Munshiganj", bn: "মুন্সীগঞ্জ" },
+  { en: "Naogaon", bn: "নওগাঁ" },
+  { en: "Narail", bn: "নড়াইল" },
+  { en: "Narsingdi", bn: "নরসিংদী" },
+  { en: "Natore", bn: "নাটোর" },
+  { en: "Netrokona", bn: "নেত্রকোণা" },
+  { en: "Nilphamari", bn: "নীলফামারী" },
+  { en: "Noakhali", bn: "নোয়াখালী" },
+  { en: "Pabna", bn: "পাবনা" },
+  { en: "Panchagarh", bn: "পঞ্চগড়" },
+  { en: "Patuakhali", bn: "পটুয়াখালী" },
+  { en: "Pirojpur", bn: "পিরোজপুর" },
+  { en: "Rajbari", bn: "রাজবাড়ী" },
+  { en: "Rangamati", bn: "রাঙ্গামাটি" },
+  { en: "Satkhira", bn: "সাতক্ষীরা" },
+  { en: "Shariatpur", bn: "শরীয়তপুর" },
+  { en: "Sherpur", bn: "শেরপুর" },
+  { en: "Sirajganj", bn: "সিরাজগঞ্জ" },
+  { en: "Sunamganj", bn: "সুনামগঞ্জ" },
+  { en: "Tangail", bn: "টাঙ্গাইল" },
+  { en: "Thakurgaon", bn: "ঠাকুরগাঁও" },
+];
+
+// Comprehensive Real Areas & Thanas inside Dhaka
+export const DHAKA_AREAS = [
+  "Adabor (আদাবর)",
+  "Agargaon (আগারগাঁও)",
+  "Airport / Kawla (এয়ারপোর্ট / কাওলা)",
+  "Ashulia (আশুলিয়া)",
+  "Azimpur (আজিমপুর)",
+  "Badda (বাড্ডা)",
+  "Bakshibazar (বকশীবাজার)",
+  "Banani (বনানী)",
+  "Banani DOHS (বনানী ডিওএইচএস)",
+  "Banasree (বনশ্রী)",
+  "Banglamotor (বাংলামোটর)",
+  "Baridhara (বারিধারা)",
+  "Baridhara DOHS (বারিধারা ডিওএইচএস)",
+  "Basabo (বাসাবো)",
+  "Bashundhara R/A (বসুন্ধরা আ/এ)",
+  "Cantonment (সেনানিবাস)",
+  "Chawkbazar (চকবাজার)",
+  "Demra (ডেমরা)",
+  "Dhanmondi (ধানমন্ডি)",
+  "Dhamrai (ধামরাই)",
+  "Elephant Road (এলিফ্যান্ট রোড)",
+  "Eskaton (ইস্কাটন)",
+  "Farmgate (ফার্মগেট)",
+  "Gandaria (গেন্ডারিয়া)",
+  "Gulshan 1 (গুলশান ১)",
+  "Gulshan 2 (গুলশান ২)",
+  "Hazaribagh (হাজারীবাগ)",
+  "Jatrabari (যাত্রাবাড়ী)",
+  "Kalyanpur (কল্যাণপুর)",
+  "Kamrangirchar (কামরাঙ্গীরচর)",
+  "Kafrul (কাফরুল)",
+  "Kazipara (কাজীপাডা)",
+  "Keraniganj (কেরানীগঞ্জ)",
+  "Khilgaon (খিলগাঁও)",
+  "Khilkhet (খিলক্ষেত)",
+  "Kotwali (কোতোয়ালী)",
+  "Lalbagh (লালবাগ)",
+  "Lalmatia (লালমাটিয়া)",
+  "Malibagh (মালিবাগ)",
+  "Mirpur 1 (মিরপুর ১)",
+  "Mirpur 2 (মিরপুর ২)",
+  "Mirpur 6 (মিরপুর ৬)",
+  "Mirpur 10 (মিরপুর ১০)",
+  "Mirpur 11 (মিরপুর ১১)",
+  "Mirpur 12 (মিরপুর ১২)",
+  "Mirpur 14 (মিরপুর ১৪)",
+  "Mirpur DOHS (মিরপুর ডিওএইচএস)",
+  "Moghbazar (মগবাজার)",
+  "Mohakhali (মহাখালী)",
+  "Mohakhali DOHS (মহাখালী ডিওএইচএস)",
+  "Mohammadpur (মোহাম্মদপুর)",
+  "Motijheel (মতিঝিল)",
+  "New Market (নিউ মার্কেট)",
+  "Niketan (নিকেতন)",
+  "Nikunja (নিকুঞ্জ)",
+  "Pallabi (পল্লবী)",
+  "Panthapath (পান্থপথ)",
+  "Paltan (পল্টন)",
+  "Purbachal (পূর্বাচল)",
+  "Rampura (রামপুরা)",
+  "Rayer Bazar (রায়েরবাজার)",
+  "Rajarbagh (রাজারবাগ)",
+  "Sadarghat (সদরঘাট)",
+  "Savar (সাভার)",
+  "Segunbagicha (সেগুনবাগিচা)",
+  "Shahbagh (শাহবাগ)",
+  "Shantinagar (শান্তিনগর)",
+  "Shewrapara (শেওড়াপাড়া)",
+  "Shyamoli (শ্যামলী)",
+  "Sutrapur (সূত্রাপুর)",
+  "Tejgaon (তেজগাঁও)",
+  "Tejgaon Industrial Area (তেজগাঁও শিল্প এলাকা)",
+  "Uttara Sector 1-10 (উত্তরা সেক্টর ১-১০)",
+  "Uttara Sector 11-18 (উত্তরা সেক্টর ১১-১৮)",
+  "Uttarkhan / Dakshinkhan (উত্তরখান / দক্ষিণখান)",
+  "Vatara (ভাটারা)",
+  "Wari (ওয়ারী)",
+  "Other Area (অন্যান্য এলাকা)",
+];
+
+export const POPULAR_DISTRICT_AREAS: Record<string, string[]> = {
+  Chattogram: [
+    "Agrabad (আগ্রাবাদ)",
+    "GEC Circle (জিইসি মোড়)",
+    "Nasirabad (নাসিরাবাদ)",
+    "Khulshi (খুলশী)",
+    "Halishahar (হালিশহর)",
+    "Chawkbazar (চকবাজার)",
+    "Kotwali (কোতোয়ালী)",
+    "Panchlaish (পাঁচলাইশ)",
+    "Chandgaon (চান্দগাঁও)",
+    "Muradpur (মুরাদপুর)",
+    "Bahaddarhat (বহদ্দারহাট)",
+    "Patenga (পতেঙ্গা)",
+    "Pahartali (পাহাড়তলী)",
+    "Hathazari (হাটহাজারী)",
+    "Sitakunda (সীতাকুণ্ড)",
+    "Other Area (অন্যান্য)",
+  ],
+  Gazipur: [
+    "Gazipur Sadar (গাজীপুর সদর)",
+    "Tongi (টঙ্গী)",
+    "Board Bazar (বোর্ড বাজার)",
+    "Chowrasta (চৌরাস্তা)",
+    "Konabari (কোনাবাড়ী)",
+    "Kashimpur (কাশিমপুর)",
+    "Kaliakair (কালিয়াকৈর)",
+    "Sreepur (শ্রীপুর)",
+    "Kapasia (কাপাসিয়া)",
+    "Other Area (অন্যান্য)",
+  ],
+  Narayanganj: [
+    "Narayanganj Sadar (নারায়ণগঞ্জ সদর)",
+    "Chashara (চাষাঢ়া)",
+    "Fatullah (ফতুল্লা)",
+    "Siddhirganj (সিদ্ধিরগঞ্জ)",
+    "Bandar (বন্দর)",
+    "Sonargaon (সোনারগাঁও)",
+    "Rupganj (রূপগঞ্জ)",
+    "Araihazar (আড়াইহাজার)",
+    "Other Area (অন্যান্য)",
+  ],
+  Sylhet: [
+    "Zindabazar (জিন্দাবাজার)",
+    "Amberkhana (আম্বরখানা)",
+    "Subidbazar (সুবিদবাজার)",
+    "Upashahar (উপশহর)",
+    "Shahi Eidgah (শাহী ঈদগাহ)",
+    "Kumarpara (কুমারপাড়া)",
+    "Mirabazar (মিরাবাজার)",
+    "South Surma (দক্ষিণ সুরমা)",
+    "Sylhet Sadar (সিলেট সদর)",
+    "Other Area (অন্যান্য)",
+  ],
+};
+
 export default function CheckoutPage() {
   const { settings } = useSettings();
   const { user, isAuthenticated } = useAuth();
@@ -31,7 +237,7 @@ export default function CheckoutPage() {
   const displayDelivery = deliveryCharge;
   const displayTotal = total;
 
-  // Form states initialized empty for actual customers
+  // Form states initialized empty for actual customers (no manual payments, no postcode)
   const [formData, setFormData] = React.useState({
     fullName: "",
     phone: "",
@@ -39,11 +245,18 @@ export default function CheckoutPage() {
     address: "",
     district: "Dhaka",
     area: "",
-    postcode: "",
+    customArea: "",
     deliveryNotes: "",
-    paymentMethod: "SSLCommerz" as "SSLCommerz" | "COD" | "bKash" | "Nagad" | "Bank transfer - BRAC Bank",
+    paymentMethod: "SSLCommerz" as "SSLCommerz" | "COD",
     agreedToTerms: true,
   });
+
+  // Switch default payment method if SSLCommerz is disabled in admin settings
+  React.useEffect(() => {
+    if (settings.sslcommerzEnabled === false && formData.paymentMethod === "SSLCommerz") {
+      setFormData((prev) => ({ ...prev, paymentMethod: "COD" }));
+    }
+  }, [settings.sslcommerzEnabled]);
 
   // Automatically autofill contact info if customer is logged in
   React.useEffect(() => {
@@ -72,7 +285,6 @@ export default function CheckoutPage() {
     address: string;
     district: string;
     area: string;
-    postcode: string;
     phone: string;
     email: string;
     paymentMethod: string;
@@ -81,8 +293,17 @@ export default function CheckoutPage() {
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    const resolvedArea =
+      formData.area === "Other Area (অন্যান্য এলাকা)" || formData.area === "Other Area (অন্যান্য)"
+        ? formData.customArea.trim() || formData.area
+        : formData.area.trim();
+
     if (!formData.fullName.trim() || !formData.phone.trim() || !formData.address.trim()) {
       alert("অনুগ্রহ করে আপনার নাম, মোবাইল নম্বর এবং সম্পূর্ণ ডেলিভারি ঠিকানা পূরণ করুন।");
+      return;
+    }
+    if (!resolvedArea) {
+      alert("অনুগ্রহ করে আপনার এরিয়া / থানা নির্বাচন অথবা উল্লেখ করুন।");
       return;
     }
     if (!formData.agreedToTerms) {
@@ -95,9 +316,6 @@ export default function CheckoutPage() {
     const paymentMap: Record<string, string> = {
       SSLCommerz: "ONLINE_GATEWAY",
       COD: "CASH_ON_DELIVERY",
-      bKash: "BKASH_MANUAL",
-      Nagad: "NAGAD_MANUAL",
-      "Bank transfer - BRAC Bank": "BANK_TRANSFER",
     };
 
     let orderNum = `SK-${Date.now().toString().slice(-6)}`;
@@ -123,9 +341,8 @@ export default function CheckoutPage() {
         customerName: formData.fullName.trim(),
         customerPhone: formData.phone.trim().replace(/\s+/g, ""),
         customerEmail: formData.email.trim() || undefined,
-        shippingAddress: [formData.address.trim(), formData.area.trim()].filter(Boolean).join(", "),
+        shippingAddress: [formData.address.trim(), resolvedArea].filter(Boolean).join(", "),
         city: formData.district || "Dhaka",
-        postalCode: formData.postcode.trim() || undefined,
         deliveryNotes: formData.deliveryNotes.trim() || undefined,
         paymentMethod: paymentMap[formData.paymentMethod] || "ONLINE_GATEWAY",
         transactionId: `TRX-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
@@ -168,11 +385,10 @@ export default function CheckoutPage() {
       fullName: formData.fullName.trim(),
       address: formData.address.trim(),
       district: formData.district,
-      area: formData.area.trim(),
-      postcode: formData.postcode.trim(),
+      area: resolvedArea,
       phone: formData.phone.trim(),
       email: formData.email.trim(),
-      paymentMethod: formData.paymentMethod,
+      paymentMethod: formData.paymentMethod === "SSLCommerz" ? "অনলাইন পেমেন্ট (SSLCommerz)" : "ক্যাশ অন ডেলিভারি (Cash on Delivery)",
       appliedCouponCode: appliedCoupon?.code,
     });
 
@@ -253,7 +469,7 @@ export default function CheckoutPage() {
                   <p className="font-bold text-gray-900">{completedOrder.fullName}</p>
                   <p>{completedOrder.address}</p>
                   <p>
-                    {completedOrder.district} {completedOrder.postcode} · {completedOrder.phone}
+                    {completedOrder.area ? `${completedOrder.area}, ` : ""}{completedOrder.district} · {completedOrder.phone}
                   </p>
                 </div>
 
@@ -532,65 +748,92 @@ export default function CheckoutPage() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                        District *
+                        District (জেলা) *
                       </label>
                       <select
                         value={formData.district}
                         onChange={(e) => {
                           const val = e.target.value;
-                          setFormData({ ...formData, district: val });
+                          setFormData({ ...formData, district: val, area: "", customArea: "" });
                           setShippingCity(val === "Dhaka" ? "Dhaka" : "Outside Dhaka");
                         }}
                         className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
                       >
-                        <option value="Dhaka">Dhaka (ঢাকা)</option>
-                        <option value="Chattogram">Chattogram (চট্টগ্রাম)</option>
-                        <option value="Sylhet">Sylhet (সিলেট)</option>
-                        <option value="Rajshahi">Rajshahi (রাজশাহী)</option>
-                        <option value="Khulna">Khulna (খুলনা)</option>
-                        <option value="Barishal">Barishal (বরিশাল)</option>
-                        <option value="Rangpur">Rangpur (রংপুর)</option>
-                        <option value="Mymensingh">Mymensingh (ময়মনসিংহ)</option>
-                        <option value="Gazipur">Gazipur (গাজীপুর)</option>
-                        <option value="Narayanganj">Narayanganj (নারায়ণগঞ্জ)</option>
-                        <option value="Cumilla">Cumilla (কুমিল্লা)</option>
-                        <option value="Bogura">Bogura (বগুড়া)</option>
-                        <option value="Cox's Bazar">Cox's Bazar (কক্সবাজার)</option>
-                        <option value="Other">অন্যান্য জেলা / Other</option>
+                        {BANGLADESH_DISTRICTS.map((d) => (
+                          <option key={d.en} value={d.en}>
+                            {d.en} ({d.bn})
+                          </option>
+                        ))}
                       </select>
                     </div>
 
                     <div>
                       <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                        Area / Thana
+                        Area / Thana (থানা / এলাকা) *
                       </label>
-                      <input
-                        type="text"
-                        placeholder="থানা / এরিয়া (যেমন: মিরপুর, ধানমন্ডি)"
-                        value={formData.area}
-                        onChange={(e) =>
-                          setFormData({ ...formData, area: e.target.value })
-                        }
-                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
-                      />
-                    </div>
+                      {formData.district === "Dhaka" ? (
+                        <select
+                          required
+                          value={formData.area}
+                          onChange={(e) =>
+                            setFormData({ ...formData, area: e.target.value })
+                          }
+                          className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
+                        >
+                          <option value="">ঢাকা এরিয়া / থানা নির্বাচন করুন *</option>
+                          {DHAKA_AREAS.map((area) => (
+                            <option key={area} value={area}>
+                              {area}
+                            </option>
+                          ))}
+                        </select>
+                      ) : POPULAR_DISTRICT_AREAS[formData.district] ? (
+                        <select
+                          required
+                          value={formData.area}
+                          onChange={(e) =>
+                            setFormData({ ...formData, area: e.target.value })
+                          }
+                          className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
+                        >
+                          <option value="">{formData.district} এরিয়া / থানা নির্বাচন করুন *</option>
+                          {POPULAR_DISTRICT_AREAS[formData.district].map((area) => (
+                            <option key={area} value={area}>
+                              {area}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          required
+                          type="text"
+                          placeholder="আপনার থানা / উপজেলা / এলাকার নাম লিখুন *"
+                          value={formData.area}
+                          onChange={(e) =>
+                            setFormData({ ...formData, area: e.target.value })
+                          }
+                          className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
+                        />
+                      )}
 
-                    <div>
-                      <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                        Postcode (ঐচ্ছিক)
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="পোস্টকোড"
-                        value={formData.postcode}
-                        onChange={(e) =>
-                          setFormData({ ...formData, postcode: e.target.value })
-                        }
-                        className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
-                      />
+                      {/* Custom area field if 'Other Area' is chosen */}
+                      {(formData.area === "Other Area (অন্যান্য এলাকা)" || formData.area === "Other Area (অন্যান্য)") && (
+                        <div className="mt-2.5">
+                          <input
+                            required
+                            type="text"
+                            placeholder="আপনার নির্দিষ্ট এলাকার নাম লিখুন *"
+                            value={formData.customArea}
+                            onChange={(e) =>
+                              setFormData({ ...formData, customArea: e.target.value })
+                            }
+                            className="w-full h-10 px-3.5 bg-white border border-emerald-300 rounded-xl text-xs text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37]"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -784,139 +1027,6 @@ export default function CheckoutPage() {
                         )}
                       </label>
                     )}
-
-                    {/* 3. bKash Manual */}
-                    <label
-                      className={`block p-4 rounded-2xl cursor-pointer transition-all ${
-                        formData.paymentMethod === "bKash"
-                          ? "border border-[#0D3B37] bg-emerald-50/50 shadow-xs"
-                          : "border border-gray-200 bg-white hover:border-gray-300"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="bKash"
-                            checked={formData.paymentMethod === "bKash"}
-                            onChange={() =>
-                              setFormData({ ...formData, paymentMethod: "bKash" })
-                            }
-                            className="w-4 h-4 text-[#0D3B37] accent-[#0D3B37]"
-                          />
-                          <div>
-                            <p className="text-sm font-bold text-[#0D3B37]">
-                              বিকাশ ম্যানুয়াল (Send Money / Personal)
-                            </p>
-                            <p className="text-xs text-gray-500 font-normal">
-                              পার্সোনাল নম্বরে পাঠান: <strong className="text-[#0D3B37]">{settings.paymentBkashNumber || "01977765999"}</strong>
-                            </p>
-                          </div>
-                        </div>
-                        {formData.paymentMethod === "bKash" && (
-                          <span className="text-xs font-bold text-[#0D3B37]">
-                            Selected
-                          </span>
-                        )}
-                      </div>
-                      {formData.paymentMethod === "bKash" && (
-                        <div className="mt-3 pt-3 border-t border-emerald-200/60 text-xs text-charcoal-700 bg-white/70 p-2.5 rounded-xl">
-                          <p className="font-semibold text-[#0D3B37]">পেমেন্ট নির্দেশনা:</p>
-                          <p className="text-[11px] text-charcoal-600 mt-0.5">{settings.paymentInstructionsNote || "টাকা পাঠিয়ে আপনার TrxID সংরক্ষণ করুন এবং কল দিলে জানান।"}</p>
-                        </div>
-                      )}
-                    </label>
-
-                    {/* 4. Nagad Manual */}
-                    <label
-                      className={`block p-4 rounded-2xl cursor-pointer transition-all ${
-                        formData.paymentMethod === "Nagad"
-                          ? "border border-[#0D3B37] bg-emerald-50/50 shadow-xs"
-                          : "border border-gray-200 bg-white hover:border-gray-300"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="Nagad"
-                            checked={formData.paymentMethod === "Nagad"}
-                            onChange={() =>
-                              setFormData({ ...formData, paymentMethod: "Nagad" })
-                            }
-                            className="w-4 h-4 text-[#0D3B37] accent-[#0D3B37]"
-                          />
-                          <div>
-                            <p className="text-sm font-bold text-[#0D3B37]">
-                              নগদ ম্যানুয়াল (Send Money / Personal)
-                            </p>
-                            <p className="text-xs text-gray-500 font-normal">
-                              পার্সোনাল নম্বরে পাঠান: <strong className="text-[#0D3B37]">{settings.paymentNagadNumber || "01977765999"}</strong>
-                            </p>
-                          </div>
-                        </div>
-                        {formData.paymentMethod === "Nagad" && (
-                          <span className="text-xs font-bold text-[#0D3B37]">
-                            Selected
-                          </span>
-                        )}
-                      </div>
-                      {formData.paymentMethod === "Nagad" && (
-                        <div className="mt-3 pt-3 border-t border-emerald-200/60 text-xs text-charcoal-700 bg-white/70 p-2.5 rounded-xl">
-                          <p className="font-semibold text-[#0D3B37]">পেমেন্ট নির্দেশনা:</p>
-                          <p className="text-[11px] text-charcoal-600 mt-0.5">{settings.paymentInstructionsNote || "টাকা পাঠিয়ে আপনার TrxID সংরক্ষণ করুন এবং কল দিলে জানান।"}</p>
-                        </div>
-                      )}
-                    </label>
-
-                    {/* 5. Bank transfer */}
-                    <label
-                      className={`block p-4 rounded-2xl cursor-pointer transition-all ${
-                        formData.paymentMethod === "Bank transfer - BRAC Bank"
-                          ? "border border-[#0D3B37] bg-emerald-50/50 shadow-xs"
-                          : "border border-gray-200 bg-white hover:border-gray-300"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name="paymentMethod"
-                            value="Bank transfer - BRAC Bank"
-                            checked={formData.paymentMethod === "Bank transfer - BRAC Bank"}
-                            onChange={() =>
-                              setFormData({
-                                ...formData,
-                                paymentMethod: "Bank transfer - BRAC Bank",
-                              })
-                            }
-                            className="w-4 h-4 text-[#0D3B37] accent-[#0D3B37]"
-                          />
-                          <div>
-                            <p className="text-sm font-bold text-[#0D3B37]">
-                              ব্যাংক ট্রান্সফার · {settings.bankName || "BRAC Bank PLC"}
-                            </p>
-                            <p className="text-xs text-gray-500 font-normal">
-                              অ্যাকাউন্ট নং: <strong className="text-[#0D3B37]">{settings.bankAccountNumber || "1501204892001"}</strong>
-                            </p>
-                          </div>
-                        </div>
-                        {formData.paymentMethod === "Bank transfer - BRAC Bank" && (
-                          <span className="text-xs font-bold text-[#0D3B37]">
-                            Selected
-                          </span>
-                        )}
-                      </div>
-                      {formData.paymentMethod === "Bank transfer - BRAC Bank" && (
-                        <div className="mt-3 pt-3 border-t border-emerald-200/60 text-xs text-charcoal-700 bg-white/70 p-2.5 rounded-xl space-y-1">
-                          <p><span className="text-charcoal-500">ব্যাংক:</span> <strong>{settings.bankName}</strong></p>
-                          <p><span className="text-charcoal-500">অ্যাকাউন্ট নাম:</span> <strong>{settings.bankAccountName}</strong></p>
-                          <p><span className="text-charcoal-500">অ্যাকাউন্ট নম্বর:</span> <strong>{settings.bankAccountNumber}</strong></p>
-                        </div>
-                      )}
-                    </label>
                   </div>
 
                   {/* Secure handoff banner */}
