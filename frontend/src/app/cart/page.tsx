@@ -6,9 +6,11 @@ import Image from "next/image";
 import { ArrowUpRight, Minus, Plus } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
+import { useSettings } from "@/context/SettingsContext";
 import { CLIENT_INFO } from "@/data/mock-data";
 
 export default function CartPage() {
+  const { settings } = useSettings();
   const {
     items,
     removeFromCart,
@@ -23,7 +25,7 @@ export default function CartPage() {
   } = useCart();
 
   const [couponInput, setCouponInput] = React.useState(
-    appliedCoupon ? appliedCoupon.code : "WELCOME150"
+    appliedCoupon ? appliedCoupon.code : ""
   );
   const [couponFeedback, setCouponFeedback] = React.useState<{
     success?: boolean;
@@ -288,7 +290,7 @@ export default function CartPage() {
                 <div className="mt-8 text-xs text-gray-500 font-normal">
                   <span>Questions about your order? </span>
                   <a
-                    href="https://wa.me/8801731214379"
+                    href={settings.socialWhatsapp || "https://wa.me/8801731214379"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#0D3B37] hover:text-[#E0592A] font-semibold underline underline-offset-2 transition-colors"
@@ -297,7 +299,7 @@ export default function CartPage() {
                   </a>
                   <span> or </span>
                   <a
-                    href="https://m.me/shoilpikkabbo"
+                    href={settings.socialMessenger || "https://m.me/shoilpikkabbo"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#0D3B37] hover:text-[#E0592A] font-semibold underline underline-offset-2 transition-colors inline-flex items-center gap-0.5"

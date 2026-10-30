@@ -17,9 +17,30 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
-import { CLIENT_INFO } from "@/data/mock-data";
+import { useSettings } from "@/context/SettingsContext";
+import { pagesApi } from "@/lib/api";
 
 export default function ContactPage() {
+  const { settings } = useSettings();
+  const [sections, setSections] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    async function loadContactData() {
+      try {
+        const res = await pagesApi.getPublished("contact");
+        if (res.success && Array.isArray((res.data as any)?.sections)) {
+          setSections((res.data as any).sections);
+        }
+      } catch (err) {
+        console.warn("Could not load dynamic contact page CMS:", err);
+      }
+    }
+    loadContactData();
+  }, []);
+
+  const headerSec = sections.find((s) => s.type === "contact_header" && s.isVisible !== false)?.props || {};
+  const detailsSec = sections.find((s) => s.type === "contact_details" && s.isVisible !== false)?.props || {};
+
   const [formData, setFormData] = React.useState({
     name: "",
     email: "",
@@ -69,7 +90,7 @@ export default function ContactPage() {
   return (
     <StorefrontLayout>
       <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-14">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-1.5 text-xs text-gray-500 font-medium mb-6">
             <Link href="/" className="hover:text-[#E0592A] transition-colors">
@@ -83,13 +104,13 @@ export default function ContactPage() {
           <div className="max-w-3xl mb-10 sm:mb-14">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#0D3B37] text-xs font-bold mb-3 border border-emerald-100">
               <Sparkles className="w-3.5 h-3.5 text-[#E0592A]" />
-              <span>We're Here To Help</span>
+              <span>{headerSec.badge || "We're Here To Help"}</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl text-[#0D3B37] font-extrabold tracking-tight leading-tight">
-              A conversation starts here.
+              {headerSec.headline || "A conversation starts here."}
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
-              Have a product inquiry, delivery update, or customized corporate requirement? Reach out and our friendly team will assist you right away.
+              {headerSec.subtitle || "Have a product inquiry, delivery update, or customized corporate requirement? Reach out and our friendly team will assist you right away."}
             </p>
           </div>
 
@@ -121,10 +142,10 @@ export default function ContactPage() {
                       Email address
                     </span>
                     <a
-                      href={`mailto:${CLIENT_INFO.email}`}
+                      href={`mailto:${detailsSec.email || settings.contactEmail}`}
                       className="text-base text-[#0D3B37] font-bold hover:text-[#E0592A] transition-colors"
                     >
-                      {CLIENT_INFO.email}
+                      {detailsSec.email || settings.contactEmail}
                     </a>
                     <p className="text-xs text-gray-500 mt-0.5">Replies typically within a few business hours.</p>
                   </div>
@@ -140,10 +161,14 @@ export default function ContactPage() {
                       Call customer support
                     </span>
                     <div className="text-base text-[#0D3B37] font-bold leading-snug space-y-0.5">
-                      <p>{CLIENT_INFO.phonePrimary}</p>
-                      {CLIENT_INFO.phoneSecondary && <p>{CLIENT_INFO.phoneSecondary}</p>}
+                      <p>{detailsSec.primaryPhone || settings.contactPrimary}</p>
+                      {(detailsSec.secondaryPhone || settings.contactSecondary) && (
+                        <p>{detailsSec.secondaryPhone || settings.contactSecondary}</p>
+                      )}
                     </div>
-                    <p className="text-xs text-gray-500 mt-0.5">Available Saturday to Thursday, 9 AM – 8 PM.</p>
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Available {settings.officeHours || "Saturday to Thursday, 9 AM – 8 PM"}.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -155,7 +180,7 @@ export default function ContactPage() {
                 </h3>
                 <div className="space-y-3">
                   <a
-                    href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}`}
+                    href={settings.socialWhatsapp || "https://wa.me/8801731214379"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-2xl inline-flex items-center justify-center gap-2.5 transition-all shadow-md shadow-emerald-600/20 hover:shadow-lg cursor-pointer"
@@ -166,7 +191,7 @@ export default function ContactPage() {
                   </a>
 
                   <a
-                    href={CLIENT_INFO.messengerUrl || "https://m.me/shoilpikkabbo"}
+                    href={settings.socialMessenger || "https://m.me/shoilpikkabbo"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full h-12 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-2xl inline-flex items-center justify-center gap-2.5 transition-all shadow-md shadow-[#0D3B37]/15 hover:shadow-orange-500/25 cursor-pointer"

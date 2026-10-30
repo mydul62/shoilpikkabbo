@@ -8,8 +8,15 @@ import {
   InquiryStatus,
   EmploymentType,
   DiscountType,
+  PageStatus,
 } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import {
+  getDefaultHomePageSections,
+  getDefaultAboutPageSections,
+  getDefaultServicesPageSections,
+  getDefaultContactPageSections,
+} from "../src/modules/page/page.service";
 
 const prisma = new PrismaClient();
 
@@ -58,70 +65,70 @@ async function main() {
       name: "Handicraft",
       slug: "handicraft",
       description: "Authentic pottery, Nakshi Kantha, and traditional heritage artisan crafts.",
-      imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-handicrafts.png",
       displayOrder: 1,
     },
     {
       name: "Jute Items",
       slug: "jute-items",
       description: "Eco-friendly golden fiber bags, braided rugs, lifestyle decor, and woven accessories.",
-      imageUrl: "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-jute.png",
       displayOrder: 2,
     },
     {
       name: "Polymer",
       slug: "polymer",
       description: "Industrial durable containers, heavy crates, and precision engineering polymer solutions.",
-      imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-polymer.png",
       displayOrder: 3,
     },
     {
       name: "Baby Items",
       slug: "baby-items",
       description: "Pure organic muslin cotton apparel, swaddle blankets, and infant essentials.",
-      imageUrl: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-baby.png",
       displayOrder: 4,
     },
     {
       name: "Corporate Gift Items",
       slug: "corporate-gift-items",
       description: "Executive diaries, engraved pens, thermo-flasks, and custom institutional gift packs.",
-      imageUrl: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-corporate.png",
       displayOrder: 5,
     },
     {
       name: "Rudiment Garments",
       slug: "rudiment-garments",
       description: "Export-standard premium combed cotton basics, polos, tees, and handloom kurtas.",
-      imageUrl: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-garments.png",
       displayOrder: 6,
     },
     {
       name: "Industrial Solutions",
       slug: "industrial-solutions",
       description: "Workplace safety accessories, protective gear, packaging, and commercial hardware.",
-      imageUrl: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-industrial.png",
       displayOrder: 7,
     },
     {
       name: "Health and Beauty",
       slug: "health-and-beauty",
       description: "Pure virgin cold-pressed Kalijira oil, organic herbal extracts, and natural wellness.",
-      imageUrl: "https://images.unsplash.com/photo-1608248597359-58b18ec06f37?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-beauty.png",
       displayOrder: 8,
     },
     {
       name: "Agriculture",
       slug: "agriculture",
       description: "High-yield seeds, premium organic vermicompost, and rooftop urban farming kits.",
-      imageUrl: "https://images.unsplash.com/photo-1592417817098-8f3d6ef23963?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-agriculture.png",
       displayOrder: 9,
     },
     {
       name: "Special E-Sheba",
       slug: "e-sheba",
       description: "Institutional procurement desk, customized gift branding, and bulk bespoke sourcing.",
-      imageUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80",
+      imageUrl: "/images/client-mockup/cat-services.png",
       displayOrder: 10,
     },
   ];
@@ -522,36 +529,52 @@ async function main() {
   // -----------------------------------------------------------------
   const bannersData = [
     {
-      title: "Master Artisans of Bengal • Heritage Handicrafts",
-      subtitle: "Handcrafted terracotta, pure brass decor, and exquisite Nakshi Kantha made by multigenerational artisans.",
-      imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?auto=format&fit=crop&w=1600&q=80",
-      linkUrl: "/shop?category=handicraft",
+      title: "বাংলার ঐতিহ্য, আপনার প্রয়োজন",
+      subtitle: "দেশীয় পণ্য ও আধুনিক সেবার সমন্বয়ে শিল্পকলা এখন আপনার হাতের কাছে!",
+      imageUrl: "/images/client-mockup/hero-bg-exact.png",
+      linkUrl: "/shop",
       placement: "Homepage Hero",
       displayOrder: 1,
+      isActive: true,
     },
     {
-      title: "The Golden Fiber Revolution • Sustainable Jute",
-      subtitle: "100% biodegradable golden jute rugs, modern executive tote bags, and artisanal woven home decor.",
-      imageUrl: "https://images.unsplash.com/photo-1590736969955-71cc94801759?auto=format&fit=crop&w=1600&q=80",
-      linkUrl: "/shop?category=jute-items",
+      title: "প্রকৃতির সান্নিধ্যে, বিশুদ্ধ সমাহার",
+      subtitle: "পরিবেশবান্ধব ও খাঁটি সামগ্রীর অনন্য কালেকশন আপনার প্রতিদিনের জীবনের সেরা সঙ্গী!",
+      imageUrl: "/images/client-mockup/hero-bg-green.png",
+      linkUrl: "/shop",
       placement: "Homepage Hero",
       displayOrder: 2,
+      isActive: true,
     },
     {
-      title: "Special E-Sheba • Institutional Sourcing Desk",
-      subtitle: "Custom branded corporate gifts, bulk packaging, and bespoke artisan interior fitments delivered nationwide.",
-      imageUrl: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=1600&q=80",
-      linkUrl: "/e-sheba",
+      title: "মাটির সুরভী, ঐতিহ্যের কারুকাজ",
+      subtitle: "হাতে বোনা পাটজাত পণ্য ও লোকশিল্পের ভাণ্ডার বাঙালির ঘর সাজুক দেশীয় শিল্পে!",
+      imageUrl: "/images/client-mockup/hero-bg-peach.png",
+      linkUrl: "/shop",
       placement: "Homepage Hero",
       displayOrder: 3,
+      isActive: true,
+    },
+    {
+      title: "কর্পোরেট সলিউশন, বিশেষ ই-সেবা",
+      subtitle: "প্রতিষ্ঠানিক উপহার ও কাস্টমাইজড শিল্পজাত সামগ্রী সারাদেশে নিরাপদ ও নির্ভরযোগ্য ডেলিভারি!",
+      imageUrl: "/images/client-mockup/hero-bg-exact.png",
+      linkUrl: "/e-sheba",
+      placement: "Homepage Hero",
+      displayOrder: 4,
+      isActive: true,
     },
   ];
 
-  await prisma.banner.deleteMany({});
   for (const b of bannersData) {
-    await prisma.banner.create({ data: b });
+    const existing = await prisma.banner.findFirst({
+      where: { title: b.title, placement: b.placement },
+    });
+    if (!existing) {
+      await prisma.banner.create({ data: b });
+    }
   }
-  console.log(`✓ Seeded ${bannersData.length} hero homepage banners.`);
+  console.log(`✓ Provisioned ${bannersData.length} client-approved hero homepage banners.`);
 
   // -----------------------------------------------------------------
   // 5. Promotional Coupons
@@ -672,6 +695,7 @@ async function main() {
     { key: "contact_primary", value: "01731214379", category: "contact", description: "Primary operations and customer support phone" },
     { key: "contact_secondary", value: "01811909068", category: "contact", description: "Secondary contact phone" },
     { key: "contact_email", value: "shoilpikkabbo@gmail.com", category: "contact", description: "Official client correspondence email" },
+    { key: "contact_payment", value: "01977765999", category: "payment", description: "Payment support phone number" },
     { key: "payment_bkash_number", value: "01977765999", category: "payment", description: "Official bKash recipient number" },
     { key: "payment_nagad_number", value: "01977765999", category: "payment", description: "Official Nagad recipient number" },
     { key: "bank_name", value: "BRAC Bank PLC", category: "payment", description: "Official settlement bank" },
@@ -680,16 +704,74 @@ async function main() {
     { key: "delivery_outside", value: "130", category: "delivery", description: "Standard outside-Dhaka courier fee (BDT)" },
     { key: "free_delivery_threshold", value: "3000", category: "delivery", description: "Order minimum for complimentary free delivery (BDT)" },
     { key: "social_whatsapp", value: "https://wa.me/8801731214379", category: "social", description: "Direct WhatsApp support link" },
+    { key: "social_facebook", value: "https://facebook.com/shoilpikkabbo", category: "social", description: "Official Facebook page URL" },
+    { key: "social_messenger", value: "https://m.me/shoilpikkabbo", category: "social", description: "Official Messenger link" },
+    { key: "social_youtube", value: "https://youtube.com/@shoilpikkabbo", category: "social", description: "Official YouTube channel URL" },
+    { key: "office_address", value: "House 12, Road 4, Sector 3, Uttara, Dhaka - 1230, Bangladesh", category: "contact", description: "Headquarters & operations address" },
+    { key: "office_hours", value: "Saturday - Thursday: 9:00 AM - 8:00 PM", category: "contact", description: "Customer care working hours" },
+    { key: "header_announcement", value: "Free delivery nationwide on orders above ৳3,000 | Authentic Bengali Craftsmanship", category: "general", description: "Storefront top announcement bar text" },
   ];
 
   for (const s of settingsData) {
     await prisma.siteSetting.upsert({
       where: { key: s.key },
-      update: { value: s.value, description: s.description },
+      update: { description: s.description }, // Preserve existing admin edits without overwriting
       create: s,
     });
   }
   console.log("✓ Seeded verified store settings (phones, bank, delivery fees, brand promise).");
+ 
+  // -----------------------------------------------------------------
+  // 10. Default Visual CMS Pages (Home, About, Services, Contact)
+  // -----------------------------------------------------------------
+  const defaultCmsPages = [
+    { slug: "home", title: "Home Page", sections: getDefaultHomePageSections() },
+    { slug: "about", title: "About Us Page", sections: getDefaultAboutPageSections() },
+    { slug: "services", title: "Special E-Sheba & Services Page", sections: getDefaultServicesPageSections() },
+    { slug: "contact", title: "Contact Us Page", sections: getDefaultContactPageSections() },
+  ];
+
+  for (const p of defaultCmsPages) {
+    const existingPub = await prisma.pageVersion.findFirst({
+      where: { slug: p.slug, status: PageStatus.PUBLISHED },
+    });
+    if (!existingPub) {
+      await prisma.pageVersion.create({
+        data: {
+          slug: p.slug,
+          title: p.title,
+          status: PageStatus.PUBLISHED,
+          version: 1,
+          sections: p.sections as any,
+          publishedAt: new Date(),
+          metadata: {
+            title: `SHOILPIKKABBO | ${p.title}`,
+            description: "Authentic Bangladeshi craftsmanship and solutions.",
+          },
+        },
+      });
+    }
+
+    const existingDraft = await prisma.pageVersion.findFirst({
+      where: { slug: p.slug, status: PageStatus.DRAFT },
+    });
+    if (!existingDraft) {
+      await prisma.pageVersion.create({
+        data: {
+          slug: p.slug,
+          title: p.title,
+          status: PageStatus.DRAFT,
+          version: (existingPub?.version || 1) + 1,
+          sections: p.sections as any,
+          metadata: {
+            title: `SHOILPIKKABBO | ${p.title}`,
+            description: "Authentic Bangladeshi craftsmanship and solutions.",
+          },
+        },
+      });
+    }
+  }
+  console.log("✓ Seeded verified CMS Page Versions (Home, About, Services, Contact).");
 
   console.log("=================================================");
   console.log("🎉 Complete SHOILPIKKABBO database seed finished!");

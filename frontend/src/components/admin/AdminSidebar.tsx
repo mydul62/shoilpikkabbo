@@ -97,10 +97,17 @@ export function AdminSidebar({
       group: "Visual Builder & CMS",
       items: [
         {
-          label: "Home Page Editor",
+          label: "Website Pages",
+          href: "/admin/pages",
+          icon: Layers,
+          badge: "4 Pages",
+          badgeVariant: "default",
+        },
+        {
+          label: "Visual Page Editor",
           href: "/admin/home-editor",
           icon: Palette,
-          badge: "Elementor",
+          badge: "Studio",
           badgeVariant: "gold",
         },
         {

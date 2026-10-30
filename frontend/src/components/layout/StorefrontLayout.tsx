@@ -9,9 +9,9 @@ import { FloatingWidgets } from "@/components/layout/FloatingWidgets";
 
 export function StorefrontLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col bg-ivory text-charcoal-900 pb-14 md:pb-0">
+    <div className="min-h-screen flex flex-col bg-ivory text-charcoal-900 pb-16 md:pb-0 overflow-x-hidden w-full max-w-full">
       <Header />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 w-full">{children}</main>
       <Footer />
       <CartDrawer />
       <MobileBottomNav />

@@ -75,14 +75,25 @@ export class ProductService {
     };
   }
 
-  static async getBySlug(slug: string) {
-    const product = await prisma.product.findUnique({
-      where: { slug },
+  static async getBySlug(slugOrId: string) {
+    let product = await prisma.product.findUnique({
+      where: { slug: slugOrId },
       include: {
         category: true,
         images: { orderBy: { displayOrder: "asc" } },
       },
     });
+
+    if (!product) {
+      product = await prisma.product.findUnique({
+        where: { id: slugOrId },
+        include: {
+          category: true,
+          images: { orderBy: { displayOrder: "asc" } },
+        },
+      });
+    }
+
     if (!product) {
       throw new ApiError(404, "Product not found.");
     }
@@ -100,9 +111,13 @@ export class ProductService {
     sku?: string;
     isFeatured?: boolean;
     imageUrl?: string;
+    images?: string[];
     specifications?: Record<string, string>;
   }) {
     const slug = data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const allImages = data.images && data.images.length > 0 
+      ? data.images 
+      : data.imageUrl ? [data.imageUrl] : [];
 
     return prisma.product.create({
       data: {
@@ -116,21 +131,19 @@ export class ProductService {
         sku: data.sku,
         isFeatured: data.isFeatured ?? false,
         specifications: data.specifications,
-        images: data.imageUrl
+        images: allImages.length > 0
           ? {
-              create: [
-                {
-                  url: data.imageUrl,
-                  isPrimary: true,
-                  displayOrder: 0,
-                },
-              ],
+              create: allImages.map((url, index) => ({
+                url,
+                isPrimary: index === 0,
+                displayOrder: index,
+              })),
             }
           : undefined,
       },
       include: {
         category: true,
-        images: true,
+        images: { orderBy: { displayOrder: "asc" } },
       },
     });
   }
@@ -144,17 +157,114 @@ export class ProductService {
     sku: string;
     isFeatured: boolean;
     isActive: boolean;
+    categoryId: string;
+    specifications?: Record<string, any>;
+    imageUrl?: string;
+    images?: string[];
   }>) {
-    return prisma.product.update({
+    const { imageUrl, images, ...rest } = data;
+
+    await prisma.product.update({
       where: { id },
-      data,
-      include: { category: true, images: true },
+      data: rest,
+    });
+
+    if (images && Array.isArray(images) && images.length > 0) {
+      await prisma.productImage.deleteMany({ where: { productId: id } });
+      await prisma.productImage.createMany({
+        data: images.map((url, index) => ({
+          productId: id,
+          url,
+          isPrimary: index === 0,
+          displayOrder: index,
+        })),
+      });
+    } else if (imageUrl) {
+      await prisma.productImage.deleteMany({ where: { productId: id } });
+      await prisma.productImage.create({
+        data: {
+          productId: id,
+          url: imageUrl,
+          isPrimary: true,
+          displayOrder: 0,
+        },
+      });
+    }
+
+    return prisma.product.findUnique({
+      where: { id },
+      include: { category: true, images: { orderBy: { displayOrder: "asc" } } },
     });
   }
 
   static async delete(id: string) {
+    const orderItemCount = await prisma.orderItem.count({ where: { productId: id } });
+    if (orderItemCount > 0) {
+      return prisma.product.update({
+        where: { id },
+        data: { isActive: false },
+      });
+    }
     return prisma.product.delete({
       where: { id },
     });
   }
+
+  static async batchDelete(ids: string[]) {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return { deletedCount: 0, archivedCount: 0, totalAffected: 0 };
+    }
+
+    const orderItems = await prisma.orderItem.findMany({
+      where: { productId: { in: ids } },
+      select: { productId: true },
+    });
+    const restrictedIds = new Set(orderItems.map((o) => o.productId));
+    const deletableIds = ids.filter((id) => !restrictedIds.has(id));
+    const archivedIds = ids.filter((id) => restrictedIds.has(id));
+
+    if (archivedIds.length > 0) {
+      await prisma.product.updateMany({
+        where: { id: { in: archivedIds } },
+        data: { isActive: false },
+      });
+    }
+
+    let deletedCount = 0;
+    if (deletableIds.length > 0) {
+      const result = await prisma.product.deleteMany({
+        where: { id: { in: deletableIds } },
+      });
+      deletedCount = result.count;
+    }
+
+    return {
+      deletedCount,
+      archivedCount: archivedIds.length,
+      totalAffected: ids.length,
+    };
+  }
+
+  static async batchStatus(ids: string[], isActive: boolean) {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return { count: 0 };
+    }
+    const res = await prisma.product.updateMany({
+      where: { id: { in: ids } },
+      data: { isActive },
+    });
+    return { count: res.count };
+  }
+
+  static async batchFeatured(ids: string[], isFeatured: boolean) {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return { count: 0 };
+    }
+    const res = await prisma.product.updateMany({
+      where: { id: { in: ids } },
+      data: { isFeatured },
+    });
+    return { count: res.count };
+  }
 }
+

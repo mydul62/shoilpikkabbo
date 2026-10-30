@@ -80,7 +80,7 @@ export default function AccountPage() {
   return (
     <StorefrontLayout>
       <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-10 sm:py-16">
-        <div className="max-w-[1524px] mx-auto px-5 space-y-8">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           {/* User Welcome Banner */}
           <div className="p-6 sm:p-8 rounded-3xl bg-[#0D3B37] text-white shadow-[0_4px_20px_rgba(13,59,55,0.12)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
             <div className="flex items-center gap-5">

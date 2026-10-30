@@ -68,8 +68,10 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
         return "Analytics";
       case "settings":
         return "Website Settings";
+      case "pages":
+        return "Website Pages";
       case "home-editor":
-        return "Visual Home Editor";
+        return "Visual Page Editor";
       default:
         return segment.charAt(0).toUpperCase() + segment.slice(1);
     }

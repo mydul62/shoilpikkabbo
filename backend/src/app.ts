@@ -5,6 +5,8 @@ import { appRouter } from "./routes";
 import { errorHandler } from "./middlewares/error.middleware";
 import { ENV } from "./config/env";
 
+import path from "path";
+
 export const app: Application = express();
 
 // Middlewares
@@ -17,6 +19,10 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve uploaded static files if local storage fallback is used
+app.use("/uploads", express.static(path.join(process.cwd(), "public", "uploads")));
+
 
 // Health Check
 app.get("/api/v1/health", (req: Request, res: Response) => {

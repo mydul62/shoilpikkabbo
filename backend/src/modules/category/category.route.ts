@@ -8,7 +8,8 @@ const router = Router();
 router.get("/", CategoryController.getAll);
 router.get("/:slug", CategoryController.getBySlug);
 router.post("/", authenticate, authorize(Role.ADMIN, Role.STAFF), CategoryController.create);
+router.post("/batch-delete", authenticate, authorize(Role.ADMIN, Role.STAFF), CategoryController.batchDelete);
 router.patch("/:id", authenticate, authorize(Role.ADMIN, Role.STAFF), CategoryController.update);
-router.delete("/:id", authenticate, authorize(Role.ADMIN), CategoryController.delete);
+router.delete("/:id", authenticate, authorize(Role.ADMIN, Role.STAFF), CategoryController.delete);
 
 export const categoryRoutes = router;

@@ -93,3 +93,65 @@ body {
   padding-left: 20px;
   padding-right: 20px;
 }
+
+/* Product Rich Description Typography */
+.product-rich-description h1,
+.product-rich-description h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0D3B37;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.product-rich-description h3,
+.product-rich-description h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0D3B37;
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+}
+.product-rich-description p {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+  line-height: 1.75;
+  color: #383838;
+}
+.product-rich-description ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.product-rich-description ol {
+  list-style-type: decimal;
+  margin-left: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+.product-rich-description li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  color: #383838;
+}
+.product-rich-description blockquote {
+  border-left: 4px solid #E0592A;
+  padding-left: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+  color: #525252;
+  background: #FFF9F6;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+.product-rich-description a {
+  color: #0D3B37;
+  text-decoration: underline;
+  font-weight: 600;
+}
+.product-rich-description a:hover {
+  color: #E0592A;
+}
+

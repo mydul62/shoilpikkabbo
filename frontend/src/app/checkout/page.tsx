@@ -6,9 +6,11 @@ import Image from "next/image";
 import { ArrowUpRight, Check, ShieldCheck } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart, defaultInitialItems } from "@/context/CartContext";
+import { useSettings } from "@/context/SettingsContext";
 import { CLIENT_INFO } from "@/data/mock-data";
 
 export default function CheckoutPage() {
+  const { settings } = useSettings();
   const {
     items,
     subtotal,
@@ -21,20 +23,11 @@ export default function CheckoutPage() {
     clearCart,
   } = useCart();
 
-  // If cart is currently empty, use client mockup demo items for seamless presentation
-  const displayItems = items.length > 0 ? items : defaultInitialItems;
-  const displaySubtotal = items.length > 0 ? subtotal : 1900;
-  const displayDiscount = items.length > 0 ? discount : 150;
-  const displayDelivery =
-    items.length > 0
-      ? deliveryCharge
-      : shippingCity === "Dhaka"
-      ? 80
-      : 130;
-  const displayTotal =
-    items.length > 0
-      ? total
-      : displaySubtotal - displayDiscount + displayDelivery;
+  const displayItems = items;
+  const displaySubtotal = subtotal;
+  const displayDiscount = discount;
+  const displayDelivery = deliveryCharge;
+  const displayTotal = total;
 
   // Form states with default realistic values matching client mockup
   const [formData, setFormData] = React.useState({
@@ -242,7 +235,7 @@ export default function CheckoutPage() {
 
                 <div className="pt-2">
                   <span className="inline-block bg-emerald-50 text-emerald-800 px-4 py-2 rounded-xl text-xs font-bold border border-emerald-200">
-                    Estimated Delivery · 3–5 Business Days
+                    Estimated Delivery · {completedOrder.district === "Dhaka" ? (settings.deliveryTimeDhaka || "24 - 48 Hours") : (settings.deliveryTimeOutside || "3 - 5 Business Days")}
                   </span>
                 </div>
 
@@ -319,7 +312,7 @@ export default function CheckoutPage() {
               <span>Have a question about your order? We're here to help.</span>
               <div className="flex items-center gap-4 text-xs">
                 <a
-                  href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}`}
+                  href={settings.socialWhatsapp || `https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#0D3B37] hover:text-[#E0592A] font-bold inline-flex items-center gap-1 transition-colors"
@@ -329,7 +322,7 @@ export default function CheckoutPage() {
                 </a>
                 <span className="text-gray-300">·</span>
                 <a
-                  href={CLIENT_INFO.messengerUrl || "https://m.me/shoilpikkabbo"}
+                  href={settings.socialMessenger || CLIENT_INFO.messengerUrl || "https://m.me/shoilpikkabbo"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#0D3B37] hover:text-[#E0592A] font-bold inline-flex items-center gap-1 transition-colors"
@@ -339,6 +332,31 @@ export default function CheckoutPage() {
                 </a>
               </div>
             </div>
+          </div>
+        </div>
+      </StorefrontLayout>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <StorefrontLayout>
+        <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-16 flex items-center justify-center">
+          <div className="max-w-md mx-auto text-center px-4">
+            <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-[#0D3B37] flex items-center justify-center mx-auto mb-4">
+              <ShieldCheck className="w-8 h-8" />
+            </div>
+            <h2 className="text-2xl font-black text-[#0D3B37]">Your Bag is Empty</h2>
+            <p className="text-sm text-gray-500 mt-2 mb-6">
+              You haven't added any items to checkout yet. Browse our handcrafted artisanal collections to find something you love.
+            </p>
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#0D3B37] hover:bg-[#E0592A] text-white text-sm font-bold rounded-2xl transition-all shadow-md"
+            >
+              <span>Explore Products</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </StorefrontLayout>
@@ -557,7 +575,7 @@ export default function CheckoutPage() {
                           Standard delivery · {formData.district === "Dhaka" ? "Dhaka" : "Outside Dhaka"}
                         </p>
                         <p className="text-xs text-gray-500 font-normal mt-0.5">
-                          Estimated 3–5 Nov 2026
+                          Estimated timeline: {formData.district === "Dhaka" ? (settings.deliveryTimeDhaka || "24 - 48 Hours") : (settings.deliveryTimeOutside || "3 - 5 Business Days")}
                         </p>
                       </div>
                     </div>
@@ -612,7 +630,7 @@ export default function CheckoutPage() {
                               bKash
                             </p>
                             <p className="text-xs text-gray-500 font-normal">
-                              Continue to secure bKash payment
+                              Send Money / Payment to: <strong className="text-[#0D3B37]">{settings.paymentBkashNumber || "01977765999"}</strong>
                             </p>
                           </div>
                         </div>
@@ -622,6 +640,12 @@ export default function CheckoutPage() {
                           </span>
                         )}
                       </div>
+                      {formData.paymentMethod === "bKash" && (
+                        <div className="mt-3 pt-3 border-t border-emerald-200/60 text-xs text-charcoal-700 bg-white/70 p-2.5 rounded-xl">
+                          <p className="font-semibold text-[#0D3B37]">Payment Instructions:</p>
+                          <p className="text-[11px] text-charcoal-600 mt-0.5">{settings.paymentInstructionsNote || "Send payment and keep your transaction ID handy."}</p>
+                        </div>
+                      )}
                     </label>
 
                     {/* Nagad */}
@@ -649,7 +673,7 @@ export default function CheckoutPage() {
                               Nagad
                             </p>
                             <p className="text-xs text-gray-500 font-normal">
-                              Continue to secure Nagad payment
+                              Send Money / Payment to: <strong className="text-[#0D3B37]">{settings.paymentNagadNumber || "01977765999"}</strong>
                             </p>
                           </div>
                         </div>
@@ -659,6 +683,12 @@ export default function CheckoutPage() {
                           </span>
                         )}
                       </div>
+                      {formData.paymentMethod === "Nagad" && (
+                        <div className="mt-3 pt-3 border-t border-emerald-200/60 text-xs text-charcoal-700 bg-white/70 p-2.5 rounded-xl">
+                          <p className="font-semibold text-[#0D3B37]">Payment Instructions:</p>
+                          <p className="text-[11px] text-charcoal-600 mt-0.5">{settings.paymentInstructionsNote || "Send payment and keep your transaction ID handy."}</p>
+                        </div>
+                      )}
                     </label>
 
                     {/* Card */}
@@ -698,7 +728,7 @@ export default function CheckoutPage() {
                       </div>
                     </label>
 
-                    {/* Bank transfer - BRAC Bank */}
+                    {/* Bank transfer */}
                     <label
                       className={`block p-4 rounded-2xl cursor-pointer transition-all ${
                         formData.paymentMethod === "Bank transfer - BRAC Bank"
@@ -723,10 +753,10 @@ export default function CheckoutPage() {
                           />
                           <div>
                             <p className="text-sm font-bold text-[#0D3B37]">
-                              Bank transfer - BRAC Bank
+                              Bank Transfer · {settings.bankName || "BRAC Bank PLC"}
                             </p>
                             <p className="text-xs text-gray-500 font-normal">
-                              Receive verified transfer instructions securely
+                              Official Account: <strong className="text-[#0D3B37]">{settings.bankAccountNumber || "1501204892001"}</strong>
                             </p>
                           </div>
                         </div>
@@ -736,6 +766,16 @@ export default function CheckoutPage() {
                           </span>
                         )}
                       </div>
+                      {formData.paymentMethod === "Bank transfer - BRAC Bank" && (
+                        <div className="mt-3 pt-3 border-t border-emerald-200/60 text-xs text-charcoal-700 bg-white/70 p-2.5 rounded-xl space-y-1">
+                          <p><span className="text-charcoal-500">Bank:</span> <strong>{settings.bankName}</strong></p>
+                          <p><span className="text-charcoal-500">A/C Name:</span> <strong>{settings.bankAccountName}</strong></p>
+                          <p><span className="text-charcoal-500">A/C Number:</span> <strong>{settings.bankAccountNumber}</strong></p>
+                          {settings.bankBranch && (
+                            <p><span className="text-charcoal-500">Branch:</span> <strong>{settings.bankBranch}</strong></p>
+                          )}
+                        </div>
+                      )}
                     </label>
                   </div>
 

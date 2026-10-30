@@ -42,8 +42,18 @@ export default function AdminOverviewPage() {
       ]);
 
       if (overviewRes.success) setOverview(overviewRes.data);
-      if (paymentsRes.success) setPayments((paymentsRes.data as any[]) || []);
-      if (inquiriesRes.success) setInquiries(((inquiriesRes.data as any[]) || []).slice(0, 5));
+      if (paymentsRes.success) {
+        const pList = Array.isArray(paymentsRes.data)
+          ? paymentsRes.data
+          : (paymentsRes.data as any)?.payments || [];
+        setPayments(Array.isArray(pList) ? pList : []);
+      }
+      if (inquiriesRes.success) {
+        const inqList = Array.isArray(inquiriesRes.data)
+          ? inquiriesRes.data
+          : (inquiriesRes.data as any)?.inquiries || [];
+        setInquiries(Array.isArray(inqList) ? inqList.slice(0, 5) : []);
+      }
     } catch (err: any) {
       console.error("Failed to load admin overview:", err);
       setError(err?.message || "Failed to load dashboard operational data.");
@@ -62,7 +72,7 @@ export default function AdminOverviewPage() {
       const res = await paymentsApi.verify(paymentId, status);
       if (res.success) {
         setPayments((prev) =>
-          prev.map((p) => (p.id === paymentId ? { ...p, status } : p))
+          (Array.isArray(prev) ? prev : []).map((p) => (p.id === paymentId ? { ...p, status } : p))
         );
         // Refresh overview metrics as well
         const ovRes = await analyticsApi.getOverview();
@@ -75,7 +85,8 @@ export default function AdminOverviewPage() {
     }
   };
 
-  const pendingPaymentsList = payments.filter((p) => p.status === "PENDING");
+  const safePayments = Array.isArray(payments) ? payments : [];
+  const pendingPaymentsList = safePayments.filter((p) => p.status === "PENDING");
 
   return (
     <AdminLayoutShell>

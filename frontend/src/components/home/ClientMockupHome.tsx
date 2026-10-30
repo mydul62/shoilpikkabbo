@@ -25,13 +25,97 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useSettings } from "@/context/SettingsContext";
+import { productsApi, categoriesApi, bannersApi } from "@/lib/api";
 import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/data/mock-data";
+
+// Fallback icon map for the 10 core categories
+const CATEGORY_ICON_MAP: Record<string, string> = {
+  handicraft: "/images/client-mockup/cat-handicrafts.png",
+  "jute-items": "/images/client-mockup/cat-jute.png",
+  polymer: "/images/client-mockup/cat-polymer.png",
+  "baby-items": "/images/client-mockup/cat-baby.png",
+  "corporate-gift-items": "/images/client-mockup/cat-corporate.png",
+  "rudiment-garments": "/images/client-mockup/cat-garments.png",
+  "industrial-solutions": "/images/client-mockup/cat-industrial.png",
+  "health-and-beauty": "/images/client-mockup/cat-beauty.png",
+  agriculture: "/images/client-mockup/cat-agriculture.png",
+  "e-sheba": "/images/client-mockup/cat-services.png",
+};
+
+function CategoryCardSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center shadow-[0_2px_10px_rgba(0,0,0,0.03)] animate-pulse">
+      <div className="w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 bg-gray-100/90 rounded-2xl" />
+      <div className="h-3.5 w-20 bg-gray-200 rounded-md" />
+    </div>
+  );
+}
+
+function ProductCardSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] animate-pulse min-h-[320px]">
+      <div>
+        <div className="w-full aspect-square rounded-xl bg-gray-100/90 mb-3" />
+        <div className="h-2.5 w-16 bg-gray-100 rounded mb-2" />
+        <div className="h-4 w-4/5 bg-gray-200 rounded mb-1.5" />
+        <div className="h-3 w-1/3 bg-gray-100 rounded mb-3" />
+        <div className="h-4 w-20 bg-gray-200 rounded mt-2" />
+      </div>
+      <div className="pt-4 mt-3 border-t border-gray-100">
+        <div className="h-10 w-full bg-gray-100 rounded-xl" />
+      </div>
+    </div>
+  );
+}
 
 export function ClientMockupHome() {
   const { addToCart, setIsCartOpen } = useCart();
+  const { settings } = useSettings();
+
+  const [liveProducts, setLiveProducts] = React.useState<any[]>([]);
+  const [liveCategories, setLiveCategories] = React.useState<any[]>([]);
+  const [liveBanners, setLiveBanners] = React.useState<any[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+
   const [wishlist, setWishlist] = React.useState<Record<string, boolean>>({});
   const [addedProductId, setAddedProductId] = React.useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = React.useState(0);
+
+  // Fetch live products, categories, and banners from PostgreSQL
+  React.useEffect(() => {
+    let mounted = true;
+    async function loadData() {
+      try {
+        const [prodRes, catRes, banRes] = await Promise.all([
+          productsApi.getAll({ limit: 100 }),
+          categoriesApi.getAll(),
+          bannersApi.getAll(true),
+        ]);
+
+        if (!mounted) return;
+
+        if (prodRes && prodRes.success && Array.isArray(prodRes.data) && prodRes.data.length > 0) {
+          setLiveProducts(prodRes.data);
+        }
+        if (catRes && catRes.success && Array.isArray(catRes.data) && catRes.data.length > 0) {
+          setLiveCategories(catRes.data);
+        }
+        if (banRes && banRes.success && Array.isArray(banRes.data) && banRes.data.length > 0) {
+          setLiveBanners(banRes.data);
+        }
+      } catch (err) {
+        console.error("Error loading live storefront data:", err);
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    }
+
+    loadData();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const toggleWishlist = (productId: string) => {
     setWishlist((prev) => ({
@@ -40,22 +124,51 @@ export function ClientMockupHome() {
     }));
   };
 
+  // Helper getters
+  const getProductImage = (product: any): string => {
+    if (product.images && product.images.length > 0 && product.images[0]?.url) {
+      return product.images[0].url;
+    }
+    if (product.imageUrl) return product.imageUrl;
+    return "/images/client-mockup/cat-handicrafts.png";
+  };
+
+  const getProductCategoryName = (product: any): string => {
+    if (product.category && product.category.name) return product.category.name;
+    if (product.categoryName) return product.categoryName;
+    return "Handicrafts";
+  };
+
+  const getProductDiscount = (product: any): number => {
+    const price = Number(product.price);
+    const salePrice = product.salePrice ? Number(product.salePrice) : null;
+    if (salePrice && salePrice > price) {
+      return Math.round(((salePrice - price) / salePrice) * 100);
+    }
+    return 20;
+  };
+
   const handleAddToCart = (product: any) => {
+    const price = Number(product.price);
+    const salePrice = product.salePrice ? Number(product.salePrice) : undefined;
+    const imageUrl = getProductImage(product);
+    const categoryName = getProductCategoryName(product);
+
     addToCart(
       {
         id: product.id,
         name: product.name,
         slug: product.slug,
-        categoryId: product.categoryId || "cat-1",
-        categoryName: product.categoryName || "Handicrafts",
-        price: product.price,
-        salePrice: product.salePrice,
+        categoryId: product.categoryId || product.category?.id || "cat-1",
+        categoryName,
+        price,
+        salePrice,
         stock: product.stock ?? 30,
         sku: product.sku || `SK-${product.slug}`,
         rating: product.rating ?? 4.8,
         reviewCount: product.reviewCount ?? 50,
-        imageUrl: product.imageUrl,
-        galleryUrls: product.galleryUrls || [product.imageUrl],
+        imageUrl,
+        galleryUrls: product.images?.map((img: any) => img.url) || [imageUrl],
         description: product.description || product.name,
         specifications: product.specifications || {},
       },
@@ -66,40 +179,21 @@ export function ClientMockupHome() {
     setIsCartOpen(true);
   };
 
-  // Top 5 Featured Products matching user request
-  const featuredProducts = MOCK_PRODUCTS.slice(0, 5);
+  // 1. Featured Products: top 5 products from PostgreSQL database
+  const featuredProducts = React.useMemo(() => {
+    return liveProducts.slice(0, 5);
+  }, [liveProducts]);
 
-  // Extended pool of 40 products for "For You" (5 items per row, batches of 10 items / 2 rows)
+  // 2. "For You" Section: uses real database products (no artificial 40 dummy loop)
   const allForYouProducts = React.useMemo(() => {
-    const baseItems = [
-      MOCK_PRODUCTS[0], // Jute Shopping Bag
-      MOCK_PRODUCTS[1], // Baby Care Set
-      MOCK_PRODUCTS[2], // Organic Honey
-      MOCK_PRODUCTS[3], // Men's T-Shirt
-      MOCK_PRODUCTS[4], // Organic Fertilizer
-      MOCK_PRODUCTS[5], // Cosmetic Set
-      MOCK_PRODUCTS[6], // Everyday Jute Basket
-      MOCK_PRODUCTS[7], // The Everyday Jute Tote
-      MOCK_PRODUCTS[8], // Woven Coaster Set
-      MOCK_PRODUCTS[10] || MOCK_PRODUCTS[9], // Terracotta Stem Vase
-    ].filter(Boolean);
-
-    // Combine with the rest of MOCK_PRODUCTS and cycle up to 40 items
-    const pool = [...baseItems, ...MOCK_PRODUCTS.slice(10), ...MOCK_PRODUCTS];
-    return Array.from({ length: 40 }).map((_, idx) => {
-      const item = pool[idx % pool.length];
-      return {
-        ...item,
-        id: `${item.id}-fy-${idx}`,
-      };
-    });
-  }, []);
+    return liveProducts;
+  }, [liveProducts]);
 
   // Show 2 rows initially (5 products per row = 10 products)
   const [forYouVisibleCount, setForYouVisibleCount] = React.useState(10);
   const [isLoadingMoreForYou, setIsLoadingMoreForYou] = React.useState(false);
 
-  // Load 2 more rows (10 products) per click
+  // Load 2 more rows (10 products) per click up to the total database count
   const handleLoadMoreForYou = () => {
     setIsLoadingMoreForYou(true);
     setTimeout(() => {
@@ -112,57 +206,97 @@ export function ClientMockupHome() {
     return allForYouProducts.slice(0, forYouVisibleCount);
   }, [allForYouProducts, forYouVisibleCount]);
 
-  // Hero carousel slides data based on user assets
-  const heroSlides = React.useMemo(() => [
-    {
-      id: 1,
-      bgImage: "/images/client-mockup/hero-bg-exact.png",
-      pill: "Handmade  •  Eco Friendly  •  Local Products",
-      titleLine1: "বাংলার ঐতিহ্য,",
-      titleLine2: "আপনার প্রয়োজন",
-      subtitleLine1: "দেশীয় পণ্য ও আধুনিক সেবার সমন্বয়ে",
-      subtitleLine2: "শিল্পকলা এখন আপনার হাতের কাছে!",
-      ctaText: "Shop Now",
-      ctaLink: "/shop",
-      showBadge: true,
-    },
-    {
-      id: 2,
-      bgImage: "/images/client-mockup/hero-bg-green.png",
-      pill: "100% Natural  •  Pure Living  •  Sustainable",
-      titleLine1: "প্রকৃতির সান্নিধ্যে,",
-      titleLine2: "বিশুদ্ধ সমাহার",
-      subtitleLine1: "পরিবেশবান্ধব ও খাঁটি সামগ্রীর অনন্য কালেকশন",
-      subtitleLine2: "আপনার প্রতিদিনের জীবনের সেরা সঙ্গী!",
-      ctaText: "Explore More",
-      ctaLink: "/shop",
-      showBadge: false,
-    },
-    {
-      id: 3,
-      bgImage: "/images/client-mockup/hero-bg-peach.png",
-      pill: "Artisanal Craft  •  Jute & Clay  •  Heritage",
-      titleLine1: "মাটির সুরভী,",
-      titleLine2: "ঐতিহ্যের কারুকাজ",
-      subtitleLine1: "হাতে বোনা পাটজাত পণ্য ও লোকশিল্পের ভাণ্ডার",
-      subtitleLine2: "বাঙালির ঘর সাজুক দেশীয় শিল্পে!",
-      ctaText: "View Crafts",
-      ctaLink: "/shop",
-      showBadge: false,
-    },
-    {
-      id: 4,
-      bgImage: "/images/client-mockup/hero-bg-exact.png",
-      pill: "Corporate Gifting  •  Custom Orders  •  Special E-Sheba",
-      titleLine1: "কর্পোরেট সলিউশন,",
-      titleLine2: "বিশেষ ই-সেবা",
-      subtitleLine1: "প্রতিষ্ঠানিক উপহার ও কাস্টমাইজড শিল্পজাত সামগ্রী",
-      subtitleLine2: "সারাদেশে নিরাপদ ও নির্ভরযোগ্য ডেলিভারি!",
-      ctaText: "Order E-Sheba",
-      ctaLink: "/e-sheba",
-      showBadge: true,
-    },
-  ], []);
+  // 3. Categories: Live from database
+  const categories = React.useMemo(() => {
+    return liveCategories;
+  }, [liveCategories]);
+
+  // 4. Hero carousel slides: Dynamic from database with high-res presets
+  const defaultHeroSlides = React.useMemo(
+    () => [
+      {
+        id: "slide-1",
+        bgImage: "/images/client-mockup/hero-bg-exact.png",
+        pill: "Handmade  •  Eco Friendly  •  Local Products",
+        titleLine1: "বাংলার ঐতিহ্য,",
+        titleLine2: "আপনার প্রয়োজন",
+        subtitleLine1: "দেশীয় পণ্য ও আধুনিক সেবার সমন্বয়ে",
+        subtitleLine2: "শিল্পকলা এখন আপনার হাতের কাছে!",
+        ctaText: "Shop Now",
+        ctaLink: "/shop",
+        showBadge: true,
+      },
+      {
+        id: "slide-2",
+        bgImage: "/images/client-mockup/hero-bg-green.png",
+        pill: "100% Natural  •  Pure Living  •  Sustainable",
+        titleLine1: "প্রকৃতির সান্নিধ্যে,",
+        titleLine2: "বিশুদ্ধ সমাহার",
+        subtitleLine1: "পরিবেশবান্ধব ও খাঁটি সামগ্রীর অনন্য কালেকশন",
+        subtitleLine2: "আপনার প্রতিদিনের জীবনের সেরা সঙ্গী!",
+        ctaText: "Explore More",
+        ctaLink: "/shop",
+        showBadge: false,
+      },
+      {
+        id: "slide-3",
+        bgImage: "/images/client-mockup/hero-bg-peach.png",
+        pill: "Artisanal Craft  •  Jute & Clay  •  Heritage",
+        titleLine1: "মাটির সুরভী,",
+        titleLine2: "ঐতিহ্যের কারুকাজ",
+        subtitleLine1: "হাতে বোনা পাটজাত পণ্য ও লোকশিল্পের ভাণ্ডার",
+        subtitleLine2: "বাঙালির ঘর সাজুক দেশীয় শিল্পে!",
+        ctaText: "View Crafts",
+        ctaLink: "/shop",
+        showBadge: false,
+      },
+      {
+        id: "slide-4",
+        bgImage: "/images/client-mockup/hero-bg-exact.png",
+        pill: "Corporate Gifting  •  Custom Orders  •  Special E-Sheba",
+        titleLine1: "কর্পোরেট সলিউশন,",
+        titleLine2: "বিশেষ ই-সেবা",
+        subtitleLine1: "প্রতিষ্ঠানিক উপহার ও কাস্টমাইজড শিল্পজাত সামগ্রী",
+        subtitleLine2: "সারাদেশে নিরাপদ ও নির্ভরযোগ্য ডেলিভারি!",
+        ctaText: "Order E-Sheba",
+        ctaLink: "/e-sheba",
+        showBadge: true,
+      },
+    ],
+    []
+  );
+
+  const heroSlides = React.useMemo(() => {
+    if (liveBanners.length > 0) {
+      return liveBanners.map((b: any, idx: number) => {
+        const titleParts = b.title.includes(",")
+          ? b.title.split(",")
+          : [b.title, ""];
+
+        return {
+          id: b.id || `banner-${idx}`,
+          bgImage:
+            b.imageUrl ||
+            defaultHeroSlides[idx % defaultHeroSlides.length].bgImage,
+          pill:
+            idx % 2 === 0
+              ? "Handmade  •  Eco Friendly  •  Local Products"
+              : "100% Authentic  •  Quality Assured",
+          titleLine1: titleParts[0]?.trim() || b.title,
+          titleLine2: titleParts[1]?.trim() || "",
+          subtitleLine1:
+            b.subtitle ||
+            defaultHeroSlides[idx % defaultHeroSlides.length].subtitleLine1,
+          subtitleLine2:
+            defaultHeroSlides[idx % defaultHeroSlides.length].subtitleLine2,
+          ctaText: "Shop Now",
+          ctaLink: b.linkUrl || "/shop",
+          showBadge: idx === 0 || idx === 3,
+        };
+      });
+    }
+    return defaultHeroSlides;
+  }, [liveBanners, defaultHeroSlides]);
 
   const nextSlide = React.useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -180,55 +314,84 @@ export function ClientMockupHome() {
     return () => clearInterval(timer);
   }, [nextSlide]);
 
+  const [touchStartX, setTouchStartX] = React.useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 40) {
+      nextSlide();
+    } else if (diff < -40) {
+      prevSlide();
+    }
+    setTouchStartX(null);
+  };
+
   const activeSlide = heroSlides[currentSlide] || heroSlides[0];
 
   return (
     <div className="w-full bg-[#F8F9FA] pb-16">
       {/* ========================================================================= */}
-      {/* 1. HERO SECTION (Exact Match to Client Design & Background Image) */}
+      {/* 1. HERO SECTION (Exact Match to Client Design & High-Res Background Image) */}
       {/* ========================================================================= */}
-      <section className="w-full bg-[#FAF6EB] border-b border-[#EDE8DC] relative overflow-hidden">
-        <div className="relative w-full max-w-[1524px] mx-auto aspect-[1024/302] min-h-[220px] sm:min-h-[270px] md:min-h-[320px] lg:min-h-[380px] xl:min-h-[440px] select-none">
+      <section
+        className="w-full bg-[#FAF6EB] border-b border-[#EDE8DC] relative overflow-hidden"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div className="relative w-full max-w-[1524px] mx-auto aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px] select-none">
           {/* Panoramic High-Res Hero Background Image */}
           <Image
             src={activeSlide.bgImage}
             alt={`${activeSlide.titleLine1} ${activeSlide.titleLine2} - SHOILPIKKABBO`}
             fill
             priority
-            className="object-cover sm:object-fill transition-all duration-700"
+            className="object-cover object-right sm:object-fill transition-all duration-700"
             sizes="(max-width: 1524px) 100vw, 1524px"
           />
 
+          {/* Subtle Mobile Gradient to ensure high-contrast readability without hiding artwork */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FAF6EB]/95 via-[#FAF6EB]/80 to-transparent sm:from-transparent sm:via-transparent sm:to-transparent z-1 pointer-events-none" />
+
           {/* Left Content Overlay: Exact typography, badges, icons & CTA */}
-          <div className="absolute left-[7.5%] sm:left-[8%] top-0 bottom-0 flex flex-col justify-center max-w-[52%] sm:max-w-[46%] z-10">
+          <div className="absolute left-4 sm:left-[8%] top-0 bottom-0 flex flex-col justify-center max-w-[72%] sm:max-w-[46%] z-10 py-3 sm:py-0">
             {/* Top Pill Tag */}
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-0.5 sm:py-1 rounded-full bg-[#084035] text-white text-[9.5px] sm:text-xs md:text-[13px] font-semibold w-fit tracking-wide shadow-xs mb-1 sm:mb-2 md:mb-2.5">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-0.5 sm:py-1 rounded-full bg-[#084035] text-white text-[9px] sm:text-xs md:text-[13px] font-semibold w-fit tracking-wide shadow-xs mb-1 sm:mb-2 md:mb-2.5">
               <span>Handmade</span>
               <span className="text-white/60">•</span>
               <span>Eco Friendly</span>
-              <span className="text-white/60">•</span>
-              <span>Local Products</span>
+              <span className="hidden xs:inline text-white/60">•</span>
+              <span className="hidden xs:inline">Local Products</span>
             </div>
 
             {/* Main Bengali Headline */}
             <h1 className="font-bengali font-bold sm:font-black tracking-tight leading-[1.12]">
-              <span className="block text-[#083D33] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px]">
+              <span className="block text-[#083D33] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px]">
                 {activeSlide.titleLine1}
               </span>
-              <span className="block text-[#E0592A] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] mt-0.5 sm:mt-1">
+              <span className="block text-[#E0592A] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] mt-0.5 sm:mt-1">
                 {activeSlide.titleLine2}
               </span>
             </h1>
 
             {/* Subtitle Description */}
-            <p className="font-bengali font-medium text-[#143D34] text-[10.5px] sm:text-xs md:text-sm lg:text-[15.5px] xl:text-[16.5px] leading-snug mt-1.5 sm:mt-2.5 md:mt-3 max-w-sm sm:max-w-md">
+            <p className="font-bengali font-medium text-[#143D34] text-[10.5px] sm:text-xs md:text-sm lg:text-[15.5px] xl:text-[16.5px] leading-snug mt-1 sm:mt-2.5 md:mt-3 max-w-sm sm:max-w-md line-clamp-2 sm:line-clamp-none">
               <span>{activeSlide.subtitleLine1}</span>
-              <br />
-              <span>{activeSlide.subtitleLine2}</span>
+              {activeSlide.subtitleLine2 && (
+                <>
+                  <br className="hidden sm:inline" />
+                  <span className="hidden sm:inline"> {activeSlide.subtitleLine2}</span>
+                </>
+              )}
             </p>
 
-            {/* 3 Value Proposition Features */}
-            <div className="flex items-center gap-2.5 sm:gap-4 md:gap-6 mt-2 sm:mt-3 md:mt-4 text-[#083D33]">
+            {/* Value Proposition Features: Clean compact line on mobile, full 3 items on sm+ */}
+            <div className="hidden sm:flex items-center gap-2.5 sm:gap-4 md:gap-6 mt-2 sm:mt-3 md:mt-4 text-[#083D33]">
               <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M1 4h3v2H1V4zm0 4h5v2H1V8zm0 4h3v2H1v-2zm17 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-10 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm14-5v-4l-3-4H8v10h1.18a3 3 0 0 1 5.64 0h1.36a3 3 0 0 1 5.64 0H23v-2h-1zM9.5 8h4.5v3H9.5V8zm7.5 1l2 2.5h-2V9z"/>
@@ -247,53 +410,58 @@ export function ClientMockupHome() {
               </div>
             </div>
 
+            <div className="sm:hidden flex items-center gap-1.5 mt-1.5 text-[10px] text-[#083D33] font-semibold">
+              <span className="text-emerald-700">✓</span>
+              <span>দ্রুত ডেলিভারি • প্রিমিয়াম মান</span>
+            </div>
+
             {/* CTA Button */}
             <div className="mt-2.5 sm:mt-3.5 md:mt-4 lg:mt-5">
               <Link
                 href={activeSlide.ctaLink}
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] hover:bg-[#C8481C] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)] transition-all hover:scale-105 cursor-pointer group"
+                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] hover:bg-[#C8481C] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)] transition-all hover:scale-105 cursor-pointer group"
               >
                 <span>{activeSlide.ctaText}</span>
-                <span className="text-base transition-transform duration-200 group-hover:translate-x-1">→</span>
+                <span className="text-xs sm:text-base transition-transform duration-200 group-hover:translate-x-1">→</span>
               </Link>
             </div>
           </div>
 
           {/* Top Right "Support Local Products ♡" Stamp */}
           {activeSlide.showBadge && (
-            <div className="absolute right-[5%] sm:right-[6%] md:right-[7.5%] top-[7%] sm:top-[9%] md:top-[10%] z-10 pointer-events-none select-none">
+            <div className="absolute right-[3%] sm:right-[6%] md:right-[7.5%] top-[5%] sm:top-[9%] md:top-[10%] z-10 pointer-events-none select-none">
               <Image
                 src="/images/client-mockup/support-local-badge.png"
                 alt="Support Local Products"
                 width={115}
                 height={125}
-                className="w-14 sm:w-18 md:w-22 lg:w-26 xl:w-28 h-auto object-contain"
+                className="w-10 sm:w-18 md:w-22 lg:w-26 xl:w-28 h-auto object-contain drop-shadow-xs"
                 priority
               />
             </div>
           )}
 
-          {/* Interactive Carousel Left Arrow */}
+          {/* Interactive Carousel Left Arrow (Hidden on mobile to avoid overlapping text, visible on sm+) */}
           <button
             type="button"
             onClick={prevSlide}
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
+            className="hidden sm:flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
           </button>
 
-          {/* Interactive Carousel Right Arrow */}
+          {/* Interactive Carousel Right Arrow (Hidden on mobile to avoid overlapping text, visible on sm+) */}
           <button
             type="button"
             onClick={nextSlide}
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md flex items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
+            className="hidden sm:flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
             aria-label="Next slide"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
           </button>
 
-          {/* Interactive Pagination Dots matching client design */}
+          {/* Interactive Pagination Dots */}
           <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-2 z-20">
             {heroSlides.map((_, idx) => (
               <button
@@ -303,11 +471,11 @@ export function ClientMockupHome() {
                 className={`transition-all duration-300 rounded-full cursor-pointer ${
                   currentSlide === idx
                     ? idx === 1
-                      ? "w-5 sm:w-6 h-2 sm:h-2.5 bg-[#E0592A] ring-1 ring-white/60"
-                      : "w-5 sm:w-6 h-2 sm:h-2.5 bg-[#0D3B37] ring-1 ring-white/60"
+                      ? "w-4 sm:w-6 h-1.5 sm:h-2.5 bg-[#E0592A] ring-1 ring-white/60"
+                      : "w-4 sm:w-6 h-1.5 sm:h-2.5 bg-[#0D3B37] ring-1 ring-white/60"
                     : idx === 1
-                    ? "w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#E0592A]/60 hover:bg-[#E0592A]"
-                    : "w-2 h-2 sm:w-2.5 sm:h-2.5 bg-gray-300 hover:bg-gray-400"
+                    ? "w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-[#E0592A]/60 hover:bg-[#E0592A]"
+                    : "w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-gray-300 hover:bg-gray-400"
                 }`}
                 aria-label={`Slide ${idx + 1}`}
               />
@@ -320,7 +488,7 @@ export function ClientMockupHome() {
       <div className="space-y-12 sm:space-y-16 lg:space-y-20 pt-10 sm:pt-14 pb-20">
 
       {/* ========================================================================= */}
-      {/* 2. SHOP BY CATEGORY */}
+      {/* 2. SHOP BY CATEGORY (Live from PostgreSQL) */}
       {/* ========================================================================= */}
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -341,7 +509,7 @@ export function ClientMockupHome() {
 
           <Link
             href="/shop"
-            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group"
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group shrink-0"
           >
             <span>View All Categories</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -350,195 +518,40 @@ export function ClientMockupHome() {
 
         {/* 6-Column Responsive Grid matching Client Design */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4 lg:gap-5">
-          {/* Category 1: Handicrafts */}
-          <Link
-            href="/shop?category=handicraft"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-handicrafts.png"
-                alt="Handicrafts"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Handicrafts
-            </span>
-          </Link>
+          {isLoading ? (
+            Array.from({ length: 4 }).map((_, i) => <CategoryCardSkeleton key={i} />)
+          ) : (
+            categories.map((category) => {
+              const iconSrc =
+                CATEGORY_ICON_MAP[category.slug] ||
+                (category.imageUrl?.startsWith("http") || category.imageUrl?.startsWith("/")
+                  ? category.imageUrl
+                  : "/images/client-mockup/cat-handicrafts.png");
+              const href =
+                category.slug === "e-sheba" ? "/services" : `/shop?category=${category.slug}`;
 
-          {/* Category 2: Jute Items */}
-          <Link
-            href="/shop?category=jute-items"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-jute.png"
-                alt="Jute Items"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Jute Items
-            </span>
-          </Link>
-
-          {/* Category 3: Polymer */}
-          <Link
-            href="/shop?category=polymer"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-polymer.png"
-                alt="Polymer"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Polymer
-            </span>
-          </Link>
-
-          {/* Category 4: Baby Items */}
-          <Link
-            href="/shop?category=baby-items"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-baby.png"
-                alt="Baby Items"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Baby Items
-            </span>
-          </Link>
-
-          {/* Category 5: Corporate Gift Items */}
-          <Link
-            href="/shop?category=corporate-gift-items"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-corporate.png"
-                alt="Corporate Gift Items"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Corporate Gifts
-            </span>
-          </Link>
-
-          {/* Category 6: Rudiment Garments */}
-          <Link
-            href="/shop?category=rudiment-garments"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-garments.png"
-                alt="Rudiment Garments"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Rudiment Garments
-            </span>
-          </Link>
-
-          {/* Row 2: Category 7 - Industrial Solutions */}
-          <Link
-            href="/shop?category=industrial-solutions"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-industrial.png"
-                alt="Industrial Solutions"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Industrial Solutions
-            </span>
-          </Link>
-
-          {/* Category 8: Health & Beauty */}
-          <Link
-            href="/shop?category=health-and-beauty"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-beauty.png"
-                alt="Health & Beauty"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Health & Beauty
-            </span>
-          </Link>
-
-          {/* Category 9: Agriculture */}
-          <Link
-            href="/shop?category=agriculture"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-agriculture.png"
-                alt="Agriculture"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Agriculture
-            </span>
-          </Link>
-
-          {/* Category 10: Special E-Sheba / Services */}
-          <Link
-            href="/services"
-            className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
-          >
-            <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
-              <Image
-                src="/images/client-mockup/cat-services.png"
-                alt="Special E-Sheba"
-                width={64}
-                height={54}
-                className="object-contain group-hover:scale-108 transition-transform duration-300"
-              />
-            </div>
-            <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
-              Special E-Sheba
-            </span>
-          </Link>
+              return (
+                <Link
+                  key={category.id || category.slug}
+                  href={href}
+                  className="bg-white hover:bg-[#FAF8F5] rounded-2xl p-4 sm:p-5 flex flex-col items-center text-center transition-all duration-300 shadow-[0_2px_10px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group"
+                >
+                  <div className="relative w-16 h-14 sm:w-20 sm:h-16 mb-2.5 sm:mb-3 flex items-center justify-center">
+                    <Image
+                      src={iconSrc}
+                      alt={category.name}
+                      width={64}
+                      height={54}
+                      className="object-contain group-hover:scale-108 transition-transform duration-300 max-h-14 sm:max-h-16"
+                    />
+                  </div>
+                  <span className="text-xs sm:text-[13.5px] font-bold text-gray-800 group-hover:text-[#E0592A] transition-colors leading-tight">
+                    {category.name}
+                  </span>
+                </Link>
+              );
+            })
+          )}
 
           {/* Quality Products Better Life Banner (Spans 2 columns matching client design) */}
           <div className="col-span-2 relative rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] transition-all duration-300 min-h-[145px] sm:min-h-[155px] md:min-h-[165px] flex items-center group">
@@ -572,7 +585,7 @@ export function ClientMockupHome() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 3. FEATURED PRODUCTS (5 Products matching Client Mockup) */}
+      {/* 3. FEATURED PRODUCTS (Live from PostgreSQL Database) */}
       {/* ========================================================================= */}
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -593,7 +606,7 @@ export function ClientMockupHome() {
 
           <Link
             href="/shop"
-            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group"
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group shrink-0"
           >
             <span>View All Products</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -602,21 +615,21 @@ export function ClientMockupHome() {
 
         {/* 5-Column Grid of Products */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
-          {featuredProducts.map((product) => {
-            const isWishlisted = !!wishlist[product.id];
-            const isAdded = addedProductId === product.id;
-            const discountPct =
-              product.salePrice && product.salePrice > product.price
-                ? Math.round(
-                    ((product.salePrice - product.price) / product.salePrice) * 100
-                  )
-                : 25;
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, i) => <ProductCardSkeleton key={i} />)
+          ) : featuredProducts.length > 0 ? (
+            featuredProducts.map((product) => {
+              const isWishlisted = !!wishlist[product.id];
+              const isAdded = addedProductId === product.id;
+              const discountPct = getProductDiscount(product);
+              const imageSrc = getProductImage(product);
+              const categoryName = getProductCategoryName(product);
 
-            return (
-              <div
-                key={product.id}
-                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group relative"
-              >
+              return (
+                <div
+                  key={product.id}
+                  className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group relative"
+                >
                 {/* Wishlist Button */}
                 <button
                   type="button"
@@ -641,7 +654,7 @@ export function ClientMockupHome() {
                     className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 sm:mb-3.5 flex items-center justify-center p-3 group-hover:bg-[#F5F1E9] transition-colors block"
                   >
                     <Image
-                      src={product.imageUrl}
+                      src={imageSrc}
                       alt={product.name}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
@@ -652,7 +665,7 @@ export function ClientMockupHome() {
                   {/* Details */}
                   <div className="space-y-1">
                     <p className="text-xs text-gray-500 font-medium truncate">
-                      {product.categoryName}
+                      {categoryName}
                     </p>
 
                     <Link
@@ -670,18 +683,18 @@ export function ClientMockupHome() {
                         {product.rating ?? 4.8}
                       </span>
                       <span className="text-gray-400">
-                        ({product.reviewCount ?? 80})
+                        ({product.reviewCount ?? 45})
                       </span>
                     </div>
 
                     {/* Price & Discount */}
                     <div className="flex items-center gap-2 flex-wrap pt-1.5">
                       <span className="font-extrabold text-base sm:text-lg text-[#0D3B37]">
-                        ৳ {product.price}
+                        ৳ {Number(product.price)}
                       </span>
                       {product.salePrice && (
                         <span className="text-xs sm:text-sm text-gray-400 line-through">
-                          ৳ {product.salePrice}
+                          ৳ {Number(product.salePrice)}
                         </span>
                       )}
                       <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
@@ -717,8 +730,13 @@ export function ClientMockupHome() {
                 </div>
               </div>
             );
-          })}
-        </div>
+          })
+        ) : (
+          <div className="col-span-full py-12 text-center text-sm text-gray-400">
+            No featured products found.
+          </div>
+        )}
+      </div>
       </section>
 
       {/* ========================================================================= */}
@@ -814,7 +832,7 @@ export function ClientMockupHome() {
             </div>
           </div>
 
-          {/* Card 3: Stay Connected / Get in Touch */}
+          {/* Card 3: Stay Connected / Get in Touch (Dynamic Social & Contact from Database) */}
           <div className="bg-[#FAF8F3] rounded-3xl p-7 sm:p-8 flex items-center justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] min-h-[250px] relative overflow-hidden transition-all duration-300">
             <div className="space-y-2.5 z-10 max-w-[60%]">
               <span className="text-xs sm:text-sm font-bold text-gray-400 uppercase tracking-wider">
@@ -824,11 +842,11 @@ export function ClientMockupHome() {
                 Get in Touch
               </h3>
 
-              {/* Chat Buttons */}
+              {/* Chat Buttons powered by dynamic settings */}
               <div className="flex items-center gap-3 pt-2">
                 {/* WhatsApp */}
                 <a
-                  href="https://wa.me/8801731214379"
+                  href={settings.socialWhatsapp || "https://wa.me/8801731214379"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-11 h-11 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
@@ -839,7 +857,7 @@ export function ClientMockupHome() {
 
                 {/* Messenger */}
                 <a
-                  href="https://m.me/shoilpikkabbo"
+                  href={settings.socialMessenger || "https://m.me/shoilpikkabbo"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-11 h-11 rounded-full bg-[#0084FF] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
@@ -847,6 +865,19 @@ export function ClientMockupHome() {
                 >
                   <span className="text-lg font-bold">💬</span>
                 </a>
+
+                {/* Instagram */}
+                {settings.socialInstagram && (
+                  <a
+                    href={settings.socialInstagram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-xs"
+                    title="Follow on Instagram"
+                  >
+                    <span className="text-lg font-bold">📷</span>
+                  </a>
+                )}
               </div>
 
               <p className="text-xs text-gray-500 pt-1">
@@ -867,7 +898,7 @@ export function ClientMockupHome() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. FOR YOU SECTION (5 Products per Row x 2 Rows = 10 Products) */}
+      {/* 5. FOR YOU SECTION (Live from PostgreSQL - Matches Real Database Count) */}
       {/* ========================================================================= */}
       <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
@@ -888,30 +919,30 @@ export function ClientMockupHome() {
 
           <Link
             href="/shop"
-            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group"
+            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group shrink-0"
           >
             <span>View All</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         </div>
 
-        {/* 5-Column Grid (Loads 2 rows / 10 products per batch) */}
+        {/* 5-Column Grid (Loads 2 rows / 10 products per batch from PostgreSQL) */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
-          {displayedForYouProducts.map((product) => {
-            const isWishlisted = !!wishlist[product.id];
-            const isAdded = addedProductId === product.id;
-            const discountPct =
-              product.salePrice && product.salePrice > product.price
-                ? Math.round(
-                    ((product.salePrice - product.price) / product.salePrice) * 100
-                  )
-                : 20;
+          {isLoading ? (
+            Array.from({ length: 10 }).map((_, i) => <ProductCardSkeleton key={i} />)
+          ) : displayedForYouProducts.length > 0 ? (
+            displayedForYouProducts.map((product) => {
+              const isWishlisted = !!wishlist[product.id];
+              const isAdded = addedProductId === product.id;
+              const discountPct = getProductDiscount(product);
+              const imageSrc = getProductImage(product);
+              const categoryName = getProductCategoryName(product);
 
-            return (
-              <div
-                key={product.id}
-                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group relative"
-              >
+              return (
+                <div
+                  key={product.id}
+                  className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group relative"
+                >
                 {/* Wishlist Button */}
                 <button
                   type="button"
@@ -940,7 +971,7 @@ export function ClientMockupHome() {
                     className="block relative w-full aspect-square mb-3 sm:mb-3.5 bg-[#FAF8F5] rounded-xl overflow-hidden p-3 group-hover:bg-[#F5F1E9] transition-colors"
                   >
                     <Image
-                      src={product.imageUrl}
+                      src={imageSrc}
                       alt={product.name}
                       fill
                       sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
@@ -950,7 +981,7 @@ export function ClientMockupHome() {
 
                   {/* Category Name */}
                   <p className="text-xs text-gray-500 font-medium truncate mb-1">
-                    {product.categoryName}
+                    {categoryName}
                   </p>
 
                   {/* Product Title */}
@@ -976,11 +1007,11 @@ export function ClientMockupHome() {
                   {/* Price & Discount */}
                   <div className="flex items-center gap-2 flex-wrap pt-1.5">
                     <span className="font-extrabold text-base sm:text-lg text-[#0D3B37]">
-                      ৳ {product.price}
+                      ৳ {Number(product.price)}
                     </span>
                     {product.salePrice && (
                       <span className="text-xs sm:text-sm text-gray-400 line-through">
-                        ৳ {product.salePrice}
+                        ৳ {Number(product.salePrice)}
                       </span>
                     )}
                     <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
@@ -1015,10 +1046,15 @@ export function ClientMockupHome() {
                 </div>
               </div>
             );
-          })}
-        </div>
+          })
+        ) : (
+          <div className="col-span-full py-12 text-center text-sm text-gray-400">
+            No products found.
+          </div>
+        )}
+      </div>
 
-        {/* Load More Button Area (Loads 2 rows = 10 products per click) */}
+        {/* Load More Button Area (Loads batches of products from real database pool) */}
         <div className="mt-10 sm:mt-12 flex flex-col items-center justify-center text-center">
           <p className="text-xs sm:text-sm text-gray-500 mb-3.5 font-medium">
             Showing <span className="font-bold text-[#0D3B37]">{displayedForYouProducts.length}</span> of{" "}
@@ -1140,20 +1176,29 @@ export function ClientMockupHome() {
               <div className="relative z-10 max-w-[65%] sm:max-w-[62%] space-y-2.5">
                 {/* Brand Header: Logo Icon + SHOILPIKKABBO + Tagline */}
                 <div className="flex items-center gap-2.5 sm:gap-3">
-                  <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0">
-                    <Image
-                      src="/images/client-mockup/trust-brand-icon.png"
-                      alt="Shoilpikkabbo"
-                      fill
-                      className="object-contain"
-                    />
+                  <div className="relative w-9 h-9 sm:w-10 sm:h-10 shrink-0 bg-white/10 rounded-xl p-1 flex items-center justify-center">
+                    {settings.logoUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={settings.logoUrl}
+                        alt={settings.storeName}
+                        className="w-full h-full object-contain"
+                      />
+                    ) : (
+                      <Image
+                        src="/images/client-mockup/trust-brand-icon.png"
+                        alt={settings.storeName}
+                        fill
+                        className="object-contain"
+                      />
+                    )}
                   </div>
                   <div>
                     <h4 className="font-extrabold text-sm sm:text-base lg:text-[17px] text-white tracking-wide leading-tight drop-shadow-xs">
-                      SHOILPIKKABBO
+                      {settings.storeName}
                     </h4>
                     <p className="text-[9.5px] sm:text-[10px] font-semibold text-emerald-100/90 tracking-widest uppercase mt-0.5 drop-shadow-xs">
-                      DELIVERY • QUALITY • RELIABILITY
+                      {settings.tagline}
                     </p>
                   </div>
                 </div>

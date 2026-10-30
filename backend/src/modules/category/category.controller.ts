@@ -61,11 +61,35 @@ export class CategoryController {
 
   static async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await CategoryService.delete(req.params.id);
+      const { id } = req.params;
+      const force = req.query.force === "true" || req.body?.force === true;
+      const reassignTo = (req.query.reassignTo as string) || req.body?.reassignTo;
+
+      const result = await CategoryService.delete(id, { force, reassignTo });
       return sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: "Category deleted successfully.",
+        message: result && "reallocated" in result
+          ? `Category deleted. ${result.reallocated} product(s) safely moved to "${result.targetName}".`
+          : "Category deleted successfully.",
+        data: result,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async batchDelete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { ids, force, reassignTo } = req.body;
+      const result = await CategoryService.batchDelete(ids, { force, reassignTo });
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: `${result.deletedCount} categories deleted successfully.${
+          result.reallocatedCount > 0 ? ` ${result.reallocatedCount} products preserved.` : ""
+        }`,
+        data: result,
       });
     } catch (err) {
       return next(err);

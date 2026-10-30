@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useSettings } from "@/context/SettingsContext";
 import { MOCK_PRODUCTS } from "@/data/mock-data";
 
 const SEARCH_CATEGORIES = [
@@ -63,6 +64,7 @@ export function Header() {
   const router = useRouter();
   const { totalItemCount, setIsCartOpen } = useCart();
   const { user, isAuthenticated, logout } = useAuth();
+  const { settings } = useSettings();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = React.useState(false);
@@ -401,61 +403,75 @@ export function Header() {
       </React.Suspense>
 
       {/* 1. Top Bar (Dark Teal #0D3B37) */}
-      <div className="bg-[#0D3B37] text-white/90 py-2 border-b border-[#0A2F2C]">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between text-xs sm:text-[13px]">
-          {/* Left Contact Info */}
-          <div className="flex items-center gap-3.5 sm:gap-5">
+      <div className="bg-[#0D3B37] text-white/90 py-1.5 sm:py-2 border-b border-[#0A2F2C] overflow-hidden">
+        <div className="max-w-[1524px] mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between text-xs sm:text-[13px] gap-2">
+          {/* Left Contact Info & Announcement */}
+          <div className="flex items-center gap-2 sm:gap-4 truncate">
             <a
-              href="mailto:shoilpikkabbo@gmail.com"
-              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors font-medium"
+              href={`mailto:${settings.contactEmail}`}
+              className="hidden md:flex items-center gap-1.5 hover:text-orange-300 transition-colors font-medium shrink-0"
             >
               <Mail className="w-3.5 h-3.5 text-white/90" />
-              <span className="hidden sm:inline">shoilpikkabbo@gmail.com</span>
-              <span className="sm:hidden">Email</span>
+              <span>{settings.contactEmail}</span>
             </a>
-            <span className="text-white/30">|</span>
+            <span className="hidden md:inline text-white/30">|</span>
             <a
-              href="tel:01731214379"
-              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors font-medium"
+              href={`tel:${settings.contactPrimary}`}
+              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors font-medium shrink-0"
             >
-              <Phone className="w-3.5 h-3.5 text-white/90" />
-              <span>01731214379, 01811999068</span>
+              <Phone className="w-3.5 h-3.5 text-white/90 shrink-0" />
+              <span className="truncate">
+                {settings.contactPrimary}
+                {settings.contactSecondary ? (
+                  <span className="hidden sm:inline">, {settings.contactSecondary}</span>
+                ) : null}
+              </span>
             </a>
+            {settings.headerAnnouncementEnabled && settings.headerAnnouncement && (
+              <>
+                <span className="hidden lg:inline text-white/30">|</span>
+                <span className="hidden lg:inline text-amber-200/90 font-medium text-xs truncate max-w-[320px]">
+                  ✨ {settings.headerAnnouncement}
+                </span>
+              </>
+            )}
           </div>
 
           {/* Right Links & Language Toggle */}
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link
               href="/track-order"
-              className="flex items-center gap-1.5 hover:text-orange-300 transition-colors text-xs sm:text-[13px] text-white/90 font-medium"
+              className="hidden sm:flex items-center gap-1.5 hover:text-orange-300 transition-colors text-xs sm:text-[13px] text-white/90 font-medium"
             >
               <Truck className="w-3.5 h-3.5 text-white/90" />
               <span>Track Order</span>
             </Link>
-            <span className="text-white/30">|</span>
-            <button
-              type="button"
-              onClick={() => setLang("bn")}
-              className={`px-2.5 py-0.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
-                lang === "bn"
-                  ? "bg-[#E0592A] text-white shadow-xs"
-                  : "text-white/70 hover:text-white"
-              }`}
-            >
-              বাংলা
-            </button>
-            <span className="text-white/30">|</span>
-            <button
-              type="button"
-              onClick={() => setLang("en")}
-              className={`px-1.5 py-0.5 text-xs font-semibold transition-all cursor-pointer ${
-                lang === "en"
-                  ? "text-orange-400 font-bold"
-                  : "text-white/80 hover:text-white"
-              }`}
-            >
-              English
-            </button>
+            <span className="hidden sm:inline text-white/30">|</span>
+            {/* Language Toggle Pill */}
+            <div className="inline-flex items-center bg-white/10 rounded-md p-0.5 border border-white/10">
+              <button
+                type="button"
+                onClick={() => setLang("bn")}
+                className={`px-2 py-0.5 rounded text-[11px] sm:text-xs font-bold transition-all cursor-pointer ${
+                  lang === "bn"
+                    ? "bg-[#E0592A] text-white shadow-xs"
+                    : "text-white/70 hover:text-white"
+                }`}
+              >
+                বাংলা
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang("en")}
+                className={`px-1.5 py-0.5 rounded text-[11px] sm:text-xs font-semibold transition-all cursor-pointer ${
+                  lang === "en"
+                    ? "bg-[#E0592A] text-white shadow-xs"
+                    : "text-white/70 hover:text-white"
+                }`}
+              >
+                EN
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -487,17 +503,26 @@ export function Header() {
             </div>
           </button>
 
-          {/* Brand Logo matching Client Mockup */}
+          {/* Brand Logo matching Client Mockup or Custom Dynamic Store Logo */}
           <div className="shrink-0 flex items-center justify-center flex-1 lg:flex-initial">
             <Link href="/" className="group flex items-center">
-              <Image
-                src="/images/client-mockup/logo-brand-exact.png"
-                alt="SHOILPIKKABBO - Delivery • Quality • Reliability"
-                width={250}
-                height={62}
-                priority
-                className="h-10 sm:h-12 w-auto object-contain hover:opacity-95 transition-opacity"
-              />
+              {settings.logoUrl ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={settings.logoUrl}
+                  alt={lang === "bn" && settings.storeNameBn ? settings.storeNameBn : settings.storeName}
+                  className="h-11 sm:h-13 md:h-14 w-auto max-w-[260px] object-contain hover:opacity-95 transition-opacity"
+                />
+              ) : (
+                <Image
+                  src="/images/client-mockup/logo-brand-exact.png"
+                  alt={`${settings.storeName} - ${settings.tagline}`}
+                  width={250}
+                  height={62}
+                  priority
+                  className="h-10 sm:h-12 w-auto object-contain hover:opacity-95 transition-opacity"
+                />
+              )}
             </Link>
           </div>
 
@@ -714,8 +739,8 @@ export function Header() {
         </div>
       </div>
 
-      {/* 3. Navigation Bar (All Categories Button + Centered Links) */}
-      <nav className="border-b border-gray-100 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+      {/* 3. Navigation Bar (All Categories Button + Centered Links - Hidden on small devices) */}
+      <nav className="hidden md:block border-b border-gray-100 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
         <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-6 sm:gap-8 lg:gap-10 py-2.5">
           {/* All Categories Dropdown Button */}
           <div className="relative shrink-0" ref={categoriesMenuRef}>
@@ -833,9 +858,20 @@ export function Header() {
             <Link
               href="/"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="font-serif text-lg font-normal tracking-[0.14em] text-[#143527] uppercase"
+              className="flex items-center gap-2"
             >
-              SHOILPIKKABBO
+              {settings.logoUrl ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={settings.logoUrl}
+                  alt={settings.storeName}
+                  className="h-9 w-auto max-w-[180px] object-contain"
+                />
+              ) : (
+                <span className="font-serif text-lg font-normal tracking-[0.14em] text-[#143527] uppercase">
+                  {lang === "bn" && settings.storeNameBn ? settings.storeNameBn : settings.storeName}
+                </span>
+              )}
             </Link>
             <button
               onClick={() => setIsMobileMenuOpen(false)}
@@ -850,141 +886,182 @@ export function Header() {
           <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
             {/* User Profile Banner in Mobile Drawer */}
             {isAuthenticated && user ? (
-              <div className="bg-[#F7F4EE] rounded-lg p-3.5 border border-[#EAE3D5] flex items-center justify-between">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-full bg-[#143527] text-white flex items-center justify-center font-bold text-sm shrink-0">
-                    {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+              <div className="bg-[#F7F4EE] rounded-xl p-3.5 border border-[#EAE3D5] space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-full bg-[#143527] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                      {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-[#143527] truncate">{user.name}</p>
+                      <p className="text-xs text-[#7A837C] truncate">{user.phone || user.email}</p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#143527] truncate">{user.name}</p>
-                    <p className="text-xs text-[#7A837C] truncate">{user.phone || user.email}</p>
-                  </div>
+                  <button
+                    onClick={async () => {
+                      setIsMobileMenuOpen(false);
+                      await logout();
+                      router.push("/");
+                    }}
+                    className="text-xs text-red-600 font-medium hover:underline shrink-0 ml-2 cursor-pointer"
+                  >
+                    Logout
+                  </button>
                 </div>
-                <button
-                  onClick={async () => {
-                    setIsMobileMenuOpen(false);
-                    await logout();
-                    router.push("/");
-                  }}
-                  className="text-xs text-red-600 font-medium hover:underline shrink-0 ml-2 cursor-pointer"
-                >
-                  Logout
-                </button>
+
+                <div className="pt-2 border-t border-[#EAE3D5]/80 flex items-center justify-between text-xs">
+                  <Link
+                    href="/account"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-[#143527] font-semibold hover:text-[#E0592A] flex items-center gap-1.5 transition-colors"
+                  >
+                    <User className="w-3.5 h-3.5 text-[#B85D38]" />
+                    <span>My Profile & Orders</span>
+                  </Link>
+                  {(user.role === "ADMIN" || user.role === "SUPER_ADMIN" || user.role === "STAFF") && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="text-[#E0592A] font-bold hover:underline flex items-center gap-1 transition-colors"
+                    >
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span>Admin</span>
+                    </Link>
+                  )}
+                </div>
               </div>
             ) : (
               <Link
                 href="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-[#143527] text-white text-sm font-medium rounded-[2px] hover:bg-[#0F261B] transition-colors shadow-xs"
+                className="flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-[#143527] text-white text-sm font-medium rounded-lg hover:bg-[#0F261B] transition-colors shadow-xs"
               >
                 <User className="w-4 h-4" />
                 <span>Sign in to your account</span>
               </Link>
             )}
 
-            {/* Primary Navigation */}
+            {/* Main Navigation (1:1 with Desktop Navbar) */}
             <div>
-              <p className="text-[10.5px] font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3">
-                Collections & Categories
+              <p className="text-[10.5px] font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-2.5">
+                Main Pages
               </p>
-              <div className="flex flex-col space-y-2 text-[15px] font-medium text-[#143527]">
+              <div className="flex flex-col space-y-1 text-[14.5px] font-medium text-[#143527]">
                 <Link
-                  href="/shop"
+                  href="/"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
+                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
                 >
-                  <span>Shop all</span>
-                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
+                  <span className="font-semibold">Home</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
                 </Link>
+
                 <Link
-                  href="/shop?category=handicraft"
+                  href="/offers"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
+                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40 text-[#E0592A] font-semibold"
                 >
-                  <span>Handicrafts</span>
-                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
+                  <div className="flex items-center gap-2">
+                    <span>Offers</span>
+                    <span className="px-1.5 py-0.2 bg-[#EF4444] text-white text-[9px] font-bold rounded-full uppercase leading-tight animate-pulse">
+                      Hot
+                    </span>
+                  </div>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#E0592A]" />
                 </Link>
-                <Link
-                  href="/shop?category=jute-items"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
-                >
-                  <span>Jute Items</span>
-                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
-                </Link>
-                <Link
-                  href="/shop?category=corporate-gift-items"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
-                >
-                  <span>Corporate Gifting</span>
-                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
-                </Link>
+
                 <Link
                   href="/services"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-1.5 hover:text-[#B85D38] transition-colors border-b border-[#EAE3D5]/50"
+                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
                 >
-                  <span>Special E-Sheba & Services</span>
-                  <ArrowRight className="w-4 h-4 text-[#8C948E]" />
+                  <span>Services</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
+                </Link>
+
+                <Link
+                  href="/track-order"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
+                >
+                  <span>Track Order</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
+                </Link>
+
+                <Link
+                  href="/about"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
+                >
+                  <span>About Us</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
+                </Link>
+
+                <Link
+                  href="/careers"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
+                >
+                  <span>Career</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
+                </Link>
+
+                <Link
+                  href="/contact"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2 px-2 hover:bg-[#F2ECE1] rounded-lg transition-colors border-b border-[#EAE3D5]/40"
+                >
+                  <span>Contact Us</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-[#8C948E]" />
                 </Link>
               </div>
             </div>
 
-            {/* Quick Links & Offers */}
+            {/* All 10 Categories matching Desktop "All Categories" Dropdown */}
             <div>
-              <p className="text-[10.5px] font-bold tracking-[0.16em] uppercase text-[#B85D38] mb-3">
-                Explore More
-              </p>
-              <div className="flex flex-col space-y-2 text-[14px] text-[#2D3F33]">
+              <div className="flex items-center justify-between mb-2.5">
+                <p className="text-[10.5px] font-bold tracking-[0.16em] uppercase text-[#B85D38]">
+                  All Categories ({SEARCH_CATEGORIES.length})
+                </p>
                 <Link
-                  href="/offers"
+                  href="/shop"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-1 text-[#B85D38] font-semibold"
+                  className="text-xs font-semibold text-[#E0592A] hover:underline"
                 >
-                  <span>Offers & Discounts</span>
-                  <span className="text-[10px] bg-[#B85D38]/10 text-[#B85D38] px-2 py-0.5 rounded-full font-bold">
-                    DEALS
-                  </span>
+                  Shop all &rarr;
                 </Link>
-                <Link
-                  href="/track-order"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="py-1 hover:text-[#B85D38] transition-colors"
-                >
-                  Track Order
-                </Link>
-                <Link
-                  href="/about"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="py-1 hover:text-[#B85D38] transition-colors"
-                >
-                  About Us & Story
-                </Link>
-                <Link
-                  href="/careers"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="py-1 hover:text-[#B85D38] transition-colors"
-                >
-                  Careers
-                </Link>
-                <Link
-                  href="/contact"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="py-1 hover:text-[#B85D38] transition-colors"
-                >
-                  Customer Support / Contact
-                </Link>
+              </div>
+              <div className="flex flex-col space-y-1 text-[13.5px] text-[#2D3F33] bg-[#F7F4EE] rounded-xl p-2 border border-[#EAE3D5]/70">
+                {SEARCH_CATEGORIES.map((cat) => (
+                  <Link
+                    key={cat.slug}
+                    href={cat.href || `/shop?category=${cat.slug}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between py-1.5 px-2.5 rounded-md hover:bg-white hover:text-[#E0592A] transition-colors"
+                  >
+                    <span>{cat.name}</span>
+                    <ArrowRight className="w-3 h-3 text-[#A0A7A1]" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Admin Dashboard Quick Access (Only if Admin/Staff logged in) */}
+            {isAuthenticated && (user?.role === "ADMIN" || user?.role === "SUPER_ADMIN" || user?.role === "STAFF") && (
+              <div className="pt-2 border-t border-[#EAE3D5]">
                 <Link
                   href="/admin"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2 text-[#143527] font-bold border-t border-[#EAE3D5] mt-2 pt-3 hover:text-[#B85D38] transition-colors"
+                  className="flex items-center justify-between py-2.5 px-3 bg-[#0D3B37] text-white rounded-lg text-sm font-semibold hover:bg-[#143527] transition-colors shadow-xs"
                 >
-                  <span>Admin Dashboard</span>
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-[#E0592A]" />
+                    <span>Admin Dashboard</span>
+                  </div>
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Drawer Footer with Language & Help */}

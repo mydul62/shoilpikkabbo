@@ -106,7 +106,7 @@ function TrackOrderContent() {
 
   return (
     <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-10 sm:py-16">
-      <div className="max-w-[1524px] mx-auto px-5">
+      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="text-xs sm:text-sm text-gray-500 font-medium mb-4">
           <Link href="/" className="hover:text-[#0D3B37] transition-colors">

@@ -5,6 +5,9 @@ import { Role } from "@prisma/client";
 
 const router = Router();
 
+// Public: List all editable pages
+router.get("/", PageController.listPages);
+
 // Public: Get currently published page
 router.get("/:slug", PageController.getPublishedPage);
 

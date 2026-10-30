@@ -12,10 +12,11 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { CLIENT_INFO } from "@/data/mock-data";
+import { useSettings } from "@/context/SettingsContext";
 
 export function FloatingWidgets() {
   const { totalItemCount, subtotal, setIsCartOpen } = useCart();
+  const { settings } = useSettings();
   const [isChatOpen, setIsChatOpen] = React.useState(false);
 
   // Quick message form state
@@ -66,40 +67,40 @@ export function FloatingWidgets() {
   return (
     <>
       {/* ============================================================== */}
-      {/* 1. SIDE FLOATING CART WIDGET (D始めて right edge, vertically centered) */}
+      {/* 1. SIDE FLOATING CART WIDGET (Desktop only, docked to right edge) */}
       {/* ============================================================== */}
       <button
         type="button"
         onClick={() => setIsCartOpen(true)}
-        className="fixed right-0 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center rounded-l-2xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.18)] hover:shadow-[0_8px_30px_rgba(224,89,42,0.4)] hover:-translate-x-1.5 transition-all duration-200 cursor-pointer group border-y border-l border-orange-500/20 active:scale-95"
+        className="hidden md:flex fixed right-0 top-1/2 -translate-y-1/2 z-40 flex-col items-center w-[74px] rounded-l-2xl overflow-hidden shadow-[-4px_4px_20px_rgba(0,0,0,0.15)] hover:shadow-[-6px_6px_25px_rgba(224,89,42,0.35)] hover:brightness-105 transition-all duration-200 cursor-pointer group border-y border-l border-orange-500/25 active:scale-95"
         aria-label="Open Shopping Cart"
         title="Open Shopping Cart"
       >
         {/* Top Part: Orange Background with Bag Icon & Item Count */}
-        <div className="w-full bg-[#E0592A] group-hover:bg-[#C94C20] transition-colors px-2.5 sm:px-3 pt-3 pb-2 flex flex-col items-center min-w-[68px] sm:min-w-[76px]">
-          <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-white stroke-[2.2] group-hover:scale-110 transition-transform" />
-          <span className="text-[11px] sm:text-xs font-bold text-white tracking-wide mt-1 leading-none text-center whitespace-nowrap">
+        <div className="w-full bg-[#E0592A] group-hover:bg-[#C94C20] transition-colors px-2 pt-2.5 pb-2 flex flex-col items-center">
+          <ShoppingBag className="w-5 h-5 text-white stroke-[2.2] group-hover:scale-110 transition-transform" />
+          <span className="text-[11px] font-bold text-white tracking-wide mt-1 leading-tight text-center whitespace-nowrap">
             {totalItemCount} {totalItemCount === 1 ? "Item" : "Items"}
           </span>
         </div>
 
         {/* Bottom Part: Clean White Surface with Accent Price */}
-        <div className="w-full bg-white py-1.5 px-2 text-center border-t border-orange-100 flex items-center justify-center">
-          <span className="text-[11px] sm:text-[12px] font-extrabold text-[#E0592A] tracking-tight">
+        <div className="w-full bg-white py-1.5 px-1 text-center border-t border-orange-100 flex items-center justify-center">
+          <span className="text-[11.5px] font-extrabold text-[#E0592A] tracking-tight whitespace-nowrap">
             ৳{subtotal > 0 ? subtotal.toFixed(2) : "0.00"}
           </span>
         </div>
       </button>
 
       {/* ============================================================== */}
-      {/* 2. FLOATING CHAT BUBBLE BUTTON (Bottom Right Corner) */}
+      {/* 2. FLOATING CHAT BUBBLE BUTTON (Precisely centered with Cart Widget on desktop) */}
       {/* ============================================================== */}
-      <div className="fixed bottom-20 right-4 sm:bottom-8 sm:right-8 z-40">
+      <div className="fixed bottom-18 sm:bottom-7 right-3 sm:right-[10px] z-40 flex flex-col items-center">
         {/* Chat Button */}
         <button
           type="button"
           onClick={() => setIsChatOpen(!isChatOpen)}
-          className={`w-14 h-14 sm:w-15 sm:h-15 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-[0_6px_24px_rgba(224,89,42,0.42)] hover:shadow-[0_8px_32px_rgba(224,89,42,0.6)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group ${
+          className={`w-12 h-12 sm:w-[54px] sm:h-[54px] rounded-2xl flex items-center justify-center shadow-[0_4px_20px_rgba(224,89,42,0.38)] hover:shadow-[0_6px_25px_rgba(224,89,42,0.55)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group ${
             isChatOpen
               ? "bg-[#0D3B37] text-white rotate-90"
               : "bg-gradient-to-tr from-[#E0592A] to-[#F26922] text-white"
@@ -108,11 +109,11 @@ export function FloatingWidgets() {
           title="Customer Support Chat"
         >
           {isChatOpen ? (
-            <X className="w-6 h-6 stroke-[2.5] transition-transform" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5] transition-transform" />
           ) : (
-            /* Custom crisp chat bubble matching client screenshot: Orange bubble with white background and '=' horizontal lines */
+            /* Custom crisp chat bubble matching client screenshot */
             <svg
-              className="w-8 h-8 sm:w-9 sm:h-9 group-hover:scale-110 transition-transform duration-300"
+              className="w-6 h-6 sm:w-7 sm:h-7 group-hover:scale-110 transition-transform duration-300"
               viewBox="0 0 32 32"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -164,7 +165,7 @@ export function FloatingWidgets() {
                   </div>
                   <div>
                     <h3 className="font-extrabold text-base tracking-tight leading-none text-white">
-                      SHOILPIKKABBO
+                      {settings.storeName || "SHOILPIKKABBO"}
                     </h3>
                     <p className="text-xs text-emerald-300 mt-1 font-medium flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -218,7 +219,7 @@ export function FloatingWidgets() {
 
                   {/* WhatsApp Channel */}
                   <a
-                    href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}?text=Hello%20Shoilpikkabbo%2C%20I%20have%20an%20inquiry%20regarding%20products%20and%20orders.`}
+                    href={settings.socialWhatsapp || "https://wa.me/8801731214379"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-emerald-100 hover:border-emerald-300 hover:shadow-md transition-all group cursor-pointer"
@@ -241,7 +242,7 @@ export function FloatingWidgets() {
 
                   {/* Facebook Messenger Channel */}
                   <a
-                    href={CLIENT_INFO.messengerUrl || "https://m.me/shoilpikkabbo"}
+                    href={settings.socialMessenger || "https://m.me/shoilpikkabbo"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-blue-100 hover:border-blue-300 hover:shadow-md transition-all group cursor-pointer"
@@ -262,9 +263,34 @@ export function FloatingWidgets() {
                     <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-[#0084FF] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </a>
 
+                  {/* Instagram Channel */}
+                  {settings.socialInstagram && (
+                    <a
+                      href={settings.socialInstagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-pink-100 hover:border-pink-300 hover:shadow-md transition-all group cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white flex items-center justify-center shrink-0 shadow-xs">
+                          <span className="text-base font-bold">📷</span>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-[#0D3B37] group-hover:text-[#DD2A7B] transition-colors">
+                            Instagram
+                          </h4>
+                          <p className="text-[11px] text-gray-500">
+                            DM us & view latest collections
+                          </p>
+                        </div>
+                      </div>
+                      <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-[#DD2A7B] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </a>
+                  )}
+
                   {/* Direct Phone Call */}
                   <a
-                    href={`tel:${CLIENT_INFO.phonePrimary}`}
+                    href={`tel:${settings.contactPrimary}`}
                     className="flex items-center justify-between p-3.5 bg-white rounded-2xl border border-gray-200/80 hover:border-[#0D3B37] hover:shadow-md transition-all group cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
@@ -276,7 +302,7 @@ export function FloatingWidgets() {
                           Direct Phone Call
                         </h4>
                         <p className="text-[11px] text-gray-500">
-                          {CLIENT_INFO.phonePrimary} (9 AM - 8 PM)
+                          {settings.contactPrimary} ({settings.officeHours ? settings.officeHours.split(":")[0] : "Support"})
                         </p>
                       </div>
                     </div>

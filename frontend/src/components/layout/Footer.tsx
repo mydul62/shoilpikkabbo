@@ -2,10 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Mail, Phone, CreditCard, Building2, Send } from "lucide-react";
-import { CLIENT_INFO } from "@/data/mock-data";
+import { Mail, Phone, CreditCard, Building2, Send, MapPin, Clock } from "lucide-react";
+import { useSettings } from "@/context/SettingsContext";
 
 export function Footer() {
+  const { settings } = useSettings();
   const [newsletterEmail, setNewsletterEmail] = React.useState("");
   const [newsletterSubscribed, setNewsletterSubscribed] = React.useState(false);
   const [lang, setLang] = React.useState<"bn" | "en">("bn");
@@ -26,20 +27,29 @@ export function Footer() {
           {/* Column 1: Brand Info & Socials (Col 1-4) */}
           <div className="lg:col-span-4 space-y-4">
             <Link href="/" className="inline-flex items-center gap-3 group">
-              <div className="w-10 h-10 shrink-0">
-                <svg className="w-full h-full" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 12C8 10.8954 8.89543 10 10 10H30C31.1046 10 32 10.8954 32 12L34 33C34 34.6569 32.6569 36 31 36H9C7.34315 36 6 34.6569 6 33L8 12Z" fill="#134E48" />
-                  <path d="M14 12V9C14 6.79086 15.7909 5 18 5H22C24.2091 5 26 6.79086 26 9V12" stroke="#134E48" strokeWidth="2.5" strokeLinecap="round" />
-                  <path d="M14 27C14 20 22 17 26 15C26 21 21 27 15 28" fill="#22C55E" />
-                  <path d="M12 29C14 24 19 22 23 23C20 26 16 30 12 29Z" fill="#E0592A" />
-                </svg>
-              </div>
+              {settings.logoUrl ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={settings.logoUrl}
+                  alt={lang === "bn" && settings.storeNameBn ? settings.storeNameBn : settings.storeName}
+                  className="h-10 sm:h-12 w-auto max-w-[200px] object-contain hover:opacity-95 transition-opacity"
+                />
+              ) : (
+                <div className="w-10 h-10 shrink-0">
+                  <svg className="w-full h-full" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 12C8 10.8954 8.89543 10 10 10H30C31.1046 10 32 10.8954 32 12L34 33C34 34.6569 32.6569 36 31 36H9C7.34315 36 6 34.6569 6 33L8 12Z" fill="#134E48" />
+                    <path d="M14 12V9C14 6.79086 15.7909 5 18 5H22C24.2091 5 26 6.79086 26 9V12" stroke="#134E48" strokeWidth="2.5" strokeLinecap="round" />
+                    <path d="M14 27C14 20 22 17 26 15C26 21 21 27 15 28" fill="#22C55E" />
+                    <path d="M12 29C14 24 19 22 23 23C20 26 16 30 12 29Z" fill="#E0592A" />
+                  </svg>
+                </div>
+              )}
               <div className="flex flex-col">
-                <span className="font-extrabold text-[22px] tracking-tight text-white leading-none">
-                  SHOILPIKKABBO
+                <span className="font-extrabold text-[20px] sm:text-[22px] tracking-tight text-white leading-none">
+                  {lang === "bn" && settings.storeNameBn ? settings.storeNameBn : settings.storeName}
                 </span>
                 <span className="text-[10px] font-bold tracking-[0.2em] text-white/70 mt-1 uppercase">
-                  DELIVERY • QUALITY • RELIABILITY
+                  {lang === "bn" && settings.taglineBn ? settings.taglineBn : settings.tagline}
                 </span>
               </div>
             </Link>
@@ -49,50 +59,71 @@ export function Footer() {
             </p>
 
             {/* Social Media Circles */}
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-2.5 pt-2 flex-wrap">
               {/* Facebook */}
-              <a
-                href="https://facebook.com/shoilpikkabbo"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[#1877F2] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
-                title="Facebook"
-              >
-                <span className="text-xs font-bold">f</span>
-              </a>
+              {settings.socialFacebook && (
+                <a
+                  href={settings.socialFacebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-xl bg-[#1877F2] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
+                  title="Facebook"
+                >
+                  <span className="text-xs font-bold">f</span>
+                </a>
+              )}
 
               {/* Messenger */}
-              <a
-                href="https://m.me/shoilpikkabbo"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[#0084FF] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
-                title="Messenger"
-              >
-                <span className="text-xs font-bold">💬</span>
-              </a>
+              {settings.socialMessenger && (
+                <a
+                  href={settings.socialMessenger}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-xl bg-[#0084FF] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
+                  title="Messenger"
+                >
+                  <span className="text-xs font-bold">💬</span>
+                </a>
+              )}
 
               {/* WhatsApp */}
-              <a
-                href={`https://wa.me/88${CLIENT_INFO.phonePrimary}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[#25D366] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
-                title="WhatsApp"
-              >
-                <span className="text-xs font-bold">✆</span>
-              </a>
+              {settings.socialWhatsapp && (
+                <a
+                  href={settings.socialWhatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-xl bg-[#25D366] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
+                  title="WhatsApp"
+                >
+                  <span className="text-xs font-bold">✆</span>
+                </a>
+              )}
+
+              {/* Instagram */}
+              {settings.socialInstagram && (
+                <a
+                  href={settings.socialInstagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
+                  title="Instagram"
+                >
+                  <span className="text-xs font-bold">📷</span>
+                </a>
+              )}
 
               {/* YouTube */}
-              <a
-                href="https://youtube.com/@shoilpikkabbo"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[#FF0000] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
-                title="YouTube"
-              >
-                <span className="text-xs font-bold">▶</span>
-              </a>
+              {settings.socialYoutube && (
+                <a
+                  href={settings.socialYoutube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-xl bg-[#FF0000] text-white flex items-center justify-center hover:opacity-90 hover:scale-105 transition-all shadow-xs"
+                  title="YouTube"
+                >
+                  <span className="text-xs font-bold">▶</span>
+                </a>
+              )}
             </div>
           </div>
 
@@ -182,24 +213,45 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-white/85">
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <a href="mailto:shoilpikkabbo@gmail.com" className="hover:text-[#E0592A] transition-colors break-all">
-                  shoilpikkabbo@gmail.com
+                <a href={`mailto:${settings.contactEmail}`} className="hover:text-[#E0592A] transition-colors break-all">
+                  {settings.contactEmail}
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                 <span className="leading-snug">
-                  01731214379, 01811909068
+                  {settings.contactPrimary}
+                  {settings.contactSecondary ? `, ${settings.contactSecondary}` : ""}
                 </span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CreditCard className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>01977765999 (Payment)</span>
+                <span>{settings.contactPayment || settings.paymentBkashNumber} (bKash / Nagad)</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <Building2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>BRAC Bank</span>
+                <div className="leading-snug">
+                  <p className="font-semibold">{settings.bankName}</p>
+                  {settings.bankAccountNumber && (
+                    <p className="text-xs text-white/70">A/C: {settings.bankAccountNumber}</p>
+                  )}
+                  {settings.bankBranch && (
+                    <p className="text-[11px] text-white/60">{settings.bankBranch}</p>
+                  )}
+                </div>
               </li>
+              {settings.officeAddress && (
+                <li className="flex items-start gap-2.5 pt-1 border-t border-white/10">
+                  <MapPin className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="text-xs text-white/80 leading-relaxed">{settings.officeAddress}</span>
+                </li>
+              )}
+              {settings.officeHours && (
+                <li className="flex items-start gap-2.5">
+                  <Clock className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="text-xs text-white/75">{settings.officeHours}</span>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -270,8 +322,8 @@ export function Footer() {
 
         {/* Bottom Copyright Bar */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/60">
-          <p>© 2025 SHOILPIKKABBO. All rights reserved.</p>
-          <p className="tracking-wide">Delivery • Quality • Reliability</p>
+          <p>© {new Date().getFullYear()} {settings.storeName}. All rights reserved.</p>
+          <p className="tracking-wide">{settings.tagline}</p>
         </div>
       </div>
     </footer>

@@ -3,15 +3,25 @@
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, Plus, Check, Copy } from "lucide-react";
+import { ArrowUpRight, Plus, Check, Copy, Heart, Star, ShoppingCart } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
+import { useSettings } from "@/context/SettingsContext";
 import { CLIENT_INFO, MOCK_PRODUCTS } from "@/data/mock-data";
 
 export default function OffersPage() {
-  const { addToCart } = useCart();
+  const { settings } = useSettings();
+  const { addToCart, setIsCartOpen } = useCart();
   const [copied, setCopied] = React.useState(false);
   const [addedItem, setAddedItem] = React.useState<string | null>(null);
+  const [wishlist, setWishlist] = React.useState<Record<string, boolean>>({});
+
+  const toggleWishlist = (productId: string) => {
+    setWishlist((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+  };
 
   const handleCopyCode = (code: string) => {
     navigator.clipboard.writeText(code);
@@ -25,6 +35,7 @@ export default function OffersPage() {
       addToCart(product, 1);
       setAddedItem(productName);
       setTimeout(() => setAddedItem(null), 2000);
+      setIsCartOpen(true);
     }
   };
 
@@ -143,100 +154,206 @@ export default function OffersPage() {
             </div>
 
             {/* 3 Column Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
               {/* Product 1 */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 group relative">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 group relative border border-gray-100">
+                {/* For You / Discount Badge on Top Left */}
+                <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+                  <span className="text-[9px] sm:text-[10px] font-bold text-white bg-gradient-to-r from-[#E0592A] to-[#F59E0B] px-2 py-0.5 rounded-md shadow-2xs">
+                    12% OFF
+                  </span>
+                </div>
+
+                {/* Wishlist Button on Top Right */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleWishlist("prod-jute-basket");
+                  }}
+                  className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
+                  title="Save to Wishlist"
+                  aria-label="Save to Wishlist"
+                >
+                  <Heart
+                    className={`w-4 h-4 transition-colors ${
+                      wishlist["prod-jute-basket"]
+                        ? "fill-[#E0592A] text-[#E0592A]"
+                        : "text-gray-400"
+                    }`}
+                  />
+                </button>
+
                 <div>
-                  <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] p-3 mb-3 group-hover:bg-[#F5F1E9] transition-colors">
-                    <Link href="/products/everyday-jute-basket">
-                      <Image
-                        src="/images/product-jute-basket.png"
-                        alt="Everyday jute basket"
-                        fill
-                        sizes="(max-width: 640px) 50vw, 320px"
-                        className="object-contain p-2 group-hover:scale-106 transition-transform duration-300"
-                      />
-                    </Link>
+                  <Link
+                    href="/products/everyday-jute-basket"
+                    className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 flex items-center justify-center p-2 group-hover:bg-[#F5F1E9] transition-colors block cursor-pointer"
+                  >
+                    <Image
+                      src="/images/product-jute-basket.png"
+                      alt="Everyday jute basket"
+                      fill
+                      sizes="(max-width: 640px) 100vw, 320px"
+                      className="object-contain p-2 group-hover:scale-106 transition-transform duration-300"
+                    />
+                  </Link>
 
-                    <button
-                      type="button"
-                      onClick={() => handleAddProduct("prod-jute-basket", "Everyday jute basket")}
-                      className="w-8 h-8 rounded-xl bg-[#0D3B37] hover:bg-[#E0592A] text-white shadow-md flex items-center justify-center absolute bottom-2.5 right-2.5 cursor-pointer transition-all hover:scale-105"
-                      title="Add to cart"
-                    >
-                      <Plus className="w-4 h-4 stroke-[2]" />
-                    </button>
-                  </div>
-
-                  <span className="text-xs text-gray-400 font-medium block mb-1">
+                  <span className="text-[11px] text-gray-400 font-medium block truncate">
                     Jute items
                   </span>
                   <Link
                     href="/products/everyday-jute-basket"
-                    className="text-sm sm:text-[15px] font-semibold text-gray-900 group-hover:text-[#E0592A] transition-colors block line-clamp-1"
+                    className="block font-semibold text-xs sm:text-sm text-gray-900 hover:text-[#E0592A] transition-colors line-clamp-2 mt-0.5 cursor-pointer leading-snug"
                   >
                     Everyday jute basket
                   </Link>
+
+                  {/* Star Rating Row */}
+                  <div className="flex items-center gap-1 text-xs text-amber-500 pt-1">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="font-bold text-gray-700">4.9</span>
+                    <span className="text-gray-400 text-[10.5px]">(38)</span>
+                  </div>
+
+                  {/* Price */}
+                  <div className="flex items-center gap-2 flex-wrap pt-2">
+                    <span className="font-extrabold text-sm sm:text-base text-[#0D3B37]">
+                      ৳ 1,450
+                    </span>
+                    <span className="text-[11px] text-gray-400 line-through">
+                      ৳ 1,650
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                      12% OFF
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 pt-3 border-t border-gray-50 mt-3">
-                  <span className="text-base sm:text-lg font-bold text-[#0D3B37]">
-                    ৳ 1,450
-                  </span>
-                  <span className="text-xs text-gray-400 line-through">
-                    ৳ 1,650
-                  </span>
-                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md ml-auto">
-                    12% OFF
-                  </span>
+                {/* Full-width Add to Cart Button */}
+                <div className="pt-3">
+                  <button
+                    type="button"
+                    onClick={() => handleAddProduct("prod-jute-basket", "Everyday jute basket")}
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                      addedItem === "Everyday jute basket"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-[#0D3B37] hover:bg-[#E0592A] text-white active:scale-95"
+                    }`}
+                  >
+                    {addedItem === "Everyday jute basket" ? (
+                      <>
+                        <Check className="w-4 h-4 stroke-[3]" />
+                        <span>Added to Cart</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="w-3.5 h-3.5" />
+                        <span>Add to Cart</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
 
               {/* Product 2 */}
-              <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 group relative">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 group relative border border-gray-100">
+                {/* For You / Discount Badge on Top Left */}
+                <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+                  <span className="text-[9px] sm:text-[10px] font-bold text-white bg-gradient-to-r from-[#E0592A] to-[#F59E0B] px-2 py-0.5 rounded-md shadow-2xs">
+                    11% OFF
+                  </span>
+                </div>
+
+                {/* Wishlist Button on Top Right */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleWishlist("prod-jute-tote");
+                  }}
+                  className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/95 hover:bg-white text-gray-400 hover:text-[#E0592A] flex items-center justify-center transition-colors shadow-xs cursor-pointer"
+                  title="Save to Wishlist"
+                  aria-label="Save to Wishlist"
+                >
+                  <Heart
+                    className={`w-4 h-4 transition-colors ${
+                      wishlist["prod-jute-tote"]
+                        ? "fill-[#E0592A] text-[#E0592A]"
+                        : "text-gray-400"
+                    }`}
+                  />
+                </button>
+
                 <div>
-                  <div className="relative aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] p-3 mb-3 group-hover:bg-[#F5F1E9] transition-colors">
-                    <Link href="/products/everyday-jute-tote">
-                      <Image
-                        src="/images/product-jute-tote.png"
-                        alt="The everyday jute tote"
-                        fill
-                        sizes="(max-width: 640px) 50vw, 320px"
-                        className="object-contain p-2 group-hover:scale-106 transition-transform duration-300"
-                      />
-                    </Link>
+                  <Link
+                    href="/products/everyday-jute-tote"
+                    className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] mb-3 flex items-center justify-center p-2 group-hover:bg-[#F5F1E9] transition-colors block cursor-pointer"
+                  >
+                    <Image
+                      src="/images/product-jute-tote.png"
+                      alt="The everyday jute tote"
+                      fill
+                      sizes="(max-width: 640px) 100vw, 320px"
+                      className="object-contain p-2 group-hover:scale-106 transition-transform duration-300"
+                    />
+                  </Link>
 
-                    <button
-                      type="button"
-                      onClick={() => handleAddProduct("prod-jute-tote", "The everyday jute tote")}
-                      className="w-8 h-8 rounded-xl bg-[#0D3B37] hover:bg-[#E0592A] text-white shadow-md flex items-center justify-center absolute bottom-2.5 right-2.5 cursor-pointer transition-all hover:scale-105"
-                      title="Add to cart"
-                    >
-                      <Plus className="w-4 h-4 stroke-[2]" />
-                    </button>
-                  </div>
-
-                  <span className="text-xs text-gray-400 font-medium block mb-1">
+                  <span className="text-[11px] text-gray-400 font-medium block truncate">
                     Jute items
                   </span>
                   <Link
                     href="/products/everyday-jute-tote"
-                    className="text-sm sm:text-[15px] font-semibold text-gray-900 group-hover:text-[#E0592A] transition-colors block line-clamp-1"
+                    className="block font-semibold text-xs sm:text-sm text-gray-900 hover:text-[#E0592A] transition-colors line-clamp-2 mt-0.5 cursor-pointer leading-snug"
                   >
                     The everyday jute tote
                   </Link>
+
+                  {/* Star Rating Row */}
+                  <div className="flex items-center gap-1 text-xs text-amber-500 pt-1">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span className="font-bold text-gray-700">4.8</span>
+                    <span className="text-gray-400 text-[10.5px]">(24)</span>
+                  </div>
+
+                  {/* Price */}
+                  <div className="flex items-center gap-2 flex-wrap pt-2">
+                    <span className="font-extrabold text-sm sm:text-base text-[#0D3B37]">
+                      ৳ 850
+                    </span>
+                    <span className="text-[11px] text-gray-400 line-through">
+                      ৳ 950
+                    </span>
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                      11% OFF
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 pt-3 border-t border-gray-50 mt-3">
-                  <span className="text-base sm:text-lg font-bold text-[#0D3B37]">
-                    ৳ 850
-                  </span>
-                  <span className="text-xs text-gray-400 line-through">
-                    ৳ 950
-                  </span>
-                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md ml-auto">
-                    11% OFF
-                  </span>
+                {/* Full-width Add to Cart Button */}
+                <div className="pt-3">
+                  <button
+                    type="button"
+                    onClick={() => handleAddProduct("prod-jute-tote", "The everyday jute tote")}
+                    className={`w-full py-2.5 sm:py-3 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer ${
+                      addedItem === "The everyday jute tote"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-[#0D3B37] hover:bg-[#E0592A] text-white active:scale-95"
+                    }`}
+                  >
+                    {addedItem === "The everyday jute tote" ? (
+                      <>
+                        <Check className="w-4 h-4 stroke-[3]" />
+                        <span>Added to Cart</span>
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="w-3.5 h-3.5" />
+                        <span>Add to Cart</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -259,7 +376,7 @@ export default function OffersPage() {
 
                 <div className="pt-6">
                   <a
-                    href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}?text=Hello%20Shoilpikkabbo%2C%20I%20have%20a%20question%20about%20offers.`}
+                    href={`${settings.socialWhatsapp || "https://wa.me/8801731214379"}?text=Hello%20Shoilpikkabbo%2C%20I%20have%20a%20question%20about%20offers.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-[#0D3B37] hover:bg-[#E0592A] text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl inline-flex items-center gap-2 transition-all cursor-pointer w-fit shadow-xs"

@@ -18,8 +18,11 @@ import {
 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { CLIENT_INFO } from "@/data/mock-data";
+import { useSettings } from "@/context/SettingsContext";
+import { pagesApi } from "@/lib/api";
 
 export default function ServicesPage() {
+  const { settings } = useSettings();
   const [formData, setFormData] = React.useState({
     name: "",
     contact: "",
@@ -30,37 +33,54 @@ export default function ServicesPage() {
     agreedToPrivacy: false,
   });
 
+  const [sections, setSections] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    async function loadServicesData() {
+      try {
+        const res = await pagesApi.getPublished("services");
+        if (res.success && Array.isArray((res.data as any)?.sections)) {
+          setSections((res.data as any).sections);
+        }
+      } catch (err) {
+        console.warn("Could not load dynamic services page CMS:", err);
+      }
+    }
+    loadServicesData();
+  }, []);
+
+  const headerSec = sections.find((s) => s.type === "services_header" && s.isVisible !== false)?.props || {};
+  const listSec = sections.find((s) => (s.type === "services_list" || s.type === "services_showcase") && s.isVisible !== false)?.props || {};
+
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const formRef = React.useRef<HTMLDivElement>(null);
 
   const serviceCards = [
     {
       id: "corporate-gifts",
-      title: "Corporate Gift Items",
-      description: "Customized handcrafted packages, corporate branding, packaging preferences & bulk volumes.",
+      title: listSec.service1Title || "Corporate Gift Items",
+      description: listSec.service1Desc || "Customized handcrafted packages, corporate branding, packaging preferences & bulk volumes.",
       icon: Gift,
       areaValue: "Corporate Gift Items",
     },
     {
       id: "industrial-solutions",
-      title: "Industrial Solutions",
-      description:
-        "B2B raw supplies, artisan-grade materials, sourcing requirements and customized production.",
+      title: listSec.service2Title || "Industrial Solutions",
+      description: listSec.service2Desc || "B2B raw supplies, artisan-grade materials, sourcing requirements and customized production.",
       icon: Building2,
       areaValue: "Industrial Solutions",
     },
     {
       id: "special-e-sheba",
-      title: "Special E-Sheba / Services",
-      description:
-        "Direct personalized support, custom bespoke orders, and dedicated account advisory.",
+      title: listSec.service3Title || "Special E-Sheba / Services",
+      description: listSec.service3Desc || "Direct personalized support, custom bespoke orders, and dedicated account advisory.",
       icon: Headphones,
       areaValue: "Special E-Sheba / Services",
     },
     {
       id: "agriculture",
-      title: "Agriculture & Agro Supplies",
-      description: "Direct-from-source organic produce, seasonal farm harvests, and regional distribution.",
+      title: listSec.service4Title || "Agriculture & Agro Supplies",
+      description: listSec.service4Desc || "Direct-from-source organic produce, seasonal farm harvests, and regional distribution.",
       icon: Sprout,
       areaValue: "Agriculture",
     },
@@ -109,7 +129,7 @@ export default function ServicesPage() {
   return (
     <StorefrontLayout>
       <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-14">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6">
+        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-1.5 text-xs text-gray-500 font-medium mb-6">
             <Link href="/" className="hover:text-[#E0592A] transition-colors">
@@ -123,13 +143,13 @@ export default function ServicesPage() {
           <div className="max-w-3xl mb-8 sm:mb-12">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-[#0D3B37] text-xs font-bold mb-3 border border-emerald-100">
               <Sparkles className="w-3.5 h-3.5 text-[#E0592A]" />
-              <span>Tailored Solutions & Institutional Services</span>
+              <span>{headerSec.badge || "Tailored Solutions & Institutional Services"}</span>
             </div>
             <h1 className="text-3xl sm:text-4xl lg:text-5xl text-[#0D3B37] font-extrabold tracking-tight leading-tight">
-              A brief today. Possibilities tomorrow.
+              {headerSec.headline || "A brief today. Possibilities tomorrow."}
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mt-3 leading-relaxed">
-              Tell us what you need. Our dedicated team will review your requirements and provide verified scope, timeline, and competitive institutional pricing.
+              {headerSec.subtitle || "Tell us what you need. Our dedicated team will review your requirements and provide verified scope, timeline, and competitive institutional pricing."}
             </p>
           </div>
 
@@ -230,7 +250,7 @@ export default function ServicesPage() {
 
               <div className="pt-2">
                 <a
-                  href={`https://wa.me/${CLIENT_INFO.whatsapp || "8801731214379"}?text=Hello%20Shoilpikkabbo%2C%20I%20have%20an%20inquiry%20regarding%20services.`}
+                  href={`${settings.socialWhatsapp || "https://wa.me/8801731214379"}?text=Hello%20Shoilpikkabbo%2C%20I%20have%20an%20inquiry%20regarding%20services.`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="h-12 px-6 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-2xl inline-flex items-center gap-2.5 transition-all shadow-md shadow-emerald-600/20 hover:shadow-lg cursor-pointer"

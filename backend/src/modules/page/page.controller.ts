@@ -78,6 +78,20 @@ export class PageController {
     }
   }
 
+  static async listPages(req: Request, res: Response, next: NextFunction) {
+    try {
+      const pages = await PageService.listPages();
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Pages listed successfully.",
+        data: pages,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
   static async restoreRevision(req: Request, res: Response, next: NextFunction) {
     try {
       const slug = req.params.slug || "home";
@@ -94,3 +108,4 @@ export class PageController {
     }
   }
 }
+

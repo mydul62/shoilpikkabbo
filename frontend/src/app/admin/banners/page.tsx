@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { bannersApi } from "@/lib/api";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 export default function AdminBannersPage() {
   const [banners, setBanners] = React.useState<any[]>([]);
@@ -265,18 +266,16 @@ export default function AdminBannersPage() {
                 </select>
               </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-charcoal-800">
-                Banner Image URL
-              </label>
-              <Input
-                placeholder="https://images.unsplash.com/..."
-                value={newBanner.imageUrl}
-                onChange={(e) =>
-                  setNewBanner({ ...newBanner, imageUrl: e.target.value })
-                }
-              />
-            </div>
+            <ImageUploader
+              label="Banner Panoramic Image"
+              helperText="Upload 16:7 panoramic banner for homepage carousel (JPG, PNG, WEBP)"
+              value={newBanner.imageUrl}
+              onChange={(url) =>
+                setNewBanner({ ...newBanner, imageUrl: url })
+              }
+              folder="banners"
+              aspectRatio="banner"
+            />
             <div className="pt-2 flex justify-end gap-2 border-t border-sand">
               <Button
                 type="button"

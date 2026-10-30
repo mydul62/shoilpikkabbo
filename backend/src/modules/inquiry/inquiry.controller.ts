@@ -19,12 +19,12 @@ export class InquiryController {
 
   static async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const inquiries = await InquiryService.getAll();
+      const result = await InquiryService.getAll(req.query as any);
       return sendResponse(res, {
         statusCode: 200,
         success: true,
         message: "Service inquiries retrieved.",
-        data: inquiries,
+        data: result,
       });
     } catch (err) {
       return next(err);
@@ -41,6 +41,51 @@ export class InquiryController {
         success: true,
         message: "Inquiry status updated.",
         data: updated,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async batchUpdateStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { ids, status, adminNotes } = req.body;
+      const result = await InquiryService.batchUpdateStatus(ids, status, adminNotes);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: `Successfully marked ${result.updatedCount} inquiries as ${status}.`,
+        data: result,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const result = await InquiryService.delete(id);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: result.message,
+        data: result,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async batchDelete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { ids } = req.body;
+      const result = await InquiryService.batchDelete(ids);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: result.message,
+        data: result,
       });
     } catch (err) {
       return next(err);

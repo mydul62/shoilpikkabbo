@@ -72,4 +72,50 @@ export class ProductController {
       return next(err);
     }
   }
+
+  static async batchDelete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { ids } = req.body;
+      const result = await ProductService.batchDelete(ids);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: "Batch products deleted successfully.",
+        data: result,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async batchStatus(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { ids, isActive } = req.body;
+      const result = await ProductService.batchStatus(ids, isActive);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: `Batch products marked as ${isActive ? "active" : "draft"} successfully.`,
+        data: result,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+
+  static async batchFeatured(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { ids, isFeatured } = req.body;
+      const result = await ProductService.batchFeatured(ids, isFeatured);
+      return sendResponse(res, {
+        statusCode: 200,
+        success: true,
+        message: `Batch products marked as ${isFeatured ? "featured" : "standard"} successfully.`,
+        data: result,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
 }
+
