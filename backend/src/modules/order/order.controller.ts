@@ -1,17 +1,33 @@
 import { Request, Response, NextFunction } from "express";
 import { OrderService } from "./order.service";
+import { SSLCommerzService } from "../payment/sslcommerz.service";
 import { sendResponse } from "../../utils/response";
+import { PaymentMethod } from "@prisma/client";
 
 export class OrderController {
   static async createOrder(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = req.user?.userId;
       const order = await OrderService.createOrder({ ...req.body, userId });
+
+      let paymentUrl: string | undefined = undefined;
+
+      // If user selected ONLINE_GATEWAY (SSLCommerz)
+      if (order.paymentMethod === PaymentMethod.ONLINE_GATEWAY) {
+        const initResult = await SSLCommerzService.initiatePayment(order);
+        if (initResult.success && initResult.paymentUrl) {
+          paymentUrl = initResult.paymentUrl;
+        }
+      }
+
       return sendResponse(res, {
         statusCode: 201,
         success: true,
         message: "Order placed successfully.",
-        data: order,
+        data: {
+          ...order,
+          paymentUrl,
+        },
       });
     } catch (err) {
       return next(err);
