@@ -35,7 +35,6 @@ export default function OffersPage() {
       addToCart(product, 1);
       setAddedItem(productName);
       setTimeout(() => setAddedItem(null), 2000);
-      setIsCartOpen(true);
     }
   };
 

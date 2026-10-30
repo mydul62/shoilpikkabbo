@@ -176,7 +176,6 @@ export function ClientMockupHome() {
     );
     setAddedProductId(product.id);
     setTimeout(() => setAddedProductId(null), 1500);
-    setIsCartOpen(true);
   };
 
   // 1. Featured Products: top 5 products from PostgreSQL database

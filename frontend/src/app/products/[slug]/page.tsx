@@ -183,10 +183,10 @@ export default function ProductDetailPage() {
     addToCart({ ...product, price: currentPrice }, quantity);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 1500);
-    setIsCartOpen(true);
   };
 
   const handleBuyNow = () => {
+    setIsCartOpen(false);
     addToCart({ ...product, price: currentPrice }, quantity);
     router.push("/checkout");
   };
@@ -229,7 +229,6 @@ export default function ProductDetailPage() {
     );
     setAddedCrossSellId(item.id);
     setTimeout(() => setAddedCrossSellId(null), 1500);
-    setIsCartOpen(true);
   };
 
   return (

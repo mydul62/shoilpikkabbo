@@ -104,7 +104,6 @@ function ShopContent() {
     addToCart(prod, 1);
     setAddedProductId(prod.id);
     setTimeout(() => setAddedProductId(null), 1500);
-    setIsCartOpen(true);
   };
 
   const [liveProducts, setLiveProducts] = React.useState<any[]>([]);
