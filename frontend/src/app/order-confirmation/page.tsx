@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { ArrowUpRight, Check, Package, Loader2, HelpCircle } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { formatPrice } from "@/lib/utils";
+import { API_BASE } from "@/lib/api";
 
 function OrderConfirmationContent() {
   const searchParams = useSearchParams();
@@ -24,7 +25,7 @@ function OrderConfirmationContent() {
     const fetchOrderDetails = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`http://localhost:5000/api/v1/orders/track/${encodeURIComponent(orderNumber)}`);
+        const res = await fetch(`${API_BASE}/orders/track/${encodeURIComponent(orderNumber)}`);
         const json = await res.json();
         if (json.success && json.data) {
           setOrder(json.data);

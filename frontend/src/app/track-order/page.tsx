@@ -19,6 +19,7 @@ import {
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { CLIENT_INFO, Order } from "@/data/mock-data";
 import { formatPrice } from "@/lib/utils";
+import { API_BASE } from "@/lib/api";
 
 function TrackOrderContent() {
   const searchParams = useSearchParams();
@@ -43,7 +44,7 @@ function TrackOrderContent() {
       setHasSearched(true);
 
       const qs = cleanPhone ? `?phone=${encodeURIComponent(cleanPhone.replace(/\s+/g, ""))}` : "";
-      const res = await fetch(`http://localhost:5000/api/v1/orders/track/${encodeURIComponent(cleanOrder)}${qs}`);
+      const res = await fetch(`${API_BASE}/orders/track/${encodeURIComponent(cleanOrder)}${qs}`);
       const json = await res.json();
 
       if (json.success && json.data) {

@@ -27,6 +27,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useSettings } from "@/context/SettingsContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { MOCK_PRODUCTS } from "@/data/mock-data";
+import { API_BASE } from "@/lib/api";
 
 export interface MegaMenuCategory {
   name: string;
@@ -206,7 +207,7 @@ export function Header() {
   // Fetch live products for accurate global search
   React.useEffect(() => {
     let isMounted = true;
-    fetch("http://localhost:5000/api/v1/products?limit=100")
+    fetch(`${API_BASE}/products?limit=100`)
       .then((res) => res.json())
       .then((json) => {
         if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {

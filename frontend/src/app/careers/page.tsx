@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowUpRight, Briefcase, MapPin, Calendar, Check, Loader2, ChevronRight, Sparkles } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { CLIENT_INFO } from "@/data/mock-data";
+import { API_BASE } from "@/lib/api";
 
 export default function CareersPage() {
   const [vacancies, setVacancies] = React.useState<any[]>([]);
@@ -14,7 +15,7 @@ export default function CareersPage() {
   React.useEffect(() => {
     const fetchVacancies = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/v1/careers");
+        const res = await fetch(`${API_BASE}/careers`);
         const json = await res.json();
         if (json.success && json.data) {
           setVacancies(json.data);

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useSettings } from "@/context/SettingsContext";
+import { inquiriesApi } from "@/lib/api";
 
 export function FloatingWidgets() {
   const { totalItemCount, subtotal, setIsCartOpen } = useCart();
@@ -36,16 +37,12 @@ export function FloatingWidgets() {
 
     try {
       setIsSending(true);
-      await fetch("http://localhost:5000/api/v1/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          serviceType: "Website Live Chat Message",
-          customerName: name,
-          customerPhone: contact,
-          customerEmail: contact.includes("@") ? contact : undefined,
-          requirements: message,
-        }),
+      await inquiriesApi.create({
+        serviceType: "Website Live Chat Message",
+        customerName: name,
+        customerPhone: contact,
+        customerEmail: contact.includes("@") ? contact : undefined,
+        requirements: message,
       });
       setIsSent(true);
     } catch (err) {

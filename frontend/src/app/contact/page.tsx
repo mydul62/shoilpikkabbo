@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useSettings } from "@/context/SettingsContext";
-import { pagesApi } from "@/lib/api";
+import { pagesApi, inquiriesApi } from "@/lib/api";
 
 export default function ContactPage() {
   const { settings } = useSettings();
@@ -67,16 +67,12 @@ export default function ContactPage() {
 
     try {
       setIsSubmitting(true);
-      await fetch("http://localhost:5000/api/v1/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          serviceType: formData.topic || "General Customer Enquiry",
-          customerName: formData.name,
-          customerPhone: formData.phone || "01700 000000",
-          customerEmail: formData.email,
-          requirements: `${formData.orderNumber ? `Order #${formData.orderNumber} - ` : ""}${formData.message}`,
-        }),
+      await inquiriesApi.create({
+        serviceType: formData.topic || "General Customer Enquiry",
+        customerName: formData.name,
+        customerPhone: formData.phone || "01700 000000",
+        customerEmail: formData.email,
+        requirements: `${formData.orderNumber ? `Order #${formData.orderNumber} - ` : ""}${formData.message}`,
       });
       setIsSubmitted(true);
     } catch (err) {

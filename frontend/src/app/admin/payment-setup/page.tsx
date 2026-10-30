@@ -141,9 +141,9 @@ export default function AdminPaymentSetupPage() {
 
   // Base URL for callback preview
   const backendBaseUrl =
-    typeof window !== "undefined"
-      ? `${window.location.protocol}//${window.location.hostname}:5000`
-      : "http://localhost:5000";
+    typeof window !== "undefined" && window.location.hostname === "localhost"
+      ? "http://localhost:5000"
+      : "https://shoilpikkabbo.onrender.com";
 
   return (
     <AdminLayoutShell>

@@ -9,6 +9,7 @@ import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { MOCK_PRODUCTS, MOCK_CATEGORIES, Product } from "@/data/mock-data";
+import { API_BASE } from "@/lib/api";
 
 const OFFICIAL_CATEGORIES = [
   { name: "Handicrafts", slug: "handicraft" },
@@ -106,7 +107,7 @@ function ShopContent() {
   React.useEffect(() => {
     const fetchCatalog = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/v1/products?limit=100");
+        const res = await fetch(`${API_BASE}/products?limit=100`);
         const json = await res.json();
         if (json.success && json.data && json.data.length > 0) {
           const mapped = json.data.map((p: any) => ({
@@ -138,7 +139,7 @@ function ShopContent() {
     };
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/v1/categories");
+        const res = await fetch(`${API_BASE}/categories`);
         const json = await res.json();
         if (json.success && json.data) {
           setLiveCategories(json.data);

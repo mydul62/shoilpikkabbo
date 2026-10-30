@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/context/AuthContext";
 import { formatPrice } from "@/lib/utils";
+import { API_BASE } from "@/lib/api";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -39,7 +40,7 @@ export default function AccountPage() {
       const fetchMyOrders = async () => {
         try {
           setOrdersLoading(true);
-          const res = await fetch(`http://localhost:5000/api/v1/orders/track?phone=${encodeURIComponent(user.phone)}`);
+          const res = await fetch(`${API_BASE}/orders/track?phone=${encodeURIComponent(user.phone)}`);
           const json = await res.json();
           if (json.success && Array.isArray(json.data)) {
             setOrders(json.data);

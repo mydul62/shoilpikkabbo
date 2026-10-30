@@ -29,7 +29,7 @@ import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { MOCK_PRODUCTS, Product } from "@/data/mock-data";
-import { productsApi } from "@/lib/api";
+import { productsApi, API_BASE } from "@/lib/api";
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -65,7 +65,7 @@ export default function ProductDetailPage() {
     let isMounted = true;
     if (slug) {
       setLoading(true);
-      fetch(`http://localhost:5000/api/v1/products/${encodeURIComponent(slug)}`)
+      fetch(`${API_BASE}/products/${encodeURIComponent(slug)}`)
         .then((res) => res.json())
         .then((json) => {
           if (isMounted && json.success && json.data) {
