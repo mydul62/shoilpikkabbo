@@ -148,8 +148,8 @@ export default function AdminPaymentsPage() {
 
     const siblingNotes = Array.isArray(item.order?.payments)
       ? item.order.payments
-          .map((p: any) => `${p.verificationNotes || ""} ${p.bankReference || ""}`)
-          .join(" ")
+        .map((p: any) => `${p.verificationNotes || ""} ${p.bankReference || ""}`)
+        .join(" ")
       : "";
 
     const combinedNotes = (
@@ -385,11 +385,11 @@ export default function AdminPaymentsPage() {
           prev.map((p) =>
             p.id === id
               ? {
-                  ...p,
-                  status: decision,
-                  verificationNotes: notes || p.verificationNotes,
-                  verifiedAt: new Date(),
-                }
+                ...p,
+                status: decision,
+                verificationNotes: notes || p.verificationNotes,
+                verifiedAt: new Date(),
+              }
               : p
           )
         );
@@ -430,11 +430,11 @@ export default function AdminPaymentsPage() {
           prev.map((p) =>
             selectedIds.includes(p.id)
               ? {
-                  ...p,
-                  status: decision,
-                  verificationNotes: notes || p.verificationNotes,
-                  verifiedAt: new Date(),
-                }
+                ...p,
+                status: decision,
+                verificationNotes: notes || p.verificationNotes,
+                verifiedAt: new Date(),
+              }
               : p
           )
         );
@@ -565,8 +565,7 @@ export default function AdminPaymentsPage() {
     if (clean.startsWith("0")) clean = "880" + clean.slice(1);
     else if (!clean.startsWith("880") && clean.length === 10) clean = "880" + clean;
     const msg = encodeURIComponent(
-      `Hello ${customerName}, greeting from Shoilpikkabbo regarding your payment verification for Order #${orderNumber} ${
-        trxId ? `(TrxID: ${trxId})` : ""
+      `Hello ${customerName}, greeting from Shoilpikkabbo regarding your payment verification for Order #${orderNumber} ${trxId ? `(TrxID: ${trxId})` : ""
       }.`
     );
     return `https://wa.me/${clean}?text=${msg}`;
@@ -595,13 +594,12 @@ export default function AdminPaymentsPage() {
       {alertToast && (
         <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
           <div
-            className={`p-4 rounded-2xl shadow-2xl border flex items-center gap-3 max-w-md ${
-              alertToast.type === "success"
+            className={`p-4 rounded-2xl shadow-2xl border flex items-center gap-3 max-w-md ${alertToast.type === "success"
                 ? "bg-[#0D3B37] text-white border-emerald-700"
                 : alertToast.type === "warning"
-                ? "bg-amber-500 text-charcoal-900 border-amber-600"
-                : "bg-rose-600 text-white border-rose-700"
-            }`}
+                  ? "bg-amber-500 text-charcoal-900 border-amber-600"
+                  : "bg-rose-600 text-white border-rose-700"
+              }`}
           >
             {alertToast.type === "success" && <CheckCircle2 className="w-5 h-5 text-emerald-300 shrink-0" />}
             {alertToast.type === "warning" && <AlertTriangle className="w-5 h-5 text-charcoal-900 shrink-0" />}
@@ -720,33 +718,29 @@ export default function AdminPaymentsPage() {
           {/* 1. Total Payments */}
           <div
             onClick={() => setStatusFilter("ALL")}
-            className={`p-4 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
-              statusFilter === "ALL"
+            className={`p-4 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${statusFilter === "ALL"
                 ? "bg-[#0D3B37] text-white border-forest-900 shadow-md ring-2 ring-forest-800/20"
                 : "bg-white text-charcoal-900 border-brand-border hover:border-forest-800/50 shadow-xs"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <span
-                className={`text-[11px] font-bold uppercase tracking-wider ${
-                  statusFilter === "ALL" ? "text-emerald-200/80" : "text-charcoal-500"
-                }`}
+                className={`text-[11px] font-bold uppercase tracking-wider ${statusFilter === "ALL" ? "text-emerald-200/80" : "text-charcoal-500"
+                  }`}
               >
                 Total Records
               </span>
               <div
-                className={`w-7 h-7 rounded-xl flex items-center justify-center ${
-                  statusFilter === "ALL" ? "bg-white/10 text-emerald-300" : "bg-forest-800/10 text-forest-900"
-                }`}
+                className={`w-7 h-7 rounded-xl flex items-center justify-center ${statusFilter === "ALL" ? "bg-white/10 text-emerald-300" : "bg-forest-800/10 text-forest-900"
+                  }`}
               >
                 <CreditCard className="w-3.5 h-3.5" />
               </div>
             </div>
             <div className="text-2xl font-black">{stats.totalPayments || payments.length}</div>
             <div
-              className={`text-[11px] font-semibold mt-1 flex items-center gap-1 ${
-                statusFilter === "ALL" ? "text-emerald-300" : "text-forest-900"
-              }`}
+              className={`text-[11px] font-semibold mt-1 flex items-center gap-1 ${statusFilter === "ALL" ? "text-emerald-300" : "text-forest-900"
+                }`}
             >
               <span>Settled: {formatPrice(stats.verifiedAmount || 0)}</span>
             </div>
@@ -755,24 +749,21 @@ export default function AdminPaymentsPage() {
           {/* 2. Pending Verification */}
           <div
             onClick={() => setStatusFilter("PENDING")}
-            className={`p-4 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
-              statusFilter === "PENDING"
+            className={`p-4 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${statusFilter === "PENDING"
                 ? "bg-amber-500 text-gray-950 border-amber-600 shadow-md ring-2 ring-amber-500/20"
                 : "bg-white text-charcoal-900 border-brand-border hover:border-amber-400 shadow-xs"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <span
-                className={`text-[11px] font-bold uppercase tracking-wider ${
-                  statusFilter === "PENDING" ? "text-amber-950" : "text-charcoal-500"
-                }`}
+                className={`text-[11px] font-bold uppercase tracking-wider ${statusFilter === "PENDING" ? "text-amber-950" : "text-charcoal-500"
+                  }`}
               >
                 Pending Audit
               </span>
               <div
-                className={`w-7 h-7 rounded-xl flex items-center justify-center ${
-                  statusFilter === "PENDING" ? "bg-black/15 text-amber-950" : "bg-amber-100 text-amber-800"
-                }`}
+                className={`w-7 h-7 rounded-xl flex items-center justify-center ${statusFilter === "PENDING" ? "bg-black/15 text-amber-950" : "bg-amber-100 text-amber-800"
+                  }`}
               >
                 <Clock className="w-3.5 h-3.5" />
               </div>
@@ -781,9 +772,8 @@ export default function AdminPaymentsPage() {
               {stats.pendingCount ?? payments.filter((p) => p.status === "PENDING").length}
             </div>
             <div
-              className={`text-[11px] font-bold mt-1 ${
-                statusFilter === "PENDING" ? "text-amber-950" : "text-amber-700"
-              }`}
+              className={`text-[11px] font-bold mt-1 ${statusFilter === "PENDING" ? "text-amber-950" : "text-amber-700"
+                }`}
             >
               Vol: {formatPrice(stats.pendingAmount || 0)}
             </div>
@@ -792,24 +782,21 @@ export default function AdminPaymentsPage() {
           {/* 3. Verified & Settled */}
           <div
             onClick={() => setStatusFilter("VERIFIED")}
-            className={`p-4 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
-              statusFilter === "VERIFIED"
+            className={`p-4 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${statusFilter === "VERIFIED"
                 ? "bg-emerald-600 text-white border-emerald-700 shadow-md ring-2 ring-emerald-500/20"
                 : "bg-white text-charcoal-900 border-brand-border hover:border-emerald-400 shadow-xs"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <span
-                className={`text-[11px] font-bold uppercase tracking-wider ${
-                  statusFilter === "VERIFIED" ? "text-emerald-100" : "text-charcoal-500"
-                }`}
+                className={`text-[11px] font-bold uppercase tracking-wider ${statusFilter === "VERIFIED" ? "text-emerald-100" : "text-charcoal-500"
+                  }`}
               >
                 Verified & Settled
               </span>
               <div
-                className={`w-7 h-7 rounded-xl flex items-center justify-center ${
-                  statusFilter === "VERIFIED" ? "bg-white/15 text-white" : "bg-emerald-100 text-emerald-800"
-                }`}
+                className={`w-7 h-7 rounded-xl flex items-center justify-center ${statusFilter === "VERIFIED" ? "bg-white/15 text-white" : "bg-emerald-100 text-emerald-800"
+                  }`}
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />
               </div>
@@ -818,9 +805,8 @@ export default function AdminPaymentsPage() {
               {stats.verifiedCount ?? payments.filter((p) => p.status === "VERIFIED").length}
             </div>
             <div
-              className={`text-[11px] font-semibold mt-1 ${
-                statusFilter === "VERIFIED" ? "text-emerald-100" : "text-emerald-700"
-              }`}
+              className={`text-[11px] font-semibold mt-1 ${statusFilter === "VERIFIED" ? "text-emerald-100" : "text-emerald-700"
+                }`}
             >
               Vol: {formatPrice(stats.verifiedAmount || 0)}
             </div>
@@ -829,24 +815,21 @@ export default function AdminPaymentsPage() {
           {/* 4. Rejected */}
           <div
             onClick={() => setStatusFilter("REJECTED")}
-            className={`p-4 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${
-              statusFilter === "REJECTED"
+            className={`p-4 rounded-3xl border transition-all cursor-pointer relative overflow-hidden group ${statusFilter === "REJECTED"
                 ? "bg-rose-600 text-white border-rose-700 shadow-md ring-2 ring-rose-500/20"
                 : "bg-white text-charcoal-900 border-brand-border hover:border-rose-400 shadow-xs"
-            }`}
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <span
-                className={`text-[11px] font-bold uppercase tracking-wider ${
-                  statusFilter === "REJECTED" ? "text-rose-100" : "text-charcoal-500"
-                }`}
+                className={`text-[11px] font-bold uppercase tracking-wider ${statusFilter === "REJECTED" ? "text-rose-100" : "text-charcoal-500"
+                  }`}
               >
                 Audit Rejected
               </span>
               <div
-                className={`w-7 h-7 rounded-xl flex items-center justify-center ${
-                  statusFilter === "REJECTED" ? "bg-white/15 text-white" : "bg-rose-100 text-rose-800"
-                }`}
+                className={`w-7 h-7 rounded-xl flex items-center justify-center ${statusFilter === "REJECTED" ? "bg-white/15 text-white" : "bg-rose-100 text-rose-800"
+                  }`}
               >
                 <XCircle className="w-3.5 h-3.5" />
               </div>
@@ -855,9 +838,8 @@ export default function AdminPaymentsPage() {
               {stats.rejectedCount ?? payments.filter((p) => p.status === "REJECTED").length}
             </div>
             <div
-              className={`text-[11px] font-semibold mt-1 ${
-                statusFilter === "REJECTED" ? "text-rose-100" : "text-rose-700"
-              }`}
+              className={`text-[11px] font-semibold mt-1 ${statusFilter === "REJECTED" ? "text-rose-100" : "text-rose-700"
+                }`}
             >
               Flagged Transactions
             </div>
@@ -875,20 +857,18 @@ export default function AdminPaymentsPage() {
             <button
               key={tab.id}
               onClick={() => setStatusFilter(tab.id)}
-              className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 border ${
-                statusFilter === tab.id
+              className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-2 border ${statusFilter === tab.id
                   ? "bg-[#0D3B37] text-white border-forest-900 shadow-xs"
                   : "bg-white text-charcoal-700 border-brand-border hover:bg-sand"
-              }`}
+                }`}
             >
               {tab.dot && <span className={`w-2 h-2 rounded-full ${tab.dot}`} />}
               <span>{tab.label}</span>
               <span
-                className={`px-1.5 py-0.2 rounded-md text-[10px] ${
-                  statusFilter === tab.id
+                className={`px-1.5 py-0.2 rounded-md text-[10px] ${statusFilter === tab.id
                     ? "bg-white/20 text-white"
                     : "bg-sand text-charcoal-800"
-                }`}
+                  }`}
               >
                 {tab.count ?? 0}
               </span>
@@ -1109,11 +1089,10 @@ export default function AdminPaymentsPage() {
                     return (
                       <tr
                         key={item.id}
-                        className={`transition-colors group ${
-                          isSelected
+                        className={`transition-colors group ${isSelected
                             ? "bg-emerald-50/60 hover:bg-emerald-50/80"
                             : "hover:bg-[#FAF8F5]/80"
-                        }`}
+                          }`}
                       >
                         {/* Checkbox */}
                         <td className="py-3.5 px-4 text-center">
@@ -1283,16 +1262,16 @@ export default function AdminPaymentsPage() {
                               item.status === "VERIFIED"
                                 ? "success"
                                 : item.status === "REJECTED"
-                                ? "danger"
-                                : "warning"
+                                  ? "danger"
+                                  : "warning"
                             }
                             className="text-[11px] font-bold py-0.5"
                           >
                             {item.status === "VERIFIED"
                               ? "Verified & Settled"
                               : item.status === "REJECTED"
-                              ? "Rejected"
-                              : "Pending Audit"}
+                                ? "Rejected"
+                                : "Pending Audit"}
                           </Badge>
                         </td>
 
@@ -1371,9 +1350,8 @@ export default function AdminPaymentsPage() {
           isOpen={Boolean(selectedPayment)}
           onClose={() => setSelectedPayment(null)}
           title="Payment Audit & Statement Matching"
-          description={`Payment Record #${selectedPayment?.id?.slice(0, 8)} • Placed on ${
-            selectedPayment ? new Date(selectedPayment.createdAt).toLocaleString() : ""
-          }`}
+          description={`Payment Record #${selectedPayment?.id?.slice(0, 8)} • Placed on ${selectedPayment ? new Date(selectedPayment.createdAt).toLocaleString() : ""
+            }`}
           maxWidth="xl"
         >
           {selectedPayment && (

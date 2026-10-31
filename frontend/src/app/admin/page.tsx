@@ -16,6 +16,7 @@ import {
   MessageSquare,
   Loader2,
   RefreshCw,
+  Sparkles,
 } from "lucide-react";
 import { AdminLayoutShell } from "@/components/admin/AdminLayoutShell";
 import { Button } from "@/components/ui/button";
@@ -131,16 +132,16 @@ export default function AdminOverviewPage() {
           </div>
         )}
 
-        {/* 7 Key Operational Summary KPI Cards */}
+        {/* 8 Key Operational Summary KPI Cards */}
         {loading && !overview ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[...Array(7)].map((_, i) => (
+            {[...Array(8)].map((_, i) => (
               <div key={i} className="p-5 rounded-2xl bg-white border border-brand-border h-28 animate-pulse" />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {/* Confirmed Revenue */}
+            {/* Confirmed Revenue (Lifetime) */}
             <div className="p-5 rounded-2xl bg-white border border-brand-border shadow-xs">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-charcoal-500 uppercase tracking-wider">
@@ -155,6 +156,24 @@ export default function AdminOverviewPage() {
               </p>
               <p className="text-[10px] text-emerald-700 font-medium mt-1">
                 From verified transactions
+              </p>
+            </div>
+
+            {/* 24-Hour Revenue (Today) */}
+            <div className="p-5 rounded-2xl bg-white border-2 border-emerald-400 bg-emerald-50/20 shadow-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-emerald-900 uppercase tracking-wider">
+                  24H Revenue (Today)
+                </span>
+                <div className="h-8 w-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+              </div>
+              <p className="text-2xl font-black text-emerald-900 font-heading mt-3">
+                {formatPrice(overview?.revenue24h || 0)}
+              </p>
+              <p className="text-[10px] text-emerald-700 font-semibold mt-1">
+                {overview?.orders24hCount || 0} order(s) placed in last 24h
               </p>
             </div>
 
@@ -249,7 +268,7 @@ export default function AdminOverviewPage() {
             </div>
 
             {/* Registered Customers */}
-            <div className="p-5 rounded-2xl bg-white border border-brand-border shadow-xs col-span-2 sm:col-span-1">
+            <div className="p-5 rounded-2xl bg-white border border-brand-border shadow-xs">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-charcoal-500 uppercase tracking-wider">
                   Customer Base
