@@ -1,6 +1,7 @@
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/apiError";
-import { OrderStatus, PaymentStatus, PaymentMethod, VerificationStatus } from "@prisma/client";
+import { OrderStatus, PaymentStatus, PaymentMethod, VerificationStatus, Role } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 export class OrderService {
   static async createOrder(data: {
@@ -97,11 +98,57 @@ export class OrderService {
       const totalAmount = Math.max(0, subtotal - discountAmount + deliveryCharge);
       const orderNumber = `SK-2026-${Math.floor(1000 + Math.random() * 9000)}`;
 
+      // Ensure customer profile is collected and linked in User table (whether guest or logged-in)
+      let resolvedUserId = data.userId;
+      const cleanPhone = (data.customerPhone || "").trim();
+
+      if (!resolvedUserId && cleanPhone) {
+        const existingUser = await tx.user.findFirst({
+          where: { phone: cleanPhone },
+        });
+
+        if (existingUser) {
+          resolvedUserId = existingUser.id;
+          if (!existingUser.email && data.customerEmail) {
+            const emailTaken = await tx.user.findFirst({
+              where: { email: data.customerEmail.trim() },
+            });
+            if (!emailTaken) {
+              await tx.user.update({
+                where: { id: existingUser.id },
+                data: { email: data.customerEmail.trim() },
+              });
+            }
+          }
+        } else {
+          // Auto-create permanent customer record from order details
+          const tempPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+          const passwordHash = await bcrypt.hash(tempPassword, 10);
+
+          let customerEmail = data.customerEmail ? data.customerEmail.trim() : null;
+          if (customerEmail) {
+            const emailTaken = await tx.user.findFirst({ where: { email: customerEmail } });
+            if (emailTaken) customerEmail = null;
+          }
+
+          const newCustomer = await tx.user.create({
+            data: {
+              name: (data.customerName || "Customer").trim(),
+              phone: cleanPhone,
+              email: customerEmail,
+              passwordHash,
+              role: Role.CUSTOMER,
+            },
+          });
+          resolvedUserId = newCustomer.id;
+        }
+      }
+
       // Create Order
       const order = await tx.order.create({
         data: {
           orderNumber,
-          userId: data.userId,
+          userId: resolvedUserId,
           customerName: data.customerName,
           customerPhone: data.customerPhone,
           customerEmail: data.customerEmail,
