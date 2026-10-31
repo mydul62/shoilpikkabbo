@@ -57,6 +57,13 @@ async function main() {
 
   console.log("✓ Provisioned Admin and Staff accounts.");
 
+  // SAFETY GUARD: If database is already provisioned with products, DO NOT delete live orders or reset catalog!
+  const productCount = await prisma.product.count();
+  if (productCount > 0) {
+    console.log(`✓ Database already has ${productCount} products. Skipping catalog reset to preserve all live customer orders & payment history.`);
+    return;
+  }
+
   // -----------------------------------------------------------------
   // 2. Categories (All 10 Categories from Master Spec)
   // -----------------------------------------------------------------
@@ -735,14 +742,8 @@ async function main() {
     },
   ];
 
-  // 1. Clean up dependent records first to respect foreign key constraints
+  // 1. Clean up abandoned cart items only if needed
   await prisma.cartItem.deleteMany({});
-  await prisma.orderItem.deleteMany({});
-  await prisma.deliveryTrackingEvent.deleteMany({});
-  await prisma.payment.deleteMany({});
-  await prisma.order.deleteMany({});
-  await prisma.serviceInquiry.deleteMany({});
-  await prisma.productImage.deleteMany({});
 
   // 2. Clean up any legacy products not in our verified 30 products catalog
   const realisticSlugs = products.map((p) => p.slug);
@@ -918,15 +919,9 @@ async function main() {
   console.log("✓ Seeded active coupons (WELCOME10, SHOILPIK15, FESTIVE20, FLAT200).");
 
   // -----------------------------------------------------------------
-  // 6. Ensure clean operational state (NO demo orders, inquiries or dummy data)
+  // 6. Operational state check
   // -----------------------------------------------------------------
-  await prisma.deliveryTrackingEvent.deleteMany({});
-  await prisma.payment.deleteMany({});
-  await prisma.orderItem.deleteMany({});
-  await prisma.order.deleteMany({});
-  await prisma.serviceInquiry.deleteMany({});
-  await prisma.careerApplication.deleteMany({});
-  console.log("✓ Verified zero demo orders, inquiries, or mock transactions in database.");
+  console.log("✓ Operational state preserved.");
 
   // -----------------------------------------------------------------
   // 7. Career Listings (Available positions without dummy applicants)
