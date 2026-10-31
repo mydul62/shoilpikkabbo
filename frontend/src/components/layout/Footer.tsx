@@ -21,7 +21,7 @@ export function Footer() {
 
   return (
     <footer className="mt-auto bg-[#092B28] text-white overflow-hidden border-t border-[#072220]">
-      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-12">
+      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 pb-12 border-b border-white/10">
           {/* Column 1: Brand Info & Socials (Col 1-4) */}
           <div className="lg:col-span-4 space-y-4">

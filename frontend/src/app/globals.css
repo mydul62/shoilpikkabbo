@@ -84,10 +84,10 @@ body {
   border-color: #f0ebe1;
 }
 
-/* Standard site container for large desktop (1484px content + 20px padding each side = 1524px max-width) */
+/* Standard site container for large desktop (1480px max-width) */
 .container-site {
   width: 100%;
-  max-width: 1524px;
+  max-width: 1480px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 20px;

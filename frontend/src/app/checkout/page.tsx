@@ -466,7 +466,7 @@ function CheckoutContent() {
     return (
       <StorefrontLayout>
         <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-10 sm:py-16">
-          <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
             {/* Top Tag & Checkmark */}
             <div className="flex items-start gap-4 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-1 shadow-xs">
@@ -722,7 +722,7 @@ function CheckoutContent() {
   return (
     <StorefrontLayout>
       <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-12">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb Steps */}
           <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-6">
             <Link href="/cart" className="hover:text-[#E0592A] transition-colors">

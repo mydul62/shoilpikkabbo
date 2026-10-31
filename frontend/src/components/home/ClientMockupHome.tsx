@@ -343,7 +343,7 @@ export function ClientMockupHome() {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="relative w-full max-w-[1524px] mx-auto aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px] select-none">
+        <div className="relative w-full max-w-[1480px] mx-auto aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px] select-none">
           {/* Panoramic High-Res Hero Background Image */}
           <Image
             src={activeSlide.bgImage}
@@ -351,7 +351,7 @@ export function ClientMockupHome() {
             fill
             priority
             className="object-cover object-right sm:object-fill transition-all duration-700"
-            sizes="(max-width: 1524px) 100vw, 1524px"
+            sizes="(max-width: 1480px) 100vw, 1480px"
           />
 
           {/* Subtle Mobile Gradient to ensure high-contrast readability without hiding artwork */}
@@ -489,7 +489,7 @@ export function ClientMockupHome() {
       {/* ========================================================================= */}
       {/* 2. SHOP BY CATEGORY (Live from PostgreSQL) */}
       {/* ========================================================================= */}
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex items-center justify-between pb-6 sm:pb-7">
           <div className="flex items-center gap-3">
@@ -586,7 +586,7 @@ export function ClientMockupHome() {
       {/* ========================================================================= */}
       {/* 3. FEATURED PRODUCTS (Live from PostgreSQL Database) */}
       {/* ========================================================================= */}
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex items-center justify-between pb-6 sm:pb-7">
           <div className="flex items-center gap-3">
@@ -754,7 +754,7 @@ export function ClientMockupHome() {
       {/* ========================================================================= */}
       {/* 4. PROMOTIONAL 3-COLUMN BANNER SECTION */}
       {/* ========================================================================= */}
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
           {/* Card 1: Special Offer UP TO 50% OFF (Exact Client Mockup & High-Res BG Asset) */}
           <div className="relative bg-[#0B4632] rounded-3xl p-6 sm:p-7 lg:p-8 text-white flex flex-col justify-between overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] min-h-[260px] sm:min-h-[280px] group transition-all duration-300">
@@ -925,7 +925,7 @@ export function ClientMockupHome() {
       {/* ========================================================================= */}
       {/* 5. FOR YOU SECTION (Live from PostgreSQL - Matches Real Database Count) */}
       {/* ========================================================================= */}
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex items-center justify-between pb-6 sm:pb-7">
           <div className="flex items-center gap-3">
@@ -1130,7 +1130,7 @@ export function ClientMockupHome() {
       {/* ========================================================================= */}
       {/* 6. WHY CHOOSE SHOILPIKKABBO (Trust Section) */}
       {/* ========================================================================= */}
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-3xl p-8 sm:p-10 lg:p-12 shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left 4 Features (7 Cols) */}

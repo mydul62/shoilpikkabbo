@@ -605,7 +605,7 @@ export function Header() {
 
       {/* 1. Top Bar (Dark Teal #0D3B37) */}
       <div className="bg-[#0D3B37] text-white/90 py-1.5 sm:py-2 border-b border-[#0A2F2C] overflow-hidden">
-        <div className="max-w-[1524px] mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between text-xs sm:text-[13px] gap-2">
+        <div className="max-w-[1480px] mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between text-xs sm:text-[13px] gap-2">
           {/* Left Contact Info & Announcement */}
           <div className="flex items-center gap-2 sm:gap-4 truncate">
             <a
@@ -653,7 +653,7 @@ export function Header() {
 
       {/* 2. Main Header Row (Clean White Background) */}
       <div className="bg-white border-b border-gray-100">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
+        <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4 flex items-center justify-between gap-3 sm:gap-6 lg:gap-10">
           {/* Mobile Menu Button with Smooth Icon Transition */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -931,7 +931,7 @@ export function Header() {
 
       {/* 3. Navigation Bar (All Categories Button + Centered Links - Hidden on small devices) */}
       <nav className="hidden md:block border-b border-gray-100 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-6 sm:gap-8 lg:gap-10 py-2.5">
+        <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-6 sm:gap-8 lg:gap-10 py-2.5">
           {/* All Categories Dropdown Button & Flyout Mega-Menu (Option 2: Daraz / Amazon Style) */}
           <div className="relative shrink-0" ref={categoriesMenuRef}>
             <button

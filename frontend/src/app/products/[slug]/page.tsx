@@ -171,7 +171,7 @@ export default function ProductDetailPage() {
     return (
       <StorefrontLayout>
         <div className="bg-[#FAF8F5] min-h-screen pb-16 animate-pulse">
-          <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             {/* Breadcrumb Skeleton */}
             <div className="h-4 w-60 bg-gray-200/90 rounded-md mb-8"></div>
 
@@ -276,7 +276,7 @@ export default function ProductDetailPage() {
   return (
     <StorefrontLayout>
       <div className="bg-[#FAF8F5] min-h-screen pb-16">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {/* ========================================================================= */}
           {/* 1. BREADCRUMBS & SHARE / WISHLIST ROW */}
           {/* ========================================================================= */}

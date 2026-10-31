@@ -42,7 +42,7 @@ function CheckoutSuccessContent() {
   return (
     <StorefrontLayout>
       <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-10 sm:py-16">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Top Banner Status */}
           <div className="max-w-3xl mx-auto bg-white rounded-3xl p-6 sm:p-10 shadow-[0_4px_25px_rgba(0,0,0,0.04)] border border-gray-100 text-center">
             <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm">

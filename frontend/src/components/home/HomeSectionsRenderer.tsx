@@ -372,7 +372,7 @@ export function HomeSectionsRenderer({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="relative w-full max-w-[1524px] mx-auto aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px]">
+        <div className="relative w-full max-w-[1480px] mx-auto aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px]">
           {/* Panoramic High-Res Hero Background Image with Smooth Cross-Fade */}
           <Image
             key={activeSlide.bgImage}
@@ -381,7 +381,7 @@ export function HomeSectionsRenderer({
             fill
             priority
             className="object-cover object-right sm:object-fill transition-all duration-700"
-            sizes="(max-width: 1524px) 100vw, 1524px"
+            sizes="(max-width: 1480px) 100vw, 1480px"
           />
 
           {/* Subtle Mobile Gradient to ensure text readability */}
@@ -538,7 +538,7 @@ export function HomeSectionsRenderer({
     const p = section.props || {};
 
     return (
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <div className="flex items-center justify-between pb-6">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-[#0D3B37]/10 flex items-center justify-center text-[#0D3B37]">
@@ -659,7 +659,7 @@ export function HomeSectionsRenderer({
     const items = products.slice(0, limit);
 
     return (
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <div className="flex items-center justify-between pb-6 sm:pb-7">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
@@ -846,7 +846,7 @@ export function HomeSectionsRenderer({
     const p = section.props || {};
 
     return (
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
           {/* Card 1: Special Offer */}
           <div className="relative bg-[#0B4632] rounded-3xl p-6 text-white flex flex-col justify-between min-h-[240px] overflow-hidden shadow-xs">
@@ -1027,7 +1027,7 @@ export function HomeSectionsRenderer({
     const items = products.slice(0, forYouVisibleCount);
 
     return (
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <div className="flex items-center justify-between pb-6 sm:pb-7">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
@@ -1261,7 +1261,7 @@ export function HomeSectionsRenderer({
     const p = section.props || {};
 
     return (
-      <section className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <div className="bg-white rounded-3xl p-6 sm:p-8 lg:p-10 shadow-xs border border-gray-100">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-7 space-y-4">
@@ -1352,7 +1352,7 @@ export function HomeSectionsRenderer({
   const renderAboutHeader = (section: HomeSectionData) => {
     const p = section.props || {};
     return (
-      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 py-8">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#0D3B37] text-xs font-bold mb-3 border border-emerald-100">
             <Sparkles className="w-3.5 h-3.5 text-[#E0592A]" />
@@ -1372,7 +1372,7 @@ export function HomeSectionsRenderer({
   const renderAboutStory = (section: HomeSectionData) => {
     const p = section.props || {};
     return (
-      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-6">
             <div className="relative aspect-[4/3] rounded-3xl overflow-hidden bg-gray-100 shadow-md">
@@ -1406,7 +1406,7 @@ export function HomeSectionsRenderer({
   const renderAboutPillars = (section: HomeSectionData) => {
     const p = section.props || {};
     return (
-      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 py-8">
         <div className="text-center max-w-2xl mx-auto mb-6">
           <h3 className="text-2xl font-bold text-[#0D3B37]">{p.headline || "The Principles That Guide Us"}</h3>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">{p.subtitle || "Every order is held to our three benchmarks."}</p>
@@ -1438,7 +1438,7 @@ export function HomeSectionsRenderer({
   const renderServicesHeader = (section: HomeSectionData) => {
     const p = section.props || {};
     return (
-      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 py-8">
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-[#0D3B37] text-xs font-bold mb-3 border border-emerald-100">
             <Building2 className="w-3.5 h-3.5 text-[#E0592A]" />
@@ -1458,7 +1458,7 @@ export function HomeSectionsRenderer({
   const renderServicesList = (section: HomeSectionData) => {
     const p = section.props || {};
     return (
-      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 py-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-start gap-3">
             <Gift className="w-6 h-6 text-[#0D3B37] shrink-0" />
@@ -1499,7 +1499,7 @@ export function HomeSectionsRenderer({
   const renderContactHeader = (section: HomeSectionData) => {
     const p = section.props || {};
     return (
-      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 py-8">
+      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 py-8">
         <div className="max-w-2xl">
           <span className="text-xs font-bold text-[#E0592A] uppercase tracking-wider block mb-1">
             {p.badge || "We Are Here For You"}
@@ -1518,7 +1518,7 @@ export function HomeSectionsRenderer({
   const renderContactDetails = (section: HomeSectionData) => {
     const p = section.props || {};
     return (
-      <div className="max-w-[1524px] mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-[1480px] mx-auto px-4 sm:px-6 py-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs space-y-1.5">
             <Phone className="w-5 h-5 text-[#0D3B37]" />

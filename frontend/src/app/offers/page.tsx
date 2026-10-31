@@ -156,7 +156,7 @@ export default function OffersPage() {
   return (
     <StorefrontLayout>
       <div className="bg-[#FAF8F5] min-h-[calc(100vh-280px)] py-8 sm:py-12 pb-16">
-        <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium mb-4">
             <Link href="/" className="hover:text-[#E0592A] transition-colors">
