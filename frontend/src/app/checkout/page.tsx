@@ -221,6 +221,7 @@ function CheckoutContent() {
   const searchParams = useSearchParams();
   const errorParam = searchParams.get("error");
   const orderNumberParam = searchParams.get("orderNumber");
+  const [showErrorBanner, setShowErrorBanner] = React.useState(Boolean(errorParam));
 
   const { settings } = useSettings();
   const { user, isAuthenticated } = useAuth();
@@ -367,8 +368,21 @@ function CheckoutContent() {
 
     const cleanPhone = formData.phone.trim().replace(/\s+/g, "");
 
-    if (!formData.fullName.trim() || !cleanPhone || !formData.address.trim()) {
-      alert("অনুগ্রহ করে আপনার নাম, মোবাইল নম্বর এবং সম্পূর্ণ ডেলিভারি ঠিকানা পূরণ করুন।");
+    if (!formData.fullName.trim()) {
+      alert("অনুগ্রহ করে আপনার পূর্ণ নাম লিখুন।");
+      return;
+    }
+    if (!cleanPhone) {
+      alert("অনুগ্রহ করে আপনার মোবাইল নম্বর প্রদান করুন।");
+      return;
+    }
+    if (!formData.address.trim()) {
+      alert("অনুগ্রহ করে আপনার সম্পূর্ণ ডেলিভারি ঠিকানা (বাসা নং, রোড নং, এলাকা) লিখুন।");
+      const el = document.getElementById("checkout-address-input");
+      if (el) {
+        el.focus();
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       return;
     }
 
@@ -773,20 +787,35 @@ function CheckoutContent() {
           </div>
 
           {/* Payment Warning Banner if redirected back with error */}
-          {errorParam && (
-            <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3 shadow-xs">
-              <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-              <div className="text-xs sm:text-sm">
-                <p className="font-bold">
-                  {errorParam === "payment_cancelled"
-                    ? "অনলাইন পেমেন্টটি সম্পন্ন হয়নি বা বাতিল করা হয়েছে"
-                    : "অনলাইন পেমেন্ট সম্পন্ন হতে ব্যর্থ হয়েছে"}
-                  {orderNumberParam ? ` (পূর্বের অর্ডার #${orderNumberParam})` : ""}
-                </p>
-                <p className="text-amber-800 text-xs mt-0.5">
-                  আপনি চাইলে নিচে "ক্যাশ অন ডেলিভারি (Cash on Delivery)" নির্বাচন করে কোনো অনলাইন পেমেন্ট ছাড়াই সরাসরি অর্ডার নিশ্চিত করতে পারেন, অথবা পুনরায় চেষ্টা করতে পারেন।
-                </p>
+          {showErrorBanner && (
+            <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-900 flex items-start justify-between gap-3 shadow-sm">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div className="text-xs sm:text-sm">
+                  <p className="font-bold text-amber-950">
+                    {errorParam === "payment_cancelled"
+                      ? "অনলাইন পেমেন্টটি সম্পন্ন হয়নি বা বাতিল করা হয়েছে"
+                      : "অনলাইন পেমেন্ট সম্পন্ন হতে ব্যর্থ হয়েছে"}
+                    {orderNumberParam ? ` (পূর্বের অর্ডার #${orderNumberParam})` : ""}
+                  </p>
+                  <p className="text-amber-900 text-xs mt-1 leading-relaxed">
+                    কোনো চিন্তা নেই! নিচে <strong>&quot;ক্যাশ অন ডেলিভারি (Cash on Delivery)&quot;</strong> নির্বাচন করা হয়েছে। আপনি ডেলিভারির সময় পণ্য হাতে পেয়ে মূল্য পরিশোধ করতে পারবেন।
+                  </p>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowErrorBanner(false);
+                  if (typeof window !== "undefined") {
+                    window.history.replaceState({}, "", "/checkout");
+                  }
+                }}
+                className="text-amber-800 hover:text-amber-950 px-2 py-1 text-sm font-bold bg-amber-100 hover:bg-amber-200 rounded-lg cursor-pointer"
+                title="বন্ধ করুন"
+              >
+                ✕
+              </button>
             </div>
           )}
 
@@ -987,6 +1016,7 @@ function CheckoutContent() {
                     <textarea
                       required
                       rows={3}
+                      id="checkout-address-input"
                       placeholder="বাসা নং, রোড নং, এলাকা/উপজেলা, জেলা ও ল্যান্ডমার্কের নাম বিস্তারিত লিখুন..."
                       value={formData.address}
                       onChange={(e) =>
