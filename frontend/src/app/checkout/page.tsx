@@ -268,14 +268,14 @@ function CheckoutContent() {
     setCouponFeedback(null);
   };
 
-  // Form states initialized empty for actual customers (no manual payments, no postcode)
+  // Form states initialized empty for actual customers (1-click location + single address field)
   const [formData, setFormData] = React.useState({
     fullName: "",
     phone: "",
     email: "",
     address: "",
-    district: shippingCity === "Outside Dhaka" ? "Chattogram" : "Dhaka",
-    area: "",
+    district: shippingCity === "Outside Dhaka" ? "Outside Dhaka" : "Dhaka",
+    area: shippingCity === "Outside Dhaka" ? "Outside Dhaka" : "Inside Dhaka",
     customArea: "",
     deliveryNotes: "",
     paymentMethod: (settings.sslcommerzEnabled === false ? "COD" : "SSLCommerz") as "SSLCommerz" | "COD",
@@ -326,10 +326,6 @@ function CheckoutContent() {
 
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    const resolvedArea =
-      formData.area === "Other Area (অন্যান্য এলাকা)" || formData.area === "Other Area (অন্যান্য)"
-        ? formData.customArea.trim() || formData.area
-        : formData.area.trim();
 
     const cleanPhone = formData.phone.trim().replace(/\s+/g, "");
 
@@ -344,15 +340,6 @@ function CheckoutContent() {
       return;
     }
 
-    if ((formData.area === "Other Area (অন্যান্য এলাকা)" || formData.area === "Other Area (অন্যান্য)") && !formData.customArea.trim()) {
-      alert("অনুগ্রহ করে আপনার নির্দিষ্ট এলাকা বা থানার নাম লিখুন।");
-      return;
-    }
-
-    if (!resolvedArea) {
-      alert("অনুগ্রহ করে আপনার এরিয়া / থানা নির্বাচন অথবা উল্লেখ করুন।");
-      return;
-    }
     if (!formData.agreedToTerms) {
       alert("অর্ডার নিশ্চিত করতে অনুগ্রহ করে শর্তাবলী গ্রহণ করুন।");
       return;
@@ -390,8 +377,8 @@ function CheckoutContent() {
         customerName: formData.fullName.trim(),
         customerPhone: cleanPhone,
         customerEmail: formData.email.trim() || undefined,
-        shippingAddress: [formData.address.trim(), resolvedArea].filter(Boolean).join(", "),
-        city: formData.district || "Dhaka",
+        shippingAddress: formData.address.trim(),
+        city: shippingCity === "Dhaka" ? "Dhaka" : "Outside Dhaka",
         deliveryNotes: formData.deliveryNotes.trim() || undefined,
         paymentMethod: paymentMap[formData.paymentMethod] || "ONLINE_GATEWAY",
         transactionId: `TRX-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
@@ -447,8 +434,8 @@ function CheckoutContent() {
       total: displayTotal,
       fullName: formData.fullName.trim(),
       address: formData.address.trim(),
-      district: formData.district,
-      area: resolvedArea,
+      district: shippingCity === "Dhaka" ? "Dhaka" : "Outside Dhaka",
+      area: shippingCity === "Dhaka" ? "ঢাকার ভেতরে" : "ঢাকার বাইরে",
       phone: cleanPhone,
       email: formData.email.trim(),
       paymentMethod: formData.paymentMethod === "SSLCommerz" ? "অনলাইন পেমেন্ট (SSLCommerz)" : "ক্যাশ অন ডেলিভারি (Cash on Delivery)",
@@ -532,7 +519,7 @@ function CheckoutContent() {
                   <p className="font-bold text-gray-900">{completedOrder.fullName}</p>
                   <p>{completedOrder.address}</p>
                   <p>
-                    {completedOrder.area ? `${completedOrder.area}, ` : ""}{completedOrder.district} · {completedOrder.phone}
+                    {completedOrder.district === "Dhaka" ? "ঢাকার ভেতরে (Inside Dhaka)" : "ঢাকার বাইরে (Outside Dhaka)"} · {completedOrder.phone}
                   </p>
                 </div>
 
@@ -852,148 +839,136 @@ function CheckoutContent() {
                 {/* 02 Delivery address */}
                 <section className="space-y-4 pt-6 border-t border-gray-100">
                   <div className="flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-[#0D3B37]/10 text-[#0D3B37] flex items-center justify-center font-bold text-xs">02</span>
-                    <h2 className="text-xl sm:text-2xl text-[#0D3B37] font-bold">
-                      Delivery Address
-                    </h2>
+                    <span className="w-7 h-7 rounded-lg bg-[#0D3B37]/10 text-[#0D3B37] flex items-center justify-center font-bold text-xs">
+                      02
+                    </span>
+                    <div>
+                      <h2 className="text-xl sm:text-2xl text-[#0D3B37] font-bold leading-tight">
+                        Delivery Address
+                      </h2>
+                      <p className="text-xs text-gray-500 font-normal mt-0.5">
+                        ডেলিভারি এলাকা নির্বাচন করুন এবং আপনার সম্পূর্ণ ঠিকানা লিখুন
+                      </p>
+                    </div>
                   </div>
 
+                  {/* 1-Click Delivery Location Selector */}
+                  <div>
+                    <label className="text-xs font-semibold text-gray-700 block mb-2">
+                      ডেলিভারি এলাকা নির্বাচন করুন * (Select Delivery Location)
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Inside Dhaka */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({ ...prev, district: "Dhaka", area: "Inside Dhaka" }));
+                          setShippingCity("Dhaka");
+                        }}
+                        className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
+                          shippingCity === "Dhaka"
+                            ? "border-2 border-[#0D3B37] bg-emerald-50/70 shadow-sm ring-1 ring-[#0D3B37]/20"
+                            : "border-gray-200 bg-[#FAF8F5] hover:border-gray-300 hover:bg-white"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                              shippingCity === "Dhaka"
+                                ? "border-[#0D3B37] bg-[#0D3B37]"
+                                : "border-gray-400 bg-white"
+                            }`}
+                          >
+                            {shippingCity === "Dhaka" && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                            )}
+                          </span>
+                          <div>
+                            <p className="text-sm font-bold text-[#0D3B37]">
+                              ঢাকার ভেতরে (Inside Dhaka)
+                            </p>
+                            <p className="text-xs text-gray-500 font-normal mt-0.5">
+                              {settings.deliveryTimeDhaka || "২৪ - ৪৮ ঘণ্টার মধ্যে ডেলিভারি"}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-sm font-extrabold text-[#0D3B37] shrink-0">
+                          ৳{settings.deliveryDhaka ?? 70}
+                        </span>
+                      </button>
+
+                      {/* Outside Dhaka */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({ ...prev, district: "Outside Dhaka", area: "Outside Dhaka" }));
+                          setShippingCity("Outside Dhaka");
+                        }}
+                        className={`p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-center justify-between ${
+                          shippingCity === "Outside Dhaka"
+                            ? "border-2 border-[#0D3B37] bg-emerald-50/70 shadow-sm ring-1 ring-[#0D3B37]/20"
+                            : "border-gray-200 bg-[#FAF8F5] hover:border-gray-300 hover:bg-white"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                              shippingCity === "Outside Dhaka"
+                                ? "border-[#0D3B37] bg-[#0D3B37]"
+                                : "border-gray-400 bg-white"
+                            }`}
+                          >
+                            {shippingCity === "Outside Dhaka" && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+                            )}
+                          </span>
+                          <div>
+                            <p className="text-sm font-bold text-[#0D3B37]">
+                              ঢাকার বাইরে (Outside Dhaka)
+                            </p>
+                            <p className="text-xs text-gray-500 font-normal mt-0.5">
+                              {settings.deliveryTimeOutside || "৩ - ৫ কার্যদিবসের মধ্যে ডেলিভারি"}
+                            </p>
+                          </div>
+                        </div>
+                        <span className="text-sm font-extrabold text-[#0D3B37] shrink-0">
+                          ৳{settings.deliveryOutside ?? 130}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Single Delivery Address Textarea */}
                   <div>
                     <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                      Street address *
+                      সম্পূর্ণ ডেলিভারি ঠিকানা (Full Delivery Address) *
                     </label>
-                    <input
+                    <textarea
                       required
-                      type="text"
-                      placeholder="বাসা নং, রোড নং, এলাকা / গ্রাম / ল্যান্ডমার্ক লিখুন..."
+                      rows={3}
+                      placeholder="বাসা নং, রোড নং, এলাকা/উপজেলা, জেলা ও ল্যান্ডমার্কের নাম বিস্তারিত লিখুন..."
                       value={formData.address}
                       onChange={(e) =>
                         setFormData({ ...formData, address: e.target.value })
                       }
-                      className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
+                      className="w-full p-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal resize-none"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                        District (জেলা) *
-                      </label>
-                      <select
-                        value={formData.district}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setFormData({ ...formData, district: val, area: "", customArea: "" });
-                          setShippingCity(val === "Dhaka" ? "Dhaka" : "Outside Dhaka");
-                        }}
-                        className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
-                      >
-                        {BANGLADESH_DISTRICTS.map((d) => (
-                          <option key={d.en} value={d.en}>
-                            {d.en} ({d.bn})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                        Area / Thana (থানা / এলাকা) *
-                      </label>
-                      {formData.district === "Dhaka" ? (
-                        <select
-                          required
-                          value={formData.area}
-                          onChange={(e) =>
-                            setFormData({ ...formData, area: e.target.value })
-                          }
-                          className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
-                        >
-                          <option value="">ঢাকা এরিয়া / থানা নির্বাচন করুন *</option>
-                          {DHAKA_AREAS.map((area) => (
-                            <option key={area} value={area}>
-                              {area}
-                            </option>
-                          ))}
-                        </select>
-                      ) : POPULAR_DISTRICT_AREAS[formData.district] ? (
-                        <select
-                          required
-                          value={formData.area}
-                          onChange={(e) =>
-                            setFormData({ ...formData, area: e.target.value })
-                          }
-                          className="w-full h-11 px-3.5 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors cursor-pointer"
-                        >
-                          <option value="">{formData.district} এরিয়া / থানা নির্বাচন করুন *</option>
-                          {POPULAR_DISTRICT_AREAS[formData.district].map((area) => (
-                            <option key={area} value={area}>
-                              {area}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <input
-                          required
-                          type="text"
-                          placeholder="আপনার থানা / উপজেলা / এলাকার নাম লিখুন *"
-                          value={formData.area}
-                          onChange={(e) =>
-                            setFormData({ ...formData, area: e.target.value })
-                          }
-                          className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
-                        />
-                      )}
-
-                      {/* Custom area field if 'Other Area' is chosen */}
-                      {(formData.area === "Other Area (অন্যান্য এলাকা)" || formData.area === "Other Area (অন্যান্য)") && (
-                        <div className="mt-2.5">
-                          <input
-                            required
-                            type="text"
-                            placeholder="আপনার নির্দিষ্ট এলাকার নাম লিখুন *"
-                            value={formData.customArea}
-                            onChange={(e) =>
-                              setFormData({ ...formData, customArea: e.target.value })
-                            }
-                            className="w-full h-10 px-3.5 bg-white border border-emerald-300 rounded-xl text-xs text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37]"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
+                  {/* Optional Delivery Notes */}
                   <div>
                     <label className="text-xs font-semibold text-gray-700 block mb-1.5">
-                      Delivery note (ঐচ্ছিক)
+                      ডেলিভারির বিশেষ কোনো নির্দেশনা (ঐচ্ছিক)
                     </label>
                     <input
                       type="text"
-                      placeholder="ডেলিভারির সময় বা বিশেষ কোনো নির্দেশনা থাকলে লিখুন..."
+                      placeholder="যেমন: বিকেল ৫টার পর ডেলিভারি দিন, বা বিশেষ কোনো নোট..."
                       value={formData.deliveryNotes}
                       onChange={(e) =>
                         setFormData({ ...formData, deliveryNotes: e.target.value })
                       }
                       className="w-full h-11 px-4 bg-[#FAF8F5] border border-gray-200 rounded-xl text-sm text-[#0D3B37] font-medium focus:outline-none focus:border-[#0D3B37] focus:bg-white transition-colors placeholder:text-gray-400 placeholder:font-normal"
                     />
-                  </div>
-
-                  {/* Selected Delivery Option Box */}
-                  <div className="mt-4 p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 flex items-center justify-between">
-                    <div className="flex items-start gap-3">
-                      <span className="w-4 h-4 rounded-full border-4 border-[#0D3B37] bg-white mt-0.5 shrink-0" />
-                      <div>
-                        <p className="text-sm font-bold text-[#0D3B37]">
-                          Standard delivery · {formData.district === "Dhaka" ? "Dhaka" : "Outside Dhaka"}
-                        </p>
-                        <p className="text-xs text-gray-500 font-normal mt-0.5">
-                          Estimated timeline: {formData.district === "Dhaka" ? (settings.deliveryTimeDhaka || "24 - 48 Hours") : (settings.deliveryTimeOutside || "3 - 5 Business Days")}
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-sm font-bold text-[#0D3B37]">
-                      ৳{displayDelivery.toLocaleString()}
-                    </span>
                   </div>
                 </section>
 
@@ -1321,7 +1296,7 @@ function CheckoutContent() {
 
                   <div className="flex justify-between text-gray-700">
                     <span className="font-normal text-gray-600">
-                      Delivery · {formData.district === "Dhaka" ? "Dhaka" : "Outside Dhaka"}
+                      ডেলিভারি · {shippingCity === "Dhaka" ? "ঢাকার ভেতরে" : "ঢাকার বাইরে"}
                     </span>
                     <span className="font-semibold text-[#0D3B37]">
                       ৳{displayDelivery.toLocaleString()}
