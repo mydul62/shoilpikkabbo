@@ -515,6 +515,69 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const getOrderPaymentBadge = (ord: any) => {
+    if (!ord) return { label: "N/A", badgeClass: "bg-gray-50 text-gray-700 border-gray-200" };
+    const method = ord.paymentMethod || "";
+    const payment = ord.payments && ord.payments.length > 0 ? ord.payments[0] : null;
+    const notes = ((payment?.verificationNotes || "") + " " + (payment?.bankReference || "")).toLowerCase();
+
+    if (method === "BKASH_MANUAL" || notes.includes("bkash")) {
+      const isOnline = method === "ONLINE_GATEWAY" || notes.includes("sslcommerz");
+      return {
+        label: isOnline ? "bKash (Online)" : "bKash (Manual)",
+        badgeClass: "bg-pink-50 text-[#e2136e] border-[#e2136e]/30 font-bold",
+      };
+    }
+    if (method === "NAGAD_MANUAL" || notes.includes("nagad")) {
+      const isOnline = method === "ONLINE_GATEWAY" || notes.includes("sslcommerz");
+      return {
+        label: isOnline ? "Nagad (Online)" : "Nagad (Manual)",
+        badgeClass: "bg-orange-50 text-[#d85604] border-[#f7941d]/30 font-bold",
+      };
+    }
+    if (method === "ROCKET_MANUAL" || notes.includes("rocket") || notes.includes("dbbl")) {
+      const isOnline = method === "ONLINE_GATEWAY" || notes.includes("sslcommerz");
+      return {
+        label: isOnline ? "Rocket (Online)" : "Rocket (Manual)",
+        badgeClass: "bg-purple-50 text-[#8c3494] border-[#8c3494]/30 font-bold",
+      };
+    }
+    if (notes.includes("visa")) {
+      return {
+        label: "Visa Card (SSL)",
+        badgeClass: "bg-blue-50 text-blue-700 border-blue-200 font-bold",
+      };
+    }
+    if (notes.includes("master")) {
+      return {
+        label: "Mastercard (SSL)",
+        badgeClass: "bg-rose-50 text-rose-700 border-rose-200 font-bold",
+      };
+    }
+    if (method === "ONLINE_GATEWAY") {
+      return {
+        label: "SSL Gateway (Online)",
+        badgeClass: "bg-teal-50 text-teal-800 border-teal-200 font-bold",
+      };
+    }
+    if (method === "CASH_ON_DELIVERY") {
+      return {
+        label: "COD (Cash)",
+        badgeClass: "bg-forest-50 text-forest-800 border-forest-200 font-bold",
+      };
+    }
+    if (method === "BANK_TRANSFER") {
+      return {
+        label: "Bank Wire",
+        badgeClass: "bg-blue-50 text-blue-700 border-blue-200 font-bold",
+      };
+    }
+    return {
+      label: method?.replace("_MANUAL", "") || "Online",
+      badgeClass: "bg-gray-50 text-gray-700 border-gray-200 font-bold",
+    };
+  };
+
   const resetAllFilters = () => {
     setSearch("");
     setStatusFilter("ALL");
@@ -1260,11 +1323,16 @@ export default function AdminOrdersPage() {
 
                         {/* Payment */}
                         <td className="py-3.5 px-4">
-                          <span className="font-bold text-charcoal-900 block text-xs">
-                            {ord.paymentMethod === "CASH_ON_DELIVERY"
-                              ? "COD (Cash)"
-                              : ord.paymentMethod?.replace("_MANUAL", "") || "Online"}
-                          </span>
+                          {(() => {
+                            const pBadge = getOrderPaymentBadge(ord);
+                            return (
+                              <span
+                                className={`px-2 py-0.5 rounded-lg text-[11px] font-bold block text-center border ${pBadge.badgeClass}`}
+                              >
+                                {pBadge.label}
+                              </span>
+                            );
+                          })()}
                           <button
                             type="button"
                             onClick={() =>
@@ -1592,9 +1660,14 @@ export default function AdminOrdersPage() {
                 <div className="grid grid-cols-2 gap-4 text-xs">
                   <div>
                     <span className="text-charcoal-400 block text-[10px]">Payment Method</span>
-                    <strong className="text-charcoal-800">
-                      {selectedOrder.paymentMethod}
-                    </strong>
+                    {(() => {
+                      const pBadge = getOrderPaymentBadge(selectedOrder);
+                      return (
+                        <span className={`px-2 py-0.5 rounded-lg text-xs font-bold border inline-block mt-0.5 ${pBadge.badgeClass}`}>
+                          {pBadge.label}
+                        </span>
+                      );
+                    })()}
                   </div>
                   <div>
                     <span className="text-charcoal-400 block text-[10px]">Transaction ID</span>
@@ -1788,7 +1861,7 @@ export default function AdminOrdersPage() {
                             Payment Details:
                           </span>
                           <p className="font-bold text-gray-800 mt-1">
-                            Method: {ord.paymentMethod?.replace("_MANUAL", "") || "COD"}
+                            Method: {getOrderPaymentBadge(ord).label}
                           </p>
                           <p className="text-gray-700">
                             Payment Status:{" "}

@@ -258,19 +258,38 @@ export class SSLCommerzService {
         },
       });
 
-      // Audit payment in Payment table
-      await prisma.payment.create({
-        data: {
-          orderId: order.id,
-          method: PaymentMethod.ONLINE_GATEWAY,
-          transactionId: tran_id || val_id,
-          bankReference: bank_tran_id || val_id || null,
-          amount: Number(amount) || order.totalAmount,
-          status: VerificationStatus.VERIFIED,
-          verifiedAt: new Date(),
-          verificationNotes: `Verified via SSLCommerz Gateway (${cardType}). Val ID: ${val_id || "N/A"}`,
-        },
+      // Audit payment in Payment table: update pending checkout payment if exists or create new
+      const existingPayment = await prisma.payment.findFirst({
+        where: { orderId: order.id },
       });
+
+      if (existingPayment) {
+        await prisma.payment.update({
+          where: { id: existingPayment.id },
+          data: {
+            method: PaymentMethod.ONLINE_GATEWAY,
+            transactionId: tran_id || val_id,
+            bankReference: cardType || bank_tran_id || val_id || null,
+            amount: Number(amount) || order.totalAmount,
+            status: VerificationStatus.VERIFIED,
+            verifiedAt: new Date(),
+            verificationNotes: `Verified via SSLCommerz Gateway (${cardType}). Val ID: ${val_id || "N/A"}`,
+          },
+        });
+      } else {
+        await prisma.payment.create({
+          data: {
+            orderId: order.id,
+            method: PaymentMethod.ONLINE_GATEWAY,
+            transactionId: tran_id || val_id,
+            bankReference: cardType || bank_tran_id || val_id || null,
+            amount: Number(amount) || order.totalAmount,
+            status: VerificationStatus.VERIFIED,
+            verifiedAt: new Date(),
+            verificationNotes: `Verified via SSLCommerz Gateway (${cardType}). Val ID: ${val_id || "N/A"}`,
+          },
+        });
+      }
 
       // Add tracking event
       await prisma.deliveryTrackingEvent.create({

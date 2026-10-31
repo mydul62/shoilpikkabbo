@@ -88,6 +88,14 @@ export class PaymentService {
               paymentStatus: true,
               shippingAddress: true,
               city: true,
+              payments: {
+                select: {
+                  id: true,
+                  verificationNotes: true,
+                  bankReference: true,
+                  method: true,
+                },
+              },
               items: {
                 select: {
                   id: true,

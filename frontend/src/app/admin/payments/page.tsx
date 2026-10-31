@@ -110,7 +110,9 @@ export default function AdminPaymentsPage() {
       setLoading(true);
       const params: Record<string, any> = {};
       if (statusFilter !== "ALL") params.status = statusFilter;
-      if (methodFilter !== "ALL") params.method = methodFilter;
+      if (methodFilter !== "ALL" && !["BKASH", "NAGAD", "ROCKET"].includes(methodFilter)) {
+        params.method = methodFilter;
+      }
       if (dateRangeFilter !== "ALL") params.dateRange = dateRangeFilter;
       if (search.trim()) params.search = search.trim();
 
@@ -137,11 +139,189 @@ export default function AdminPaymentsPage() {
     fetchPayments();
   }, [statusFilter, methodFilter, dateRangeFilter]);
 
+  const getMethodBadge = React.useCallback((itemOrMethod: any) => {
+    const item =
+      typeof itemOrMethod === "object" && itemOrMethod !== null
+        ? itemOrMethod
+        : { method: itemOrMethod };
+    const method = item.method || "";
+
+    const siblingNotes = Array.isArray(item.order?.payments)
+      ? item.order.payments
+          .map((p: any) => `${p.verificationNotes || ""} ${p.bankReference || ""}`)
+          .join(" ")
+      : "";
+
+    const combinedNotes = (
+      (item.verificationNotes || "") +
+      " " +
+      (item.bankReference || "") +
+      " " +
+      siblingNotes
+    ).toLowerCase();
+
+    // 1. bKash (Gateway or Manual)
+    if (method === "BKASH_MANUAL" || combinedNotes.includes("bkash")) {
+      const isGateway =
+        method === "ONLINE_GATEWAY" ||
+        combinedNotes.includes("sslcommerz") ||
+        combinedNotes.includes("gateway");
+      return {
+        bg: "bg-pink-50 text-[#e2136e] border-[#e2136e]/30",
+        dot: "bg-[#e2136e]",
+        label: isGateway ? "bKash (Online)" : "bKash (Manual)",
+        shortName: "bKash",
+        provider: "bKash",
+        isGateway,
+        gatewaySubtext: isGateway ? "SSLCommerz MFS" : "Personal / Agent",
+      };
+    }
+
+    // 2. Nagad (Gateway or Manual)
+    if (method === "NAGAD_MANUAL" || combinedNotes.includes("nagad")) {
+      const isGateway =
+        method === "ONLINE_GATEWAY" ||
+        combinedNotes.includes("sslcommerz") ||
+        combinedNotes.includes("gateway");
+      return {
+        bg: "bg-orange-50 text-[#d85604] border-[#f7941d]/30",
+        dot: "bg-[#f7941d]",
+        label: isGateway ? "Nagad (Online)" : "Nagad (Manual)",
+        shortName: "Nagad",
+        provider: "Nagad",
+        isGateway,
+        gatewaySubtext: isGateway ? "SSLCommerz MFS" : "Personal / Agent",
+      };
+    }
+
+    // 3. Rocket (Gateway or Manual)
+    if (
+      method === "ROCKET_MANUAL" ||
+      combinedNotes.includes("rocket") ||
+      combinedNotes.includes("dbbl")
+    ) {
+      const isGateway =
+        method === "ONLINE_GATEWAY" ||
+        combinedNotes.includes("sslcommerz") ||
+        combinedNotes.includes("gateway");
+      return {
+        bg: "bg-purple-50 text-[#8c3494] border-[#8c3494]/30",
+        dot: "bg-[#8c3494]",
+        label: isGateway ? "Rocket (Online)" : "Rocket (Manual)",
+        shortName: "Rocket",
+        provider: "Rocket",
+        isGateway,
+        gatewaySubtext: isGateway ? "SSLCommerz MFS" : "DBBL Rocket",
+      };
+    }
+
+    // 4. Upay
+    if (combinedNotes.includes("upay")) {
+      return {
+        bg: "bg-amber-50 text-amber-800 border-amber-300",
+        dot: "bg-amber-500",
+        label: "Upay (Online)",
+        shortName: "Upay",
+        provider: "Upay",
+        isGateway: true,
+        gatewaySubtext: "SSLCommerz MFS",
+      };
+    }
+
+    // 5. Card (Visa / Mastercard / Amex)
+    if (combinedNotes.includes("visa")) {
+      return {
+        bg: "bg-blue-50 text-blue-700 border-blue-200",
+        dot: "bg-blue-600",
+        label: "Visa Card (SSL)",
+        shortName: "Visa",
+        provider: "Visa",
+        isGateway: true,
+        gatewaySubtext: "Debit / Credit Card",
+      };
+    }
+    if (combinedNotes.includes("master")) {
+      return {
+        bg: "bg-rose-50 text-rose-700 border-rose-200",
+        dot: "bg-rose-600",
+        label: "Mastercard (SSL)",
+        shortName: "Mastercard",
+        provider: "Mastercard",
+        isGateway: true,
+        gatewaySubtext: "Debit / Credit Card",
+      };
+    }
+    if (combinedNotes.includes("amex")) {
+      return {
+        bg: "bg-cyan-50 text-cyan-800 border-cyan-200",
+        dot: "bg-cyan-600",
+        label: "Amex Card (SSL)",
+        shortName: "Amex",
+        provider: "Amex",
+        isGateway: true,
+        gatewaySubtext: "American Express",
+      };
+    }
+
+    // 6. Generic Online Gateway
+    if (method === "ONLINE_GATEWAY") {
+      return {
+        bg: "bg-teal-50 text-teal-800 border-teal-300",
+        dot: "bg-teal-600",
+        label: "SSL Gateway (Online)",
+        shortName: "Gateway",
+        provider: "SSLCommerz",
+        isGateway: true,
+        gatewaySubtext: "Card / MFS",
+      };
+    }
+
+    if (method === "CASH_ON_DELIVERY") {
+      return {
+        bg: "bg-emerald-50 text-emerald-800 border-emerald-200",
+        dot: "bg-emerald-600",
+        label: "COD (Cash)",
+        shortName: "COD",
+        provider: "Cash",
+      };
+    }
+
+    if (method === "BANK_TRANSFER") {
+      return {
+        bg: "bg-blue-50 text-blue-700 border-blue-200",
+        dot: "bg-blue-600",
+        label: "Bank Transfer",
+        shortName: "Bank",
+        provider: "Bank",
+      };
+    }
+
+    return {
+      bg: "bg-gray-50 text-gray-700 border-gray-200",
+      dot: "bg-gray-400",
+      label: method || "Unknown",
+      shortName: method,
+      provider: method,
+    };
+  }, []);
+
   // Client-side quick filter
   const filteredPayments = React.useMemo(() => {
     return payments.filter((p) => {
       if (statusFilter !== "ALL" && p.status !== statusFilter) return false;
-      if (methodFilter !== "ALL" && p.method !== methodFilter) return false;
+      if (methodFilter !== "ALL") {
+        const meta = getMethodBadge(p);
+        if (methodFilter === "BKASH" && meta.shortName !== "bKash") return false;
+        else if (methodFilter === "NAGAD" && meta.shortName !== "Nagad") return false;
+        else if (methodFilter === "ROCKET" && meta.shortName !== "Rocket") return false;
+        else if (methodFilter === "ONLINE_GATEWAY" && !meta.isGateway) return false;
+        else if (
+          !["BKASH", "NAGAD", "ROCKET", "ONLINE_GATEWAY"].includes(methodFilter) &&
+          p.method !== methodFilter
+        ) {
+          return false;
+        }
+      }
       if (!search.trim()) return true;
 
       const q = search.toLowerCase();
@@ -150,16 +330,21 @@ export default function AdminPaymentsPage() {
       const phone = p.senderPhone || p.order?.customerPhone || "";
       const trx = p.transactionId?.toLowerCase() || "";
       const bankRef = p.bankReference?.toLowerCase() || "";
+      const notes = p.verificationNotes?.toLowerCase() || "";
+      const methodMeta = getMethodBadge(p);
 
       return (
         orderNum.includes(q) ||
         customer.includes(q) ||
         phone.includes(q) ||
         trx.includes(q) ||
-        bankRef.includes(q)
+        bankRef.includes(q) ||
+        notes.includes(q) ||
+        methodMeta.label.toLowerCase().includes(q) ||
+        methodMeta.shortName.toLowerCase().includes(q)
       );
     });
-  }, [payments, search, statusFilter, methodFilter]);
+  }, [payments, search, statusFilter, methodFilter, getMethodBadge]);
 
   // Multi-select helpers
   const allFilteredSelected =
@@ -385,23 +570,6 @@ export default function AdminPaymentsPage() {
       }.`
     );
     return `https://wa.me/${clean}?text=${msg}`;
-  };
-
-  const getMethodBadge = (method: string) => {
-    switch (method) {
-      case "BKASH_MANUAL":
-        return { bg: "bg-pink-50 text-pink-700 border-pink-200", label: "bKash" };
-      case "NAGAD_MANUAL":
-        return { bg: "bg-orange-50 text-orange-700 border-orange-200", label: "Nagad" };
-      case "ROCKET_MANUAL":
-        return { bg: "bg-purple-50 text-purple-700 border-purple-200", label: "Rocket" };
-      case "BANK_TRANSFER":
-        return { bg: "bg-blue-50 text-blue-700 border-blue-200", label: "Bank Transfer" };
-      case "CASH_ON_DELIVERY":
-        return { bg: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "COD" };
-      default:
-        return { bg: "bg-gray-50 text-gray-700 border-gray-200", label: method };
-    }
   };
 
   const resetAllFilters = () => {
@@ -761,11 +929,12 @@ export default function AdminPaymentsPage() {
                 className="h-10 px-3 rounded-2xl border border-brand-border bg-white text-xs text-charcoal-800 font-semibold focus:outline-hidden focus:ring-2 focus:ring-[#0D3B37]"
               >
                 <option value="ALL">All Channels</option>
-                <option value="BKASH_MANUAL">bKash Manual</option>
-                <option value="NAGAD_MANUAL">Nagad Manual</option>
-                <option value="ROCKET_MANUAL">Rocket Manual</option>
+                <option value="BKASH">bKash (Online & Manual)</option>
+                <option value="NAGAD">Nagad (Online & Manual)</option>
+                <option value="ROCKET">Rocket (Online & Manual)</option>
+                <option value="ONLINE_GATEWAY">SSLCommerz Gateway (All)</option>
+                <option value="CASH_ON_DELIVERY">Cash on Delivery (COD)</option>
                 <option value="BANK_TRANSFER">Bank Wire / Transfer</option>
-                <option value="CASH_ON_DELIVERY">Cash on Delivery</option>
               </select>
             </div>
 
@@ -932,7 +1101,7 @@ export default function AdminPaymentsPage() {
                 ) : (
                   filteredPayments.map((item) => {
                     const isSelected = selectedIds.includes(item.id);
-                    const methodMeta = getMethodBadge(item.method);
+                    const methodMeta = getMethodBadge(item);
                     const orderNumber = item.order?.orderNumber;
                     const customerName = item.order?.customerName || "Customer";
                     const customerPhone = item.senderPhone || item.order?.customerPhone || "";
@@ -1040,11 +1209,19 @@ export default function AdminPaymentsPage() {
 
                         {/* Channel / Method */}
                         <td className="py-3.5 px-4">
-                          <span
-                            className={`px-2.5 py-1 rounded-xl text-[11px] font-bold border inline-block ${methodMeta.bg}`}
-                          >
-                            {methodMeta.label}
-                          </span>
+                          <div className="flex flex-col items-start gap-1">
+                            <span
+                              className={`px-2.5 py-1 rounded-xl text-[11px] font-extrabold border inline-flex items-center gap-1.5 shadow-2xs ${methodMeta.bg}`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${methodMeta.dot || "bg-current"}`} />
+                              <span>{methodMeta.label}</span>
+                            </span>
+                            {methodMeta.gatewaySubtext && (
+                              <span className="text-[10px] text-charcoal-500 font-medium pl-0.5">
+                                {methodMeta.gatewaySubtext}
+                              </span>
+                            )}
+                          </div>
                         </td>
 
                         {/* TrxID / Reference */}
@@ -1074,9 +1251,15 @@ export default function AdminPaymentsPage() {
                             )}
                           </div>
                           {item.verificationNotes && (
-                            <span className="text-[10px] text-charcoal-500 line-clamp-1 mt-0.5" title={item.verificationNotes}>
-                              Note: {item.verificationNotes}
-                            </span>
+                            <div
+                              className="mt-1 flex items-center gap-1.5 text-[10px] text-charcoal-700 bg-sand/60 px-2 py-0.5 rounded border border-sand-dark/60 max-w-fit"
+                              title={item.verificationNotes}
+                            >
+                              <span className="font-bold text-forest-900">Source:</span>
+                              <span className="font-mono text-charcoal-800 truncate max-w-[200px]">
+                                {item.verificationNotes.replace("Verified via SSLCommerz Gateway ", "")}
+                              </span>
+                            </div>
                           )}
                         </td>
 
@@ -1221,10 +1404,25 @@ export default function AdminPaymentsPage() {
                     Customer Submitted Transfer
                   </span>
                   <div>
-                    <span className="text-charcoal-400 text-[10px] block">Channel / Method</span>
-                    <strong className="text-charcoal-900 text-xs">
-                      {selectedPayment.method}
-                    </strong>
+                    <span className="text-charcoal-400 text-[10px] block">Channel / Provider</span>
+                    {(() => {
+                      const meta = getMethodBadge(selectedPayment);
+                      return (
+                        <div className="mt-1">
+                          <span
+                            className={`px-2.5 py-0.5 rounded-lg text-xs font-extrabold border inline-flex items-center gap-1.5 ${meta.bg}`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${meta.dot || "bg-current"}`} />
+                            <span>{meta.label}</span>
+                          </span>
+                          {meta.gatewaySubtext && (
+                            <span className="text-[10px] text-charcoal-500 block mt-0.5 font-medium">
+                              Type: {meta.gatewaySubtext}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                   <div>
                     <span className="text-charcoal-400 text-[10px] block">Transaction ID (TrxID)</span>
