@@ -37,6 +37,20 @@ interface AdminSidebarProps {
   setIsMobileOpen: (open: boolean) => void;
 }
 
+interface NavItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge: string | null;
+  badgeVariant?: "warning" | "danger" | "gold" | "default" | string;
+  roles?: ("ADMIN" | "SUPER_ADMIN" | "STAFF")[];
+}
+
+interface NavGroup {
+  group: string;
+  items: NavItem[];
+}
+
 export function AdminSidebar({
   isCollapsed,
   setIsCollapsed,
@@ -45,14 +59,14 @@ export function AdminSidebar({
 }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   const handleLogout = async () => {
     await logout();
     router.push("/login");
   };
 
-  const navItems = [
+  const navItems: NavGroup[] = [
     {
       group: "Core Management",
       items: [
@@ -94,6 +108,7 @@ export function AdminSidebar({
           icon: ShieldCheck,
           badge: "Gateway",
           badgeVariant: "gold",
+          roles: ["ADMIN", "SUPER_ADMIN"],
         },
         {
           label: "Customers",
@@ -107,6 +122,7 @@ export function AdminSidebar({
           icon: UserCheck,
           badge: "Roles",
           badgeVariant: "gold",
+          roles: ["ADMIN", "SUPER_ADMIN"],
         },
       ],
     },
@@ -179,10 +195,25 @@ export function AdminSidebar({
           href: "/admin/settings",
           icon: Settings,
           badge: null,
+          roles: ["ADMIN", "SUPER_ADMIN"],
         },
       ],
     },
   ];
+
+  const currentRole = user?.role || "STAFF";
+
+  const visibleGroups = React.useMemo(() => {
+    return navItems
+      .map((group) => ({
+        ...group,
+        items: group.items.filter((item) => {
+          if (!item.roles) return true;
+          return item.roles.includes(currentRole as any);
+        }),
+      }))
+      .filter((group) => group.items.length > 0);
+  }, [currentRole, navItems]);
 
   const sidebarContent = (
     <div className="flex flex-col h-full bg-forest-950 text-sand border-r border-forest-900 select-none">
@@ -220,7 +251,7 @@ export function AdminSidebar({
 
       {/* Navigation List */}
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
-        {navItems.map((group, groupIdx) => (
+        {visibleGroups.map((group, groupIdx) => (
           <div key={groupIdx} className="space-y-1">
             {!isCollapsed && (
               <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-sand/40 mb-2">

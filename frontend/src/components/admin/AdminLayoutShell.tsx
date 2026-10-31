@@ -26,6 +26,12 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
   const router = useRouter();
   const { user, loading, isAuthenticated } = useAuth();
 
+  const ADMIN_ONLY_ROUTES = ["/admin/staff", "/admin/payment-setup", "/admin/settings"];
+  const isCurrentAdminOnly = ADMIN_ONLY_ROUTES.some((route) =>
+    pathname === route || pathname?.startsWith(`${route}/`)
+  );
+  const isAdmin = Boolean(user && ["ADMIN", "SUPER_ADMIN"].includes(user.role as string));
+
   // Authentication & Role Check
   React.useEffect(() => {
     if (!loading) {
@@ -33,9 +39,11 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
         router.push(`/login?redirect=${encodeURIComponent(pathname || "/admin")}`);
       } else if (!["ADMIN", "SUPER_ADMIN", "STAFF"].includes(user.role as string)) {
         router.push("/");
+      } else if (isCurrentAdminOnly && !isAdmin) {
+        router.push("/admin");
       }
     }
-  }, [loading, isAuthenticated, user, router, pathname]);
+  }, [loading, isAuthenticated, user, router, pathname, isCurrentAdminOnly, isAdmin]);
 
   // Generate dynamic breadcrumbs
   const pathSegments = (pathname ?? "/admin")
@@ -107,6 +115,26 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
           className="px-5 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-sand font-semibold text-sm transition-colors shadow-sm"
         >
           Sign In as Admin
+        </Link>
+      </div>
+    );
+  }
+
+  if (isCurrentAdminOnly && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-sand flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-16 h-16 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center mb-4">
+          <ShieldCheck className="h-8 w-8" />
+        </div>
+        <h2 className="text-xl font-heading font-bold text-forest-900 mb-2">Administrator Access Required</h2>
+        <p className="text-sm text-charcoal-600 max-w-md mb-6">
+          This section is restricted to System Administrators. As an Operations Manager, you have full access to manage orders, inventory, products, payments verification, and customer inquiries from the main dashboard.
+        </p>
+        <Link
+          href="/admin"
+          className="px-5 py-2.5 rounded-xl bg-forest-800 hover:bg-forest-900 text-sand font-semibold text-sm transition-colors shadow-sm"
+        >
+          Return to Operations Dashboard
         </Link>
       </div>
     );
@@ -191,7 +219,11 @@ export function AdminLayoutShell({ children }: AdminLayoutShellProps) {
                 </span>
                 <span className="text-[10px] text-emerald-700 font-medium flex items-center gap-0.5 mt-0.5">
                   <ShieldCheck className="h-2.5 w-2.5" />
-                  {user.role}
+                  {user.role === "STAFF"
+                    ? "Operations Manager"
+                    : user.role === "ADMIN" || user.role === "SUPER_ADMIN"
+                    ? "System Admin"
+                    : user.role}
                 </span>
               </div>
             </Link>
