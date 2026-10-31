@@ -28,6 +28,21 @@ import { useSettings } from "@/context/SettingsContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { MOCK_PRODUCTS } from "@/data/mock-data";
 import { API_BASE } from "@/lib/api";
+import { getProductDisplayImage } from "@/lib/productImage";
+
+const CATEGORY_ICON_MAP: Record<string, string> = {
+  handicraft: "/images/client-mockup/cat-handicrafts.png",
+  "jute-items": "/images/client-mockup/cat-jute.png",
+  polymer: "/images/client-mockup/cat-polymer.png",
+  "baby-items": "/images/client-mockup/cat-baby.png",
+  "corporate-gift-items": "/images/client-mockup/cat-corporate.png",
+  "rudiment-garments": "/images/client-mockup/cat-garments.png",
+  "industrial-solutions": "/images/client-mockup/cat-industrial.png",
+  "health-and-beauty": "/images/client-mockup/cat-beauty.png",
+  agriculture: "/images/client-mockup/cat-agriculture.png",
+  "special-e-sheba": "/images/client-mockup/cat-services.png",
+  "e-sheba": "/images/client-mockup/cat-services.png",
+};
 
 export interface MegaMenuCategory {
   name: string;
@@ -197,6 +212,7 @@ export function Header() {
   const [isUserMenuOpen, setIsUserMenuOpen] = React.useState(false);
   const [isCategoriesMenuOpen, setIsCategoriesMenuOpen] = React.useState(false);
   const [activeMegaCategory, setActiveMegaCategory] = React.useState<string>("handicraft");
+  const [liveCategories, setLiveCategories] = React.useState<any[]>(MEGA_MENU_CATEGORIES);
   const [catalogProducts, setCatalogProducts] = React.useState<any[]>(MOCK_PRODUCTS);
 
   const desktopSearchRef = React.useRef<HTMLDivElement>(null);
@@ -204,9 +220,39 @@ export function Header() {
   const userMenuRef = React.useRef<HTMLDivElement>(null);
   const categoriesMenuRef = React.useRef<HTMLDivElement>(null);
 
-  // Fetch live products for accurate global search
+  // Fetch live categories & products for dynamic mega-menu and search
   React.useEffect(() => {
     let isMounted = true;
+
+    // 1. Fetch dynamic categories from PostgreSQL backend
+    fetch(`${API_BASE}/categories`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (isMounted && json.success && Array.isArray(json.data) && json.data.length > 0) {
+          const mapped = json.data.map((cat: any) => {
+            const fallback = MEGA_MENU_CATEGORIES.find((m) => m.slug === cat.slug);
+            return {
+              id: cat.id,
+              name: cat.name,
+              slug: cat.slug,
+              matchNames: fallback?.matchNames || [cat.slug, cat.name],
+              subtitle: cat.description || fallback?.subtitle || "Explore collection",
+              tagline: cat.description || fallback?.tagline || `Explore our verified ${cat.name} products.`,
+              iconImg:
+                cat.imageUrl ||
+                fallback?.iconImg ||
+                CATEGORY_ICON_MAP[cat.slug] ||
+                "/images/client-mockup/cat-handicrafts.png",
+              badge: fallback?.badge || undefined,
+              href: cat.slug === "special-e-sheba" ? "/services" : `/shop?category=${cat.slug}`,
+            };
+          });
+          setLiveCategories(mapped);
+        }
+      })
+      .catch(() => {});
+
+    // 2. Fetch live products with 1:1 square imagery
     fetch(`${API_BASE}/products?limit=100`)
       .then((res) => res.json())
       .then((json) => {
@@ -215,16 +261,20 @@ export function Header() {
             id: p.id,
             name: p.name,
             slug: p.slug,
+            categoryId: p.categoryId,
+            categorySlug: p.category?.slug,
             categoryName: p.category?.name || "Handicraft",
             price: Number(p.price),
             salePrice: p.salePrice ? Number(p.salePrice) : undefined,
-            imageUrl: p.images?.[0]?.url || "/images/product-jute-basket.png",
+            images: p.images || [],
+            imageUrl: getProductDisplayImage(p),
             description: p.description || "",
           }));
           setCatalogProducts(mapped);
         }
       })
       .catch(() => {});
+
     return () => {
       isMounted = false;
     };
@@ -292,19 +342,24 @@ export function Header() {
   // Current active category and filtered products for Flyout Mega-Menu
   const currentMegaCategory = React.useMemo(() => {
     return (
-      MEGA_MENU_CATEGORIES.find((c) => c.slug === activeMegaCategory) ||
+      liveCategories.find((c) => c.slug === activeMegaCategory) ||
+      liveCategories[0] ||
       MEGA_MENU_CATEGORIES[0]
     );
-  }, [activeMegaCategory]);
+  }, [activeMegaCategory, liveCategories]);
 
   const activeCategoryProducts = React.useMemo(() => {
     if (!currentMegaCategory) return [];
-    const matches = currentMegaCategory.matchNames.map((m) => m.toLowerCase());
+    const catSlug = currentMegaCategory.slug;
+    const catId = currentMegaCategory.id;
+    const matches = (currentMegaCategory.matchNames || [catSlug, currentMegaCategory.name]).map((m: string) => m.toLowerCase());
     return catalogProducts
-      .filter((p) => {
-        const pCat = (p.categoryName || "").toLowerCase();
+      .filter((p: any) => {
+        if (catId && p.categoryId === catId) return true;
+        if (p.categorySlug === catSlug || p.category?.slug === catSlug) return true;
+        const pCat = (p.categoryName || p.category?.name || "").toLowerCase();
         const pName = (p.name || "").toLowerCase();
-        return matches.some((m) => pCat.includes(m) || pName.includes(m));
+        return matches.some((m: string) => pCat.includes(m) || pName.includes(m));
       })
       .slice(0, 3);
   }, [catalogProducts, currentMegaCategory]);
@@ -896,11 +951,11 @@ export function Header() {
 
             {/* Flyout Mega-Menu Dropdown */}
             {isCategoriesMenuOpen && (
-              <div className="absolute left-0 top-full mt-2 w-[860px] lg:w-[920px] xl:w-[960px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-[0_24px_60px_rgba(0,0,0,0.16)] border border-gray-100 overflow-hidden flex z-50 animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute left-0 top-full mt-2 w-[860px] lg:w-[920px] xl:w-[960px] max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden flex z-50 animate-in fade-in zoom-in-95 duration-150 max-h-[calc(100vh-140px)] min-h-[380px]">
                 {/* Left Column: Categories List */}
-                <div className="w-[295px] shrink-0 bg-[#FAF9F6] border-r border-gray-100 p-2 flex flex-col justify-between">
-                  <div className="space-y-0.5">
-                    {MEGA_MENU_CATEGORIES.map((cat) => {
+                <div className="w-[285px] lg:w-[305px] shrink-0 bg-[#FAF9F6] border-r border-gray-100 p-2 flex flex-col justify-between max-h-[calc(100vh-140px)]">
+                  <div className="space-y-0.5 overflow-y-auto pr-1 flex-1 max-h-[calc(100vh-215px)] overscroll-contain">
+                    {liveCategories.map((cat) => {
                       const isActive = activeMegaCategory === cat.slug;
                       return (
                         <Link
@@ -969,7 +1024,7 @@ export function Header() {
                   </div>
 
                   {/* Left Column Bottom Action */}
-                  <div className="pt-2 mt-2 border-t border-gray-200/60">
+                  <div className="pt-2 mt-1 border-t border-gray-200/60 shrink-0 bg-[#FAF9F6]">
                     <Link
                       href="/shop"
                       onClick={() => setIsCategoriesMenuOpen(false)}
@@ -985,7 +1040,7 @@ export function Header() {
                 </div>
 
                 {/* Right Column: Dynamic Preview Panel */}
-                <div className="flex-1 p-5 lg:p-6 bg-white flex flex-col justify-between min-h-[490px]">
+                <div className="flex-1 p-4 lg:p-5 bg-white flex flex-col justify-between overflow-y-auto max-h-[calc(100vh-140px)]">
                   {/* Category Header */}
                   <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
                     <div className="min-w-0 pr-4">
@@ -1070,7 +1125,7 @@ export function Header() {
                         ))}
                       </div>
                     </div>
-                  ) : (
+                  ) : activeCategoryProducts.length > 0 ? (
                     <div className="my-auto py-2">
                       <div className="grid grid-cols-3 gap-3.5">
                         {activeCategoryProducts.map((prod) => {
@@ -1087,7 +1142,7 @@ export function Header() {
                             >
                               <div className="relative aspect-square w-full rounded-lg bg-[#F8F7F4] overflow-hidden mb-2 border border-gray-100/70">
                                 <Image
-                                  src={prod.imageUrl || "/images/product-jute-basket.png"}
+                                  src={prod.imageUrl || "/images/client-mockup/cat-handicrafts.png"}
                                   alt={prod.name}
                                   fill
                                   className="object-cover group-hover/card:scale-105 transition-transform duration-300"
@@ -1115,6 +1170,13 @@ export function Header() {
                           );
                         })}
                       </div>
+                    </div>
+                  ) : (
+                    <div className="my-auto py-10 text-center text-gray-400">
+                      <Package className="w-9 h-9 mx-auto mb-2 opacity-40 text-gray-400" />
+                      <p className="text-xs font-semibold text-gray-600">
+                        Products for {currentMegaCategory.name} will appear here.
+                      </p>
                     </div>
                   )}
 
@@ -1336,7 +1398,7 @@ export function Header() {
             <div>
               <div className="flex items-center justify-between mb-2.5">
                 <p className="text-[10.5px] font-bold tracking-[0.16em] uppercase text-[#B85D38]">
-                  All Categories ({SEARCH_CATEGORIES.length})
+                  All Categories ({liveCategories.length})
                 </p>
                 <Link
                   href="/shop"
@@ -1347,7 +1409,7 @@ export function Header() {
                 </Link>
               </div>
               <div className="flex flex-col space-y-1 text-[13.5px] text-[#2D3F33] bg-[#F7F4EE] rounded-xl p-2 border border-[#EAE3D5]/70">
-                {SEARCH_CATEGORIES.map((cat) => (
+                {liveCategories.map((cat) => (
                   <Link
                     key={cat.slug}
                     href={cat.href || `/shop?category=${cat.slug}`}
