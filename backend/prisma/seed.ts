@@ -735,12 +735,14 @@ async function main() {
     },
   ];
 
-  // 1. Clean up any old product images with unsplash.com to guarantee 100% authentic 1:1 images
-  await prisma.productImage.deleteMany({
-    where: {
-      url: { contains: 'unsplash.com' },
-    },
-  });
+  // 1. Clean up dependent records first to respect foreign key constraints
+  await prisma.cartItem.deleteMany({});
+  await prisma.orderItem.deleteMany({});
+  await prisma.deliveryTrackingEvent.deleteMany({});
+  await prisma.payment.deleteMany({});
+  await prisma.order.deleteMany({});
+  await prisma.serviceInquiry.deleteMany({});
+  await prisma.productImage.deleteMany({});
 
   // 2. Clean up any legacy products not in our verified 30 products catalog
   const realisticSlugs = products.map((p) => p.slug);

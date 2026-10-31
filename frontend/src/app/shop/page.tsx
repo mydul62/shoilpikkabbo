@@ -10,6 +10,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { MOCK_PRODUCTS, MOCK_CATEGORIES, Product } from "@/data/mock-data";
 import { API_BASE } from "@/lib/api";
+import { getProductDisplayImage } from "@/lib/productImage";
 
 const OFFICIAL_CATEGORIES = [
   { name: "Handicrafts", slug: "handicraft" },
@@ -122,7 +123,7 @@ function ShopContent() {
             sku: p.sku || `SK-${p.slug}`,
             rating: 5,
             reviewCount: 12,
-            imageUrl: p.images?.[0]?.url || "/images/product-jute-basket.png",
+            imageUrl: getProductDisplayImage(p),
             galleryUrls: p.images?.map((img: any) => img.url) || [],
             description: p.description || p.name,
             specifications: p.specifications || {},
@@ -561,10 +562,7 @@ function ShopContent() {
                             categoryName: prod.category?.name || prod.categoryName,
                             price: Number(prod.price) || 0,
                             salePrice: prod.salePrice ? Number(prod.salePrice) : undefined,
-                            imageUrl:
-                              prod.images?.[0]?.url ||
-                              prod.imageUrl ||
-                              "/images/client-mockup/cat-handicrafts.png",
+                            imageUrl: getProductDisplayImage(prod),
                             stock: prod.stock,
                             rating: prod.rating,
                             reviewCount: prod.reviewCount,

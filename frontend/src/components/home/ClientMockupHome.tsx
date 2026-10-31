@@ -29,6 +29,7 @@ import { useSettings } from "@/context/SettingsContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { productsApi, categoriesApi, bannersApi, pagesApi } from "@/lib/api";
 import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/data/mock-data";
+import { getProductDisplayImage } from "@/lib/productImage";
 
 // Fallback icon map for the 10 core categories
 const CATEGORY_ICON_MAP: Record<string, string> = {
@@ -129,11 +130,7 @@ export function ClientMockupHome() {
 
   // Helper getters
   const getProductImage = (product: any): string => {
-    if (product.images && product.images.length > 0 && product.images[0]?.url) {
-      return product.images[0].url;
-    }
-    if (product.imageUrl) return product.imageUrl;
-    return "/images/client-mockup/cat-handicrafts.png";
+    return getProductDisplayImage(product);
   };
 
   const getProductCategoryName = (product: any): string => {

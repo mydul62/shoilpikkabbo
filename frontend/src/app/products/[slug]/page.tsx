@@ -29,6 +29,7 @@ import { StorefrontLayout } from "@/components/layout/StorefrontLayout";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { MOCK_PRODUCTS, Product } from "@/data/mock-data";
+import { CATEGORY_FALLBACK_IMAGES } from "@/lib/productImage";
 import { productsApi, API_BASE } from "@/lib/api";
 
 export default function ProductDetailPage() {
@@ -37,17 +38,11 @@ export default function ProductDetailPage() {
   const slug = params?.slug as string;
   const { addToCart, setIsCartOpen } = useCart();
 
-  const fallbackProduct =
-    MOCK_PRODUCTS.find((p) => p.slug === slug) || MOCK_PRODUCTS[0];
-
-  const [product, setProduct] = React.useState<Product>(fallbackProduct);
+  // Do not flash generic mock product on mount; start as null and show Skeleton while fetching
+  const [product, setProduct] = React.useState<Product | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
-  const [galleryImages, setGalleryImages] = React.useState<string[]>([
-    fallbackProduct.imageUrl,
-  ]);
-  const [selectedImage, setSelectedImage] = React.useState<string>(
-    fallbackProduct.imageUrl
-  );
+  const [galleryImages, setGalleryImages] = React.useState<string[]>([]);
+  const [selectedImage, setSelectedImage] = React.useState<string>("");
   const [quantity, setQuantity] = React.useState<number>(1);
   const [isAdded, setIsAdded] = React.useState<boolean>(false);
   const [isCopied, setIsCopied] = React.useState<boolean>(false);
@@ -82,7 +77,10 @@ export default function ProductDetailPage() {
               imagesList.unshift(p.imageUrl);
             }
             if (imagesList.length === 0) {
-              imagesList.push("/images/client-mockup/cat-handicrafts.png");
+              const catSlug = p.category?.slug || p.categorySlug;
+              imagesList.push(
+                CATEGORY_FALLBACK_IMAGES[catSlug] || "/images/client-mockup/cat-handicrafts.png"
+              );
             }
 
             const mappedProduct: Product = {
@@ -167,6 +165,53 @@ export default function ProductDetailPage() {
     else if (diff < -40) handlePrevImage();
     setTouchStartX(null);
   };
+
+  // Loading Skeleton State - Avoid flashing wrong demo basket during initial fetch
+  if (loading || !product) {
+    return (
+      <StorefrontLayout>
+        <div className="bg-[#FAF8F5] min-h-screen pb-16 animate-pulse">
+          <div className="max-w-[1524px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            {/* Breadcrumb Skeleton */}
+            <div className="h-4 w-60 bg-gray-200/90 rounded-md mb-8"></div>
+
+            {/* Product Hero Skeleton Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+              {/* Image Gallery Skeleton */}
+              <div className="lg:col-span-7 space-y-4">
+                <div className="w-full aspect-square bg-gray-200/80 rounded-3xl flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-gray-300/50"></div>
+                </div>
+                <div className="grid grid-cols-4 gap-3">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="aspect-square bg-gray-200/80 rounded-2xl"
+                    ></div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Product Info Column Skeleton */}
+              <div className="lg:col-span-5 space-y-5">
+                <div className="h-6 w-32 bg-gray-200 rounded-full"></div>
+                <div className="h-9 w-4/5 bg-gray-200 rounded-xl"></div>
+                <div className="h-5 w-40 bg-gray-200 rounded-md"></div>
+                <div className="h-10 w-48 bg-gray-200 rounded-xl"></div>
+                <div className="h-28 w-full bg-gray-200 rounded-2xl"></div>
+                <div className="h-14 w-full bg-gray-200 rounded-2xl"></div>
+                <div className="h-14 w-full bg-gray-200 rounded-2xl"></div>
+                <div className="grid grid-cols-2 gap-3 pt-4">
+                  <div className="h-20 bg-gray-200 rounded-xl"></div>
+                  <div className="h-20 bg-gray-200 rounded-xl"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </StorefrontLayout>
+    );
+  }
 
   // Pricing & Discounts
   const regularPrice = Number(product.price) || 0;

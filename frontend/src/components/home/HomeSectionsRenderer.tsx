@@ -36,6 +36,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { MOCK_CATEGORIES, MOCK_PRODUCTS } from "@/data/mock-data";
+import { getProductDisplayImage } from "@/lib/productImage";
 import { useSettings } from "@/context/SettingsContext";
 import { useWishlist } from "@/context/WishlistContext";
 
@@ -153,11 +154,7 @@ export function HomeSectionsRenderer({
 
   // Helper getters
   const getProductImage = (product: any): string => {
-    if (product.images && product.images.length > 0 && product.images[0]?.url) {
-      return product.images[0].url;
-    }
-    if (product.imageUrl) return product.imageUrl;
-    return "/images/client-mockup/cat-handicrafts.png";
+    return getProductDisplayImage(product);
   };
 
   const getProductCategoryName = (product: any): string => {
