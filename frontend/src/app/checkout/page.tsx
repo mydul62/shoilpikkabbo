@@ -278,18 +278,56 @@ function CheckoutContent() {
     area: shippingCity === "Outside Dhaka" ? "Outside Dhaka" : "Inside Dhaka",
     customArea: "",
     deliveryNotes: "",
-    paymentMethod: (settings.sslcommerzEnabled === false ? "COD" : "SSLCommerz") as "SSLCommerz" | "COD",
+    paymentMethod: (settings.codEnabled !== false ? "COD" : "SSLCommerz") as "SSLCommerz" | "COD",
     agreedToTerms: true,
   });
 
-  // Switch payment method dynamically based on store settings
+  // Switch payment method dynamically based on store settings and payment redirects
   React.useEffect(() => {
-    if (settings.sslcommerzEnabled === false && formData.paymentMethod === "SSLCommerz") {
+    if (errorParam) {
       setFormData((prev) => ({ ...prev, paymentMethod: "COD" }));
     } else if (settings.codEnabled === false && formData.paymentMethod === "COD") {
       setFormData((prev) => ({ ...prev, paymentMethod: "SSLCommerz" }));
+    } else if (settings.sslcommerzEnabled === false && formData.paymentMethod === "SSLCommerz") {
+      setFormData((prev) => ({ ...prev, paymentMethod: "COD" }));
     }
-  }, [settings.sslcommerzEnabled, settings.codEnabled]);
+  }, [errorParam, settings.sslcommerzEnabled, settings.codEnabled]);
+
+  // Load draft from session storage so user details are preserved
+  React.useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem("sk_checkout_draft");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setFormData((prev) => ({
+          ...prev,
+          fullName: prev.fullName || parsed.fullName || "",
+          phone: prev.phone || parsed.phone || "",
+          email: prev.email || parsed.email || "",
+          address: prev.address || parsed.address || "",
+          deliveryNotes: prev.deliveryNotes || parsed.deliveryNotes || "",
+        }));
+      }
+    } catch {}
+  }, []);
+
+  // Save draft whenever user types
+  React.useEffect(() => {
+    try {
+      if (formData.fullName || formData.phone || formData.address) {
+        sessionStorage.setItem(
+          "sk_checkout_draft",
+          JSON.stringify({
+            fullName: formData.fullName,
+            phone: formData.phone,
+            email: formData.email,
+            address: formData.address,
+            deliveryNotes: formData.deliveryNotes,
+          })
+        );
+      }
+    } catch {}
+  }, [formData.fullName, formData.phone, formData.address, formData.email, formData.deliveryNotes]);
 
   // Automatically autofill contact info if customer is logged in
   React.useEffect(() => {
@@ -442,6 +480,9 @@ function CheckoutContent() {
       appliedCouponCode: appliedCoupon?.code,
     });
 
+    try {
+      sessionStorage.removeItem("sk_checkout_draft");
+    } catch {}
     clearCart();
     setIsSubmitting(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -992,12 +1033,69 @@ function CheckoutContent() {
 
                   {/* Payment Option Cards */}
                   <div className="space-y-3">
-                    {/* 1. SSLCommerz Online Gateway */}
+                    {/* 1. Cash on Delivery (COD) - Default & Recommended in Bangladesh */}
+                    {settings.codEnabled !== false && (
+                      <label
+                        className={`block p-4 sm:p-5 rounded-2xl cursor-pointer transition-all ${
+                          formData.paymentMethod === "COD"
+                            ? "border-2 border-[#0D3B37] bg-emerald-50/70 shadow-sm"
+                            : "border border-gray-200 bg-white hover:border-gray-300"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3.5">
+                            <input
+                              type="radio"
+                              name="paymentMethod"
+                              value="COD"
+                              checked={formData.paymentMethod === "COD"}
+                              onChange={() =>
+                                setFormData({ ...formData, paymentMethod: "COD" })
+                              }
+                              className="w-4 h-4 text-[#0D3B37] accent-[#0D3B37] mt-1"
+                            />
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <p className="text-sm sm:text-base font-extrabold text-[#0D3B37]">
+                                  ক্যাশ অন ডেলিভারি (Cash on Delivery)
+                                </p>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-xs">
+                                  সবচেয়ে সহজ ও নির্ভরযোগ্য
+                                </span>
+                              </div>
+                              <p className="text-xs text-gray-600 font-normal mt-1 leading-relaxed">
+                                {settings.codNote ||
+                                  "পণ্য হাতে পেয়ে দেখে ডেলিভারিম্যানকে ক্যাশ টাকা পরিশোধ করুন। কোনো অগ্রিম পেমেন্টের প্রয়োজন নেই।"}
+                              </p>
+                            </div>
+                          </div>
+
+                          {formData.paymentMethod === "COD" && (
+                            <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full shrink-0">
+                              Selected
+                            </span>
+                          )}
+                        </div>
+
+                        {formData.paymentMethod === "COD" && (
+                          <div className="mt-3.5 pt-3 border-t border-emerald-200/80 text-xs text-charcoal-700 bg-white/90 p-3 rounded-xl flex items-center justify-between">
+                            <span className="text-gray-600">
+                              📦 ডেলিভারির সময় মোট পরিশোধ করতে হবে:
+                            </span>
+                            <span className="font-extrabold text-[#0D3B37] text-sm">
+                              ৳{displayTotal.toLocaleString()}
+                            </span>
+                          </div>
+                        )}
+                      </label>
+                    )}
+
+                    {/* 2. SSLCommerz Online Gateway */}
                     {settings.sslcommerzEnabled !== false && (
                       <label
                         className={`block p-4 sm:p-5 rounded-2xl cursor-pointer transition-all ${
                           formData.paymentMethod === "SSLCommerz"
-                            ? "border-2 border-[#0D3B37] bg-emerald-50/60 shadow-sm"
+                            ? "border-2 border-[#0D3B37] bg-emerald-50/70 shadow-sm"
                             : "border border-gray-200 bg-white hover:border-gray-300"
                         }`}
                       >
@@ -1018,8 +1116,8 @@ function CheckoutContent() {
                                 <p className="text-sm sm:text-base font-extrabold text-[#0D3B37]">
                                   অনলাইন পেমেন্ট (SSLCommerz Gateway)
                                 </p>
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-xs">
-                                  Recommended
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-100 text-gray-700 border border-gray-200">
+                                  বিকাশ / নগদ / কার্ড
                                 </span>
                               </div>
                               <p className="text-xs text-gray-600 font-normal mt-1 leading-relaxed">
@@ -1027,7 +1125,7 @@ function CheckoutContent() {
                               </p>
 
                               {/* Supported Gateway Logos/Chips */}
-                              <div className="flex items-center gap-2 flex-wrap mt-3 pt-2.5 border-t border-emerald-200/60">
+                              <div className="flex items-center gap-2 flex-wrap mt-3 pt-2.5 border-t border-gray-100">
                                 <span className="px-2.5 py-1 rounded-md bg-[#D12053] text-white text-[11px] font-black tracking-wide shadow-xs">
                                   bKash
                                 </span>
@@ -1051,7 +1149,7 @@ function CheckoutContent() {
                           </div>
 
                           {formData.paymentMethod === "SSLCommerz" && (
-                            <span className="text-xs font-bold text-emerald-800 bg-emerald-100/80 px-2.5 py-1 rounded-full shrink-0">
+                            <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full shrink-0">
                               Selected
                             </span>
                           )}
@@ -1066,63 +1164,6 @@ function CheckoutContent() {
                             </span>
                             <span className="font-bold text-[#E0592A] text-[11px]">
                               ইনস্ট্যান্ট কনফার্মেশন
-                            </span>
-                          </div>
-                        )}
-                      </label>
-                    )}
-
-                    {/* 2. Cash on Delivery (COD) */}
-                    {settings.codEnabled !== false && (
-                      <label
-                        className={`block p-4 sm:p-5 rounded-2xl cursor-pointer transition-all ${
-                          formData.paymentMethod === "COD"
-                            ? "border-2 border-[#0D3B37] bg-emerald-50/60 shadow-sm"
-                            : "border border-gray-200 bg-white hover:border-gray-300"
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-start gap-3.5">
-                            <input
-                              type="radio"
-                              name="paymentMethod"
-                              value="COD"
-                              checked={formData.paymentMethod === "COD"}
-                              onChange={() =>
-                                setFormData({ ...formData, paymentMethod: "COD" })
-                              }
-                              className="w-4 h-4 text-[#0D3B37] accent-[#0D3B37] mt-1"
-                            />
-                            <div>
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <p className="text-sm sm:text-base font-extrabold text-[#0D3B37]">
-                                  ক্যাশ অন ডেলিভারি (Cash on Delivery)
-                                </p>
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-                                  হোম ডেলিভারি
-                                </span>
-                              </div>
-                              <p className="text-xs text-gray-600 font-normal mt-1 leading-relaxed">
-                                {settings.codNote ||
-                                  "পণ্য হাতে পেয়ে দেখে ডেলিভারিম্যানকে ক্যাশ টাকা পরিশোধ করুন। কোনো অগ্রিম পেমেন্টের প্রয়োজন নেই।"}
-                              </p>
-                            </div>
-                          </div>
-
-                          {formData.paymentMethod === "COD" && (
-                            <span className="text-xs font-bold text-emerald-800 bg-emerald-100/80 px-2.5 py-1 rounded-full shrink-0">
-                              Selected
-                            </span>
-                          )}
-                        </div>
-
-                        {formData.paymentMethod === "COD" && (
-                          <div className="mt-3.5 pt-3 border-t border-emerald-200/80 text-xs text-charcoal-700 bg-white/90 p-3 rounded-xl flex items-center justify-between">
-                            <span className="text-gray-600">
-                              📦 ডেলিভারির সময় মোট পরিশোধ করতে হবে:
-                            </span>
-                            <span className="font-extrabold text-[#0D3B37] text-sm">
-                              ৳{displayTotal.toLocaleString()}
                             </span>
                           </div>
                         )}
