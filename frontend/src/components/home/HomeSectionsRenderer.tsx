@@ -100,6 +100,47 @@ export function HomeSectionsRenderer({
   const [heroSlideIndex, setHeroSlideIndex] = React.useState<number>(0);
   const [touchStartX, setTouchStartX] = React.useState<number | null>(null);
 
+  // Featured Products Carousel state and auto-slide handlers
+  const featuredScrollRef = React.useRef<HTMLDivElement>(null);
+  const [isFeaturedPaused, setIsFeaturedPaused] = React.useState<boolean>(false);
+
+  const scrollFeaturedPrev = React.useCallback(() => {
+    const el = featuredScrollRef.current;
+    if (!el) return;
+    const card = el.children[0] as HTMLElement | undefined;
+    const cardWidth = card?.offsetWidth || 260;
+    const isMobile = window.innerWidth < 640;
+    const step = isMobile ? (cardWidth + 14) * 2 : (cardWidth + 24) * 2;
+    if (el.scrollLeft <= 15) {
+      el.scrollTo({ left: el.scrollWidth - el.clientWidth, behavior: "smooth" });
+    } else {
+      el.scrollBy({ left: -step, behavior: "smooth" });
+    }
+  }, []);
+
+  const scrollFeaturedNext = React.useCallback(() => {
+    const el = featuredScrollRef.current;
+    if (!el) return;
+    const card = el.children[0] as HTMLElement | undefined;
+    const cardWidth = card?.offsetWidth || 260;
+    const isMobile = window.innerWidth < 640;
+    const step = isMobile ? (cardWidth + 14) * 2 : (cardWidth + 24) * 2;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (el.scrollLeft >= maxScroll - 15) {
+      el.scrollTo({ left: 0, behavior: "smooth" });
+    } else {
+      el.scrollBy({ left: step, behavior: "smooth" });
+    }
+  }, []);
+
+  React.useEffect(() => {
+    if (isEditorMode || isFeaturedPaused) return;
+    const timer = setInterval(() => {
+      scrollFeaturedNext();
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [isEditorMode, isFeaturedPaused, scrollFeaturedNext]);
+
   // Auto-advance hero carousel every 6s unless in editor mode
   React.useEffect(() => {
     if (isEditorMode) return;
@@ -654,12 +695,12 @@ export function HomeSectionsRenderer({
   };
 
   // =========================================================================
-  // 3. HOME: FEATURED PRODUCTS
+  // 3. HOME: FEATURED PRODUCTS (Auto-Sliding Carousel - 2 on Mobile, 5 on Desktop)
   // =========================================================================
   const renderFeaturedProducts = (section: HomeSectionData) => {
     const p = section.props || {};
-    const limit = Number(p.limit) || 5;
-    const items = products.slice(0, limit);
+    const limit = Number(p.limit) || 12;
+    const items = products.slice(0, Math.max(limit, 10));
 
     return (
       <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
@@ -678,22 +719,54 @@ export function HomeSectionsRenderer({
             </div>
           </div>
 
-          {isEditorMode ? (
-            <span className="text-xs sm:text-sm font-semibold text-[#0D3B37]">
-              {p.ctaText || "View All Products"} →
-            </span>
-          ) : (
-            <Link
-              href="/shop"
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group shrink-0 cursor-pointer"
-            >
-              <span>{p.ctaText || "View All Products"}</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
-          )}
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Previous & Next Carousel Navigation Arrows */}
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={scrollFeaturedPrev}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white hover:bg-[#FAF8F5] text-[#0D3B37] hover:border-[#0D3B37] hover:text-[#E0592A] flex items-center justify-center transition-all shadow-2xs cursor-pointer active:scale-95"
+                aria-label="Previous products"
+              >
+                <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+              </button>
+              <button
+                type="button"
+                onClick={scrollFeaturedNext}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white hover:bg-[#FAF8F5] text-[#0D3B37] hover:border-[#0D3B37] hover:text-[#E0592A] flex items-center justify-center transition-all shadow-2xs cursor-pointer active:scale-95"
+                aria-label="Next products"
+              >
+                <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </div>
+
+            {isEditorMode ? (
+              <span className="hidden xs:inline text-xs sm:text-sm font-semibold text-[#0D3B37] ml-1">
+                {p.ctaText || "View All"} →
+              </span>
+            ) : (
+              <Link
+                href="/shop"
+                className="hidden xs:flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group shrink-0 ml-1 cursor-pointer"
+              >
+                <span>{p.ctaText || "View All"}</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
+            )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
+        {/* Carousel Track with 2 products on mobile, 5 on desktop */}
+        <div
+          ref={featuredScrollRef}
+          onMouseEnter={() => setIsFeaturedPaused(true)}
+          onMouseLeave={() => setIsFeaturedPaused(false)}
+          onTouchStart={() => setIsFeaturedPaused(true)}
+          onTouchEnd={() => {
+            setTimeout(() => setIsFeaturedPaused(false), 2000);
+          }}
+          className="flex items-stretch gap-3.5 sm:gap-5 lg:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-2 px-1 -mx-1"
+        >
           {items.map((prod) => {
             const imageSrc = getProductImage(prod);
             const price = Number(prod.price) || 0;
@@ -705,7 +778,7 @@ export function HomeSectionsRenderer({
             return (
               <div
                 key={prod.id}
-                className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 relative group border border-gray-100 min-h-[320px]"
+                className="w-[calc((100%-14px)/2)] min-w-[calc((100%-14px)/2)] sm:w-[calc((100%-40px)/3)] sm:min-w-[calc((100%-40px)/3)] md:w-[calc((100%-60px)/4)] md:min-w-[calc((100%-60px)/4)] lg:w-[calc((100%-96px)/5)] lg:min-w-[calc((100%-96px)/5)] shrink-0 snap-start bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 transition-all duration-300 relative group border border-gray-100 min-h-[320px]"
               >
                 {/* Wishlist Heart Button */}
                 <button

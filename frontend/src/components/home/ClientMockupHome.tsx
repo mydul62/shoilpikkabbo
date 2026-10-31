@@ -178,10 +178,52 @@ export function ClientMockupHome() {
     setTimeout(() => setAddedProductId(null), 1500);
   };
 
-  // 1. Featured Products: top 5 products from PostgreSQL database
+  // 1. Featured Products: top 12 products from PostgreSQL database for auto-sliding carousel
   const featuredProducts = React.useMemo(() => {
-    return liveProducts.slice(0, 5);
+    return liveProducts.slice(0, 12);
   }, [liveProducts]);
+
+  // Featured Products Auto-Slider State & Controls
+  const featuredScrollRef = React.useRef<HTMLDivElement>(null);
+  const [isFeaturedPaused, setIsFeaturedPaused] = React.useState(false);
+
+  const scrollFeaturedPrev = React.useCallback(() => {
+    const el = featuredScrollRef.current;
+    if (!el) return;
+    const card = el.children[0] as HTMLElement | undefined;
+    const cardWidth = card?.offsetWidth || 260;
+    const isMobile = window.innerWidth < 640;
+    const step = isMobile ? (cardWidth + 14) * 2 : (cardWidth + 24) * 2;
+    if (el.scrollLeft <= 15) {
+      el.scrollTo({ left: el.scrollWidth - el.clientWidth, behavior: "smooth" });
+    } else {
+      el.scrollBy({ left: -step, behavior: "smooth" });
+    }
+  }, []);
+
+  const scrollFeaturedNext = React.useCallback(() => {
+    const el = featuredScrollRef.current;
+    if (!el) return;
+    const card = el.children[0] as HTMLElement | undefined;
+    const cardWidth = card?.offsetWidth || 260;
+    const isMobile = window.innerWidth < 640;
+    const step = isMobile ? (cardWidth + 14) * 2 : (cardWidth + 24) * 2;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (el.scrollLeft >= maxScroll - 15) {
+      el.scrollTo({ left: 0, behavior: "smooth" });
+    } else {
+      el.scrollBy({ left: step, behavior: "smooth" });
+    }
+  }, []);
+
+  // Auto-slide every 3.5 seconds when not paused by hover or touch
+  React.useEffect(() => {
+    if (isFeaturedPaused || featuredProducts.length <= 5) return;
+    const timer = setInterval(() => {
+      scrollFeaturedNext();
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [isFeaturedPaused, featuredProducts.length, scrollFeaturedNext]);
 
   // 2. "For You" Section: uses real database products (no artificial 40 dummy loop)
   const allForYouProducts = React.useMemo(() => {
@@ -587,10 +629,10 @@ export function ClientMockupHome() {
       </section>
 
       {/* ========================================================================= */}
-      {/* 3. FEATURED PRODUCTS (Live from PostgreSQL Database) */}
+      {/* 3. FEATURED PRODUCTS (Auto-Sliding Carousel - 2 on Mobile, 5 on Desktop) */}
       {/* ========================================================================= */}
       <section className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
+        {/* Section Header with Carousel Navigation */}
         <div className="flex items-center justify-between pb-6 sm:pb-7">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
@@ -606,19 +648,57 @@ export function ClientMockupHome() {
             </div>
           </div>
 
-          <Link
-            href="/shop"
-            className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group shrink-0"
-          >
-            <span>View All Products</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          </Link>
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Previous & Next Carousel Navigation Arrows */}
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={scrollFeaturedPrev}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white hover:bg-[#FAF8F5] text-[#0D3B37] hover:border-[#0D3B37] hover:text-[#E0592A] flex items-center justify-center transition-all shadow-2xs cursor-pointer active:scale-95"
+                aria-label="Previous products"
+              >
+                <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
+              </button>
+              <button
+                type="button"
+                onClick={scrollFeaturedNext}
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-gray-200 bg-white hover:bg-[#FAF8F5] text-[#0D3B37] hover:border-[#0D3B37] hover:text-[#E0592A] flex items-center justify-center transition-all shadow-2xs cursor-pointer active:scale-95"
+                aria-label="Next products"
+              >
+                <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </div>
+
+            <Link
+              href="/shop"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#0D3B37] hover:text-[#E0592A] transition-colors group shrink-0 ml-1"
+            >
+              <span>View All</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </div>
         </div>
 
-        {/* 5-Column Grid of Products */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5 lg:gap-6">
+        {/* Responsive Auto-Sliding Carousel Track (2 cards on mobile, 5 on desktop) */}
+        <div
+          ref={featuredScrollRef}
+          onMouseEnter={() => setIsFeaturedPaused(true)}
+          onMouseLeave={() => setIsFeaturedPaused(false)}
+          onTouchStart={() => setIsFeaturedPaused(true)}
+          onTouchEnd={() => {
+            setTimeout(() => setIsFeaturedPaused(false), 2000);
+          }}
+          className="flex items-stretch gap-3.5 sm:gap-5 lg:gap-6 overflow-x-auto no-scrollbar scroll-smooth snap-x snap-mandatory py-2 px-1 -mx-1"
+        >
           {isLoading ? (
-            Array.from({ length: 5 }).map((_, i) => <ProductCardSkeleton key={i} />)
+            Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i}
+                className="w-[calc((100%-14px)/2)] min-w-[calc((100%-14px)/2)] sm:w-[calc((100%-40px)/3)] sm:min-w-[calc((100%-40px)/3)] md:w-[calc((100%-60px)/4)] md:min-w-[calc((100%-60px)/4)] lg:w-[calc((100%-96px)/5)] lg:min-w-[calc((100%-96px)/5)] shrink-0"
+              >
+                <ProductCardSkeleton />
+              </div>
+            ))
           ) : featuredProducts.length > 0 ? (
             featuredProducts.map((product) => {
               const isWishlisted = isInWishlist(product.id);
@@ -630,7 +710,7 @@ export function ClientMockupHome() {
               return (
                 <div
                   key={product.id}
-                  className="bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group relative"
+                  className="w-[calc((100%-14px)/2)] min-w-[calc((100%-14px)/2)] sm:w-[calc((100%-40px)/3)] sm:min-w-[calc((100%-40px)/3)] md:w-[calc((100%-60px)/4)] md:min-w-[calc((100%-60px)/4)] lg:w-[calc((100%-96px)/5)] lg:min-w-[calc((100%-96px)/5)] shrink-0 snap-start bg-white rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-[0_2px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.07)] hover:-translate-y-0.5 group relative"
                 >
                 {/* Wishlist Button */}
                 <button
@@ -747,7 +827,7 @@ export function ClientMockupHome() {
             );
           })
         ) : (
-          <div className="col-span-full py-12 text-center text-sm text-gray-400">
+          <div className="w-full py-12 text-center text-sm text-gray-400">
             No featured products found.
           </div>
         )}
