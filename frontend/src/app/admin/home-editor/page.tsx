@@ -281,7 +281,18 @@ export default function AdminVisualPageEditor() {
         subtitle: "Best selling and most popular products",
         ctaText: "View All Products",
         ctaLink: "/shop",
-        limit: 5,
+        limit: 12,
+      },
+    },
+    category_showcase: {
+      name: "ক্যাটাগরি শোকেস স্লাইডার (Category Showcase)",
+      props: {
+        categorySlug: "handicraft",
+        headline: "হস্তশিল্প কালেকশন (Artisanal Crafts)",
+        subtitle: "ঐতিহ্যের কারুকাজে সাজুক আপনার গৃহকোণ",
+        ctaText: "View All",
+        ctaLink: "/shop?category=handicraft",
+        limit: 12,
       },
     },
     promo_trio: {
@@ -836,7 +847,8 @@ export default function AdminVisualPageEditor() {
                       {[
                         { type: "hero_carousel", label: "হিরো কারোসেল (Hero Carousel)", desc: "প্যানোরামিক ব্যানার, বাংলা শিরোনাম ও ট্রাস্ট ব্যাজ" },
                         { type: "categories_grid", label: "শপ বাই ক্যাটাগরি গ্রিড", desc: "১০টি ক্যাটাগরি ও কোয়ালিটি প্রোডাক্টস কার্ড" },
-                        { type: "featured_products", label: "ফিচার্ড প্রডাক্টস শোকেস", desc: "সেরা নির্বাচিত পণ্যের ৫-কলাম গ্রিড" },
+                        { type: "featured_products", label: "ফিচার্ড প্রডাক্টস শোকেস", desc: "সেরা নির্বাচিত পণ্যের ৫-কলাম গ্রিড ও অটো-স্ক্রল" },
+                        { type: "category_showcase", label: "ক্যাটাগরি শোকেস স্লাইডার", desc: "হ্যান্ডিক্রাফট বা নির্দিষ্ট ক্যাটাগরির পণ্যের অটো-স্ক্রল শোকেস" },
                         { type: "promo_trio", label: "প্রোমো ব্যানার ত্রয়ী (৩টি কার্ড)", desc: "৫০% স্পেশাল অফার, সেবা ও যোগাযোগ ব্যানার" },
                         { type: "for_you_products", label: "ফর ইউ রেকমেন্ডেশন", desc: "গ্রাহকের জন্য বিশেষ পণ্যের কালেকশন" },
                         { type: "trust_mission", label: "ট্রাস্ট ও ব্র্যান্ড মিশন", desc: "কেন শিল্পকাব্য? ৪টি স্তম্ভ ও ভিশন কার্ড" },
@@ -1083,6 +1095,55 @@ export default function AdminVisualPageEditor() {
                           }}
                         />
                       </div>
+
+                      {/* Category Selector Dropdown for Category Showcase */}
+                      {("categorySlug" in selectedSection.props || selectedSection.type === "category_showcase") && (
+                        <div className="space-y-2 p-3 rounded-xl bg-emerald-50/80 border border-emerald-200">
+                          <label className="font-bold text-[#0D3B37] flex items-center justify-between">
+                            <span>প্রদর্শিত ক্যাটাগরি (Select Category) *</span>
+                            <span className="text-[10px] text-emerald-800 font-bold bg-emerald-100 px-1.5 py-0.5 rounded">
+                              Auto-Filtered
+                            </span>
+                          </label>
+                          <select
+                            value={selectedSection.props.categorySlug || "handicraft"}
+                            onChange={(e) => {
+                              const slug = e.target.value;
+                              const matched = liveCategories.find((c) => c.slug === slug);
+                              const updatedProps: Record<string, any> = {
+                                ...selectedSection.props,
+                                categorySlug: slug,
+                                ctaLink: `/shop?category=${slug}`,
+                              };
+                              if (matched) {
+                                updatedProps.headline = `${matched.name} কালেকশন`;
+                                updatedProps.subtitle = matched.description || `${matched.name} এর সেরা ও আকর্ষণীয় হস্তশিল্প সম্ভার`;
+                              }
+                              const updated = sections.map((s) =>
+                                s.id === selectedSectionId
+                                  ? {
+                                      ...s,
+                                      name: `${matched ? matched.name : slug} শোকেস স্লাইডার`,
+                                      props: updatedProps,
+                                    }
+                                  : s
+                              );
+                              updateSections(updated);
+                            }}
+                            className="w-full h-9 px-3 bg-white border border-emerald-300 rounded-lg text-xs font-semibold text-[#0D3B37] focus:outline-none focus:ring-2 focus:ring-[#0D3B37]/20 cursor-pointer"
+                          >
+                            <option value="">ক্যাটাগরি নির্বাচন করুন...</option>
+                            {liveCategories.map((cat) => (
+                              <option key={cat.id || cat.slug} value={cat.slug}>
+                                {cat.name} ({cat.slug})
+                              </option>
+                            ))}
+                          </select>
+                          <p className="text-[11px] text-emerald-800 font-normal leading-tight">
+                            ✓ যে ক্যাটাগরি বেছে নেবেন, হোমপেজে স্বয়ংক্রিয়ভাবে সেই ক্যাটাগরির প্রোডাক্টগুলো ফিল্টার হয়ে ৫টি করে অটো-স্ক্রল হবে।
+                          </p>
+                        </div>
+                      )}
 
                       {/* Overline / Pill / Badge */}
                       {"pill" in selectedSection.props && (
