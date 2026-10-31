@@ -343,108 +343,111 @@ export function ClientMockupHome() {
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="relative w-full max-w-[1480px] mx-auto aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px] select-none">
+        <div className="relative w-full aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px] select-none">
           {/* Panoramic High-Res Hero Background Image */}
           <Image
             src={activeSlide.bgImage}
             alt={`${activeSlide.titleLine1} ${activeSlide.titleLine2} - SHOILPIKKABBO`}
             fill
             priority
-            className="object-cover object-right sm:object-fill transition-all duration-700"
-            sizes="(max-width: 1480px) 100vw, 1480px"
+            className="object-cover object-center sm:object-cover transition-all duration-700"
+            sizes="100vw"
           />
 
           {/* Subtle Mobile Gradient to ensure high-contrast readability without hiding artwork */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#FAF6EB]/95 via-[#FAF6EB]/80 to-transparent sm:from-transparent sm:via-transparent sm:to-transparent z-1 pointer-events-none" />
 
-          {/* Left Content Overlay: Exact typography, badges, icons & CTA */}
-          <div className="absolute left-4 sm:left-[8%] top-0 bottom-0 flex flex-col justify-center max-w-[72%] sm:max-w-[46%] z-10 py-3 sm:py-0">
-            {/* Top Pill Tag */}
-            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-0.5 sm:py-1 rounded-full bg-[#084035] text-white text-[9px] sm:text-xs md:text-[13px] font-semibold w-fit tracking-wide shadow-xs mb-1 sm:mb-2 md:mb-2.5">
-              <span>Handmade</span>
-              <span className="text-white/60">•</span>
-              <span>Eco Friendly</span>
-              <span className="hidden xs:inline text-white/60">•</span>
-              <span className="hidden xs:inline">Local Products</span>
-            </div>
-
-            {/* Main Bengali Headline */}
-            <h1 className="font-bengali font-bold sm:font-black tracking-tight leading-[1.12]">
-              <span className="block text-[#083D33] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px]">
-                {activeSlide.titleLine1}
-              </span>
-              <span className="block text-[#E0592A] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] mt-0.5 sm:mt-1">
-                {activeSlide.titleLine2}
-              </span>
-            </h1>
-
-            {/* Subtitle Description */}
-            <p className="font-bengali font-medium text-[#143D34] text-[10.5px] sm:text-xs md:text-sm lg:text-[15.5px] xl:text-[16.5px] leading-snug mt-1 sm:mt-2.5 md:mt-3 max-w-sm sm:max-w-md line-clamp-2 sm:line-clamp-none">
-              <span>{activeSlide.subtitleLine1}</span>
-              {activeSlide.subtitleLine2 && (
-                <>
-                  <br className="hidden sm:inline" />
-                  <span className="hidden sm:inline"> {activeSlide.subtitleLine2}</span>
-                </>
-              )}
-            </p>
-
-            {/* Value Proposition Features: Clean compact line on mobile, full 3 items on sm+ */}
-            <div className="hidden sm:flex items-center gap-2.5 sm:gap-4 md:gap-6 mt-2 sm:mt-3 md:mt-4 text-[#083D33]">
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M1 4h3v2H1V4zm0 4h5v2H1V8zm0 4h3v2H1v-2zm17 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-10 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm14-5v-4l-3-4H8v10h1.18a3 3 0 0 1 5.64 0h1.36a3 3 0 0 1 5.64 0H23v-2h-1zM9.5 8h4.5v3H9.5V8zm7.5 1l2 2.5h-2V9z"/>
-                </svg>
-                <span>Fast Delivery</span>
+          {/* Inner Content Container Constrained to max-w-[1480px] for perfect alignment with site content */}
+          <div className="absolute inset-0 max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 pointer-events-none">
+            {/* Left Content Overlay: Exact typography, badges, icons & CTA */}
+            <div className="relative h-full flex flex-col justify-center max-w-[72%] sm:max-w-[50%] md:max-w-[46%] z-10 py-3 sm:py-0 pointer-events-auto">
+              {/* Top Pill Tag */}
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-0.5 sm:py-1 rounded-full bg-[#084035] text-white text-[9px] sm:text-xs md:text-[13px] font-semibold w-fit tracking-wide shadow-xs mb-1 sm:mb-2 md:mb-2.5">
+                <span>Handmade</span>
+                <span className="text-white/60">•</span>
+                <span>Eco Friendly</span>
+                <span className="hidden xs:inline text-white/60">•</span>
+                <span className="hidden xs:inline">Local Products</span>
               </div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-                </svg>
-                <span>Quality Products</span>
+
+              {/* Main Bengali Headline */}
+              <h1 className="font-bengali font-bold sm:font-black tracking-tight leading-[1.12]">
+                <span className="block text-[#083D33] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px]">
+                  {activeSlide.titleLine1}
+                </span>
+                <span className="block text-[#E0592A] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] mt-0.5 sm:mt-1">
+                  {activeSlide.titleLine2}
+                </span>
+              </h1>
+
+              {/* Subtitle Description */}
+              <p className="font-bengali font-medium text-[#143D34] text-[10.5px] sm:text-xs md:text-sm lg:text-[15.5px] xl:text-[16.5px] leading-snug mt-1 sm:mt-2.5 md:mt-3 max-w-sm sm:max-w-md line-clamp-2 sm:line-clamp-none">
+                <span>{activeSlide.subtitleLine1}</span>
+                {activeSlide.subtitleLine2 && (
+                  <>
+                    <br className="hidden sm:inline" />
+                    <span className="hidden sm:inline"> {activeSlide.subtitleLine2}</span>
+                  </>
+                )}
+              </p>
+
+              {/* Value Proposition Features: Clean compact line on mobile, full 3 items on sm+ */}
+              <div className="hidden sm:flex items-center gap-2.5 sm:gap-4 md:gap-6 mt-2 sm:mt-3 md:mt-4 text-[#083D33]">
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M1 4h3v2H1V4zm0 4h5v2H1V8zm0 4h3v2H1v-2zm17 5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm-10 0a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm14-5v-4l-3-4H8v10h1.18a3 3 0 0 1 5.64 0h1.36a3 3 0 0 1 5.64 0H23v-2h-1zM9.5 8h4.5v3H9.5V8zm7.5 1l2 2.5h-2V9z"/>
+                  </svg>
+                  <span>Fast Delivery</span>
+                </div>
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                  <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                  </svg>
+                  <span>Quality Products</span>
+                </div>
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                  <Handshake className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
+                  <span>Reliable Service</span>
+                </div>
               </div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
-                <Handshake className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
-                <span>Reliable Service</span>
+
+              <div className="sm:hidden flex items-center gap-1.5 mt-1.5 text-[10px] text-[#083D33] font-semibold">
+                <span className="text-emerald-700">✓</span>
+                <span>দ্রুত ডেলিভারি • প্রিমিয়াম মান</span>
+              </div>
+
+              {/* CTA Button */}
+              <div className="mt-2.5 sm:mt-3.5 md:mt-4 lg:mt-5">
+                <Link
+                  href={activeSlide.ctaLink}
+                  className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] hover:bg-[#C8481C] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)] transition-all hover:scale-105 cursor-pointer group"
+                >
+                  <span>{activeSlide.ctaText}</span>
+                  <span className="text-xs sm:text-base transition-transform duration-200 group-hover:translate-x-1">→</span>
+                </Link>
               </div>
             </div>
 
-            <div className="sm:hidden flex items-center gap-1.5 mt-1.5 text-[10px] text-[#083D33] font-semibold">
-              <span className="text-emerald-700">✓</span>
-              <span>দ্রুত ডেলিভারি • প্রিমিয়াম মান</span>
-            </div>
-
-            {/* CTA Button */}
-            <div className="mt-2.5 sm:mt-3.5 md:mt-4 lg:mt-5">
-              <Link
-                href={activeSlide.ctaLink}
-                className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] hover:bg-[#C8481C] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)] transition-all hover:scale-105 cursor-pointer group"
-              >
-                <span>{activeSlide.ctaText}</span>
-                <span className="text-xs sm:text-base transition-transform duration-200 group-hover:translate-x-1">→</span>
-              </Link>
-            </div>
+            {/* Top Right "Support Local Products ♡" Stamp */}
+            {activeSlide.showBadge && (
+              <div className="absolute right-4 sm:right-6 lg:right-8 top-[5%] sm:top-[9%] md:top-[10%] z-10 pointer-events-none select-none">
+                <Image
+                  src="/images/client-mockup/support-local-badge.png"
+                  alt="Support Local Products"
+                  width={115}
+                  height={125}
+                  className="w-10 sm:w-18 md:w-22 lg:w-26 xl:w-28 h-auto object-contain drop-shadow-xs"
+                  priority
+                />
+              </div>
+            )}
           </div>
-
-          {/* Top Right "Support Local Products ♡" Stamp */}
-          {activeSlide.showBadge && (
-            <div className="absolute right-[3%] sm:right-[6%] md:right-[7.5%] top-[5%] sm:top-[9%] md:top-[10%] z-10 pointer-events-none select-none">
-              <Image
-                src="/images/client-mockup/support-local-badge.png"
-                alt="Support Local Products"
-                width={115}
-                height={125}
-                className="w-10 sm:w-18 md:w-22 lg:w-26 xl:w-28 h-auto object-contain drop-shadow-xs"
-                priority
-              />
-            </div>
-          )}
 
           {/* Interactive Carousel Left Arrow (Hidden on mobile to avoid overlapping text, visible on sm+) */}
           <button
             type="button"
             onClick={prevSlide}
-            className="hidden sm:flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
+            className="hidden sm:flex absolute left-2 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
@@ -454,7 +457,7 @@ export function ClientMockupHome() {
           <button
             type="button"
             onClick={nextSlide}
-            className="hidden sm:flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
+            className="hidden sm:flex absolute right-2 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
             aria-label="Next slide"
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />

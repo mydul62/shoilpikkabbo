@@ -372,7 +372,7 @@ export function HomeSectionsRenderer({
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="relative w-full max-w-[1480px] mx-auto aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px]">
+        <div className="relative w-full aspect-[16/10] xs:aspect-[16/9] sm:aspect-[1024/302] min-h-[250px] sm:min-h-[280px] md:min-h-[340px] lg:min-h-[380px] xl:min-h-[440px]">
           {/* Panoramic High-Res Hero Background Image with Smooth Cross-Fade */}
           <Image
             key={activeSlide.bgImage}
@@ -380,96 +380,99 @@ export function HomeSectionsRenderer({
             alt={`${activeSlide.titleLine1 || ""} ${activeSlide.titleLine2 || ""} - SHOILPIKKABBO`}
             fill
             priority
-            className="object-cover object-right sm:object-fill transition-all duration-700"
-            sizes="(max-width: 1480px) 100vw, 1480px"
+            className="object-cover object-center sm:object-cover transition-all duration-700"
+            sizes="100vw"
           />
 
           {/* Subtle Mobile Gradient to ensure text readability */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#FAF6EB]/95 via-[#FAF6EB]/80 to-transparent sm:from-transparent sm:via-transparent sm:to-transparent z-1 pointer-events-none" />
 
-          {/* Left Content Overlay */}
-          <div className="absolute left-4 sm:left-[8%] top-0 bottom-0 flex flex-col justify-center max-w-[72%] sm:max-w-[46%] z-10 py-3 sm:py-0">
-            {activeSlide.pill && (
-              <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-0.5 sm:py-1 rounded-full bg-[#084035] text-white text-[9px] sm:text-xs md:text-[13px] font-semibold w-fit tracking-wide shadow-xs mb-1 sm:mb-2 md:mb-2.5">
-                <span>{activeSlide.pill}</span>
+          {/* Inner Content Container Constrained to max-w-[1480px] for perfect alignment with site content */}
+          <div className="absolute inset-0 max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-8 pointer-events-none">
+            {/* Left Content Overlay */}
+            <div className="relative h-full flex flex-col justify-center max-w-[72%] sm:max-w-[50%] md:max-w-[46%] z-10 py-3 sm:py-0 pointer-events-auto">
+              {activeSlide.pill && (
+                <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-0.5 sm:py-1 rounded-full bg-[#084035] text-white text-[9px] sm:text-xs md:text-[13px] font-semibold w-fit tracking-wide shadow-xs mb-1 sm:mb-2 md:mb-2.5">
+                  <span>{activeSlide.pill}</span>
+                </div>
+              )}
+
+              <h1 className="font-bengali font-bold sm:font-black tracking-tight leading-[1.12]">
+                <span className="block text-[#083D33] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px]">
+                  {activeSlide.titleLine1}
+                </span>
+                <span className="block text-[#E0592A] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] mt-0.5 sm:mt-1">
+                  {activeSlide.titleLine2}
+                </span>
+              </h1>
+
+              <p className="font-bengali font-medium text-[#143D34] text-[10.5px] sm:text-xs md:text-sm lg:text-[15.5px] xl:text-[16.5px] leading-snug mt-1 sm:mt-2.5 md:mt-3 max-w-sm sm:max-w-md line-clamp-2 sm:line-clamp-none">
+                <span>{activeSlide.subtitleLine1}</span>
+                {activeSlide.subtitleLine2 && (
+                  <>
+                    <br className="hidden sm:inline" />
+                    <span className="hidden sm:inline"> {activeSlide.subtitleLine2}</span>
+                  </>
+                )}
+              </p>
+
+              {/* Value Proposition Features */}
+              <div className="hidden sm:flex items-center gap-2.5 sm:gap-4 md:gap-6 mt-2 sm:mt-3 md:mt-4 text-[#083D33]">
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                  <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
+                  <span>{activeSlide.badge1Text || "Fast Delivery"}</span>
+                </div>
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                  <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
+                  <span>{activeSlide.badge2Text || "Quality Products"}</span>
+                </div>
+                <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
+                  <Handshake className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
+                  <span>{activeSlide.badge3Text || "Reliable Service"}</span>
+                </div>
+              </div>
+
+              <div className="sm:hidden flex items-center gap-1.5 mt-1.5 text-[10px] text-[#083D33] font-semibold">
+                <span className="text-emerald-700">✓</span>
+                <span>দ্রুত ডেলিভারি • প্রিমিয়াম মান</span>
+              </div>
+
+              {/* CTA Button */}
+              <div className="mt-2.5 sm:mt-3.5 md:mt-4 lg:mt-5">
+                {isEditorMode ? (
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)]"
+                  >
+                    <span>{activeSlide.ctaText || "Shop Now"}</span>
+                    <span className="text-xs sm:text-base">→</span>
+                  </button>
+                ) : (
+                  <Link
+                    href={activeSlide.ctaLink || "/shop"}
+                    className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] hover:bg-[#C8481C] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)] transition-all hover:scale-105 cursor-pointer group"
+                  >
+                    <span>{activeSlide.ctaText || "Shop Now"}</span>
+                    <span className="text-xs sm:text-base transition-transform duration-200 group-hover:translate-x-1">→</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+
+            {/* Top Right "Support Local Products ♡" Stamp */}
+            {activeSlide.showBadge && (
+              <div className="absolute right-4 sm:right-6 lg:right-8 top-[5%] sm:top-[9%] md:top-[10%] z-10 pointer-events-none select-none">
+                <Image
+                  src="/images/client-mockup/support-local-badge.png"
+                  alt="Support Local Products"
+                  width={115}
+                  height={125}
+                  className="w-10 sm:w-18 md:w-22 lg:w-26 xl:w-28 h-auto object-contain drop-shadow-xs"
+                  priority
+                />
               </div>
             )}
-
-            <h1 className="font-bengali font-bold sm:font-black tracking-tight leading-[1.12]">
-              <span className="block text-[#083D33] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px]">
-                {activeSlide.titleLine1}
-              </span>
-              <span className="block text-[#E0592A] text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-[46px] mt-0.5 sm:mt-1">
-                {activeSlide.titleLine2}
-              </span>
-            </h1>
-
-            <p className="font-bengali font-medium text-[#143D34] text-[10.5px] sm:text-xs md:text-sm lg:text-[15.5px] xl:text-[16.5px] leading-snug mt-1 sm:mt-2.5 md:mt-3 max-w-sm sm:max-w-md line-clamp-2 sm:line-clamp-none">
-              <span>{activeSlide.subtitleLine1}</span>
-              {activeSlide.subtitleLine2 && (
-                <>
-                  <br className="hidden sm:inline" />
-                  <span className="hidden sm:inline"> {activeSlide.subtitleLine2}</span>
-                </>
-              )}
-            </p>
-
-            {/* Value Proposition Features */}
-            <div className="hidden sm:flex items-center gap-2.5 sm:gap-4 md:gap-6 mt-2 sm:mt-3 md:mt-4 text-[#083D33]">
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
-                <Truck className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
-                <span>{activeSlide.badge1Text || "Fast Delivery"}</span>
-              </div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
-                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
-                <span>{activeSlide.badge2Text || "Quality Products"}</span>
-              </div>
-              <div className="flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-[11px] md:text-[13px] font-bold">
-                <Handshake className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 text-[#083D33] shrink-0" />
-                <span>{activeSlide.badge3Text || "Reliable Service"}</span>
-              </div>
-            </div>
-
-            <div className="sm:hidden flex items-center gap-1.5 mt-1.5 text-[10px] text-[#083D33] font-semibold">
-              <span className="text-emerald-700">✓</span>
-              <span>দ্রুত ডেলিভারি • প্রিমিয়াম মান</span>
-            </div>
-
-            {/* CTA Button */}
-            <div className="mt-2.5 sm:mt-3.5 md:mt-4 lg:mt-5">
-              {isEditorMode ? (
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)]"
-                >
-                  <span>{activeSlide.ctaText || "Shop Now"}</span>
-                  <span className="text-xs sm:text-base">→</span>
-                </button>
-              ) : (
-                <Link
-                  href={activeSlide.ctaLink || "/shop"}
-                  className="inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-6 md:px-7 py-1.5 sm:py-2.5 md:py-3 rounded-full bg-[#E0592A] hover:bg-[#C8481C] text-white font-bold text-[11px] sm:text-xs md:text-sm lg:text-base shadow-[0_4px_14px_rgba(224,89,42,0.35)] transition-all hover:scale-105 cursor-pointer group"
-                >
-                  <span>{activeSlide.ctaText || "Shop Now"}</span>
-                  <span className="text-xs sm:text-base transition-transform duration-200 group-hover:translate-x-1">→</span>
-                </Link>
-              )}
-            </div>
           </div>
-
-          {/* Top Right "Support Local Products ♡" Stamp */}
-          {activeSlide.showBadge && (
-            <div className="absolute right-[3%] sm:right-[6%] md:right-[7.5%] top-[5%] sm:top-[9%] md:top-[10%] z-10 pointer-events-none select-none">
-              <Image
-                src="/images/client-mockup/support-local-badge.png"
-                alt="Support Local Products"
-                width={115}
-                height={125}
-                className="w-10 sm:w-18 md:w-22 lg:w-26 xl:w-28 h-auto object-contain drop-shadow-xs"
-                priority
-              />
-            </div>
-          )}
 
           {/* Interactive Carousel Left Arrow Button */}
           {slides.length > 1 && (
@@ -479,7 +482,7 @@ export function HomeSectionsRenderer({
                 e.stopPropagation();
                 prevSlide();
               }}
-              className="hidden sm:flex absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
+              className="hidden sm:flex absolute left-2 sm:left-4 md:left-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
               aria-label="Previous slide"
             >
               <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
@@ -494,7 +497,7 @@ export function HomeSectionsRenderer({
                 e.stopPropagation();
                 nextSlide();
               }}
-              className="hidden sm:flex absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
+              className="hidden sm:flex absolute right-2 sm:right-4 md:right-6 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full bg-white/95 hover:bg-white text-[#0D3B37] shadow-md items-center justify-center transition-all hover:scale-110 cursor-pointer z-20"
               aria-label="Next slide"
             >
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.5]" />
