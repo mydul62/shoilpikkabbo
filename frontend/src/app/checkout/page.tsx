@@ -433,6 +433,7 @@ function CheckoutContent() {
         city: shippingCity === "Dhaka" ? "Dhaka" : "Outside Dhaka",
         deliveryNotes: formData.deliveryNotes.trim() || undefined,
         paymentMethod: paymentMap[formData.paymentMethod] || "ONLINE_GATEWAY",
+        clientOrigin: typeof window !== "undefined" ? window.location.origin : undefined,
         transactionId: `TRX-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
         couponCode: appliedCoupon?.code,
         items: activeItems.map((item) => {

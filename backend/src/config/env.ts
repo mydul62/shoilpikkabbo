@@ -9,7 +9,7 @@ export const ENV = {
   DATABASE_URL: process.env.DATABASE_URL || "",
   JWT_SECRET: process.env.JWT_SECRET || "shoilpikkabbo_jwt_secret_default",
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "7d",
-  FRONTEND_URL: process.env.FRONTEND_URL || (isProd ? "https://shoilpikkabbo.vercel.app" : "http://localhost:3000"),
+  FRONTEND_URL: process.env.FRONTEND_URL || (isProd ? "https://shoilpikkabbo-frontend.onrender.com" : "http://localhost:3000"),
   BACKEND_BASE_URL: process.env.BACKEND_BASE_URL || (isProd ? "https://shoilpikkabbo.onrender.com" : "http://localhost:5000"),
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "",
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "",

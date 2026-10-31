@@ -8,7 +8,7 @@ export class SSLCommerzService {
     if (envUrl && !envUrl.includes("localhost")) {
       return envUrl.replace(/\/$/, "");
     }
-    return "https://shoilpikkabbo.vercel.app";
+    return "https://shoilpikkabbo-frontend.onrender.com";
   }
 
   public static getBackendUrl(): string {
@@ -148,8 +148,11 @@ export class SSLCommerzService {
       params.append("ship_postcode", order.postalCode || "1200");
       params.append("ship_country", "Bangladesh");
 
-      // Custom order identifier
+      // Custom order identifiers & origin callback
       params.append("value_a", order.orderNumber);
+      params.append("value_b", order.id);
+      const origin = (order as any).clientOrigin || this.getFrontendUrl();
+      params.append("value_c", origin);
 
       console.log(`[SSLCommerz] Initiating session for Order #${order.orderNumber} (Amount: ৳${order.totalAmount}) at ${initUrl}`);
 
@@ -207,8 +210,9 @@ export class SSLCommerzService {
    * Handles payment success callback from SSLCommerz
    */
   static async handleSuccess(body: any): Promise<{ redirectUrl: string }> {
-    const { tran_id, val_id, amount, card_type, bank_tran_id, value_a } = body;
-    console.log(`[SSLCommerz] Success callback received for tran_id: ${tran_id}, val_id: ${val_id}, order: ${value_a}`);
+    const { tran_id, val_id, amount, card_type, bank_tran_id, value_a, value_b, value_c } = body;
+    const frontendBase = (value_c && typeof value_c === "string" && value_c.startsWith("http")) ? value_c.replace(/\/$/, "") : this.getFrontendUrl();
+    console.log(`[SSLCommerz] Success callback received for tran_id: ${tran_id}, val_id: ${val_id}, order: ${value_a}, id: ${value_b}`);
 
     let isValid = true;
     let cardType = card_type || "Online Gateway";
@@ -224,20 +228,21 @@ export class SSLCommerzService {
       }
     }
 
-    // Find the associated order
+    // Find the associated order by id, orderNumber or tran_id
     const order = await prisma.order.findFirst({
       where: {
         OR: [
-          ...(tran_id ? [{ transactionId: tran_id }] : []),
+          ...(value_b ? [{ id: value_b }] : []),
           ...(value_a ? [{ orderNumber: value_a }] : []),
+          ...(tran_id ? [{ transactionId: tran_id }] : []),
         ],
       },
     });
 
     if (!order) {
-      console.error(`[SSLCommerz] Order not found for tran_id: ${tran_id}, value_a: ${value_a}`);
+      console.error(`[SSLCommerz] Order not found for tran_id: ${tran_id}, value_a: ${value_a}, value_b: ${value_b}`);
       return {
-        redirectUrl: `${this.getFrontendUrl()}/checkout?error=order_not_found`,
+        redirectUrl: `${frontendBase}/checkout?error=order_not_found`,
       };
     }
 
@@ -279,7 +284,7 @@ export class SSLCommerzService {
 
       console.log(`[SSLCommerz] Order #${order.orderNumber} successfully marked as PAID.`);
       return {
-        redirectUrl: `${this.getFrontendUrl()}/checkout/success?orderNumber=${order.orderNumber}&paymentStatus=PAID&method=SSLCOMMERZ&tranId=${tran_id || ""}`,
+        redirectUrl: `${frontendBase}/checkout/success?orderNumber=${order.orderNumber}&paymentStatus=PAID&method=SSLCOMMERZ&tranId=${tran_id || ""}`,
       };
     } else {
       // If validation failed
@@ -291,7 +296,7 @@ export class SSLCommerzService {
       });
 
       return {
-        redirectUrl: `${this.getFrontendUrl()}/checkout?error=validation_failed&orderNumber=${order.orderNumber}`,
+        redirectUrl: `${frontendBase}/checkout?error=validation_failed&orderNumber=${order.orderNumber}`,
       };
     }
   }
@@ -300,14 +305,16 @@ export class SSLCommerzService {
    * Handles payment failure callback
    */
   static async handleFail(body: any): Promise<{ redirectUrl: string }> {
-    const { tran_id, value_a, failedreason } = body;
+    const { tran_id, value_a, value_b, value_c, failedreason } = body;
+    const frontendBase = (value_c && typeof value_c === "string" && value_c.startsWith("http")) ? value_c.replace(/\/$/, "") : this.getFrontendUrl();
     console.warn(`[SSLCommerz] Payment failed callback for tran_id: ${tran_id}, reason: ${failedreason}`);
 
     const order = await prisma.order.findFirst({
       where: {
         OR: [
-          ...(tran_id ? [{ transactionId: tran_id }] : []),
+          ...(value_b ? [{ id: value_b }] : []),
           ...(value_a ? [{ orderNumber: value_a }] : []),
+          ...(tran_id ? [{ transactionId: tran_id }] : []),
         ],
       },
     });
@@ -318,12 +325,12 @@ export class SSLCommerzService {
         data: { paymentStatus: PaymentStatus.FAILED },
       });
       return {
-        redirectUrl: `${this.getFrontendUrl()}/checkout?error=payment_failed&orderNumber=${order.orderNumber}`,
+        redirectUrl: `${frontendBase}/checkout?error=payment_failed&orderNumber=${order.orderNumber}`,
       };
     }
 
     return {
-      redirectUrl: `${this.getFrontendUrl()}/checkout?error=payment_failed`,
+      redirectUrl: `${frontendBase}/checkout?error=payment_failed`,
     };
   }
 
@@ -331,20 +338,22 @@ export class SSLCommerzService {
    * Handles payment cancel callback
    */
   static async handleCancel(body: any): Promise<{ redirectUrl: string }> {
-    const { tran_id, value_a } = body;
+    const { tran_id, value_a, value_b, value_c } = body;
+    const frontendBase = (value_c && typeof value_c === "string" && value_c.startsWith("http")) ? value_c.replace(/\/$/, "") : this.getFrontendUrl();
     console.warn(`[SSLCommerz] Payment cancelled by customer for tran_id: ${tran_id}`);
 
     const order = await prisma.order.findFirst({
       where: {
         OR: [
-          ...(tran_id ? [{ transactionId: tran_id }] : []),
+          ...(value_b ? [{ id: value_b }] : []),
           ...(value_a ? [{ orderNumber: value_a }] : []),
+          ...(tran_id ? [{ transactionId: tran_id }] : []),
         ],
       },
     });
 
     return {
-      redirectUrl: `${this.getFrontendUrl()}/checkout?error=payment_cancelled${order ? `&orderNumber=${order.orderNumber}` : ""}`,
+      redirectUrl: `${frontendBase}/checkout?error=payment_cancelled${order ? `&orderNumber=${order.orderNumber}` : ""}`,
     };
   }
 
