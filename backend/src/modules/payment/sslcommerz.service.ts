@@ -3,6 +3,23 @@ import { ENV } from "../../config/env";
 import { OrderStatus, PaymentStatus, PaymentMethod, VerificationStatus } from "@prisma/client";
 
 export class SSLCommerzService {
+  public static getFrontendUrl(): string {
+    const envUrl = process.env.FRONTEND_URL;
+    if (envUrl && !envUrl.includes("localhost")) {
+      return envUrl.replace(/\/$/, "");
+    }
+    return "https://shoilpikkabbo.vercel.app";
+  }
+
+  public static getBackendUrl(): string {
+    const envUrl = process.env.BACKEND_BASE_URL;
+    if (envUrl && !envUrl.includes("localhost")) {
+      return envUrl.replace(/\/$/, "");
+    }
+    return "https://shoilpikkabbo.onrender.com";
+  }
+
+
   /**
    * Retrieves active SSLCommerz credentials from database SiteSettings,
    * falling back to process.env if not explicitly set in dashboard.
@@ -102,11 +119,12 @@ export class SSLCommerzService {
       params.append("currency", "BDT");
       params.append("tran_id", tranId);
 
-      // Backend callback endpoints
-      params.append("success_url", `${ENV.BACKEND_BASE_URL}/api/v1/payments/sslcommerz/success`);
-      params.append("fail_url", `${ENV.BACKEND_BASE_URL}/api/v1/payments/sslcommerz/fail`);
-      params.append("cancel_url", `${ENV.BACKEND_BASE_URL}/api/v1/payments/sslcommerz/cancel`);
-      params.append("ipn_url", `${ENV.BACKEND_BASE_URL}/api/v1/payments/sslcommerz/ipn`);
+      // Backend callback endpoints (Guaranteed production HTTPS domains)
+      const backendBase = this.getBackendUrl();
+      params.append("success_url", `${backendBase}/api/v1/payments/sslcommerz/success`);
+      params.append("fail_url", `${backendBase}/api/v1/payments/sslcommerz/fail`);
+      params.append("cancel_url", `${backendBase}/api/v1/payments/sslcommerz/cancel`);
+      params.append("ipn_url", `${backendBase}/api/v1/payments/sslcommerz/ipn`);
 
       // Order & Product metadata
       params.append("shipping_method", "Courier");
@@ -219,7 +237,7 @@ export class SSLCommerzService {
     if (!order) {
       console.error(`[SSLCommerz] Order not found for tran_id: ${tran_id}, value_a: ${value_a}`);
       return {
-        redirectUrl: `${ENV.FRONTEND_URL}/checkout?error=order_not_found`,
+        redirectUrl: `${this.getFrontendUrl()}/checkout?error=order_not_found`,
       };
     }
 
@@ -261,7 +279,7 @@ export class SSLCommerzService {
 
       console.log(`[SSLCommerz] Order #${order.orderNumber} successfully marked as PAID.`);
       return {
-        redirectUrl: `${ENV.FRONTEND_URL}/checkout/success?orderNumber=${order.orderNumber}&paymentStatus=PAID&method=SSLCOMMERZ&tranId=${tran_id || ""}`,
+        redirectUrl: `${this.getFrontendUrl()}/checkout/success?orderNumber=${order.orderNumber}&paymentStatus=PAID&method=SSLCOMMERZ&tranId=${tran_id || ""}`,
       };
     } else {
       // If validation failed
@@ -273,7 +291,7 @@ export class SSLCommerzService {
       });
 
       return {
-        redirectUrl: `${ENV.FRONTEND_URL}/checkout?error=validation_failed&orderNumber=${order.orderNumber}`,
+        redirectUrl: `${this.getFrontendUrl()}/checkout?error=validation_failed&orderNumber=${order.orderNumber}`,
       };
     }
   }
@@ -300,12 +318,12 @@ export class SSLCommerzService {
         data: { paymentStatus: PaymentStatus.FAILED },
       });
       return {
-        redirectUrl: `${ENV.FRONTEND_URL}/checkout?error=payment_failed&orderNumber=${order.orderNumber}`,
+        redirectUrl: `${this.getFrontendUrl()}/checkout?error=payment_failed&orderNumber=${order.orderNumber}`,
       };
     }
 
     return {
-      redirectUrl: `${ENV.FRONTEND_URL}/checkout?error=payment_failed`,
+      redirectUrl: `${this.getFrontendUrl()}/checkout?error=payment_failed`,
     };
   }
 
@@ -326,7 +344,7 @@ export class SSLCommerzService {
     });
 
     return {
-      redirectUrl: `${ENV.FRONTEND_URL}/checkout?error=payment_cancelled${order ? `&orderNumber=${order.orderNumber}` : ""}`,
+      redirectUrl: `${this.getFrontendUrl()}/checkout?error=payment_cancelled${order ? `&orderNumber=${order.orderNumber}` : ""}`,
     };
   }
 

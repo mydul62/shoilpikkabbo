@@ -119,7 +119,7 @@ export class PaymentController {
   static async sslcommerzSuccess(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await SSLCommerzService.handleSuccess(req.body);
-      return res.redirect(result.redirectUrl);
+      return res.redirect(303, result.redirectUrl);
     } catch (err) {
       return next(err);
     }
@@ -128,7 +128,7 @@ export class PaymentController {
   static async sslcommerzFail(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await SSLCommerzService.handleFail(req.body);
-      return res.redirect(result.redirectUrl);
+      return res.redirect(303, result.redirectUrl);
     } catch (err) {
       return next(err);
     }
@@ -137,7 +137,7 @@ export class PaymentController {
   static async sslcommerzCancel(req: Request, res: Response, next: NextFunction) {
     try {
       const result = await SSLCommerzService.handleCancel(req.body);
-      return res.redirect(result.redirectUrl);
+      return res.redirect(303, result.redirectUrl);
     } catch (err) {
       return next(err);
     }
