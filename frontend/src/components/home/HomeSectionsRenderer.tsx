@@ -950,7 +950,27 @@ export function HomeSectionsRenderer({
   const renderFeaturedProducts = (section: HomeSectionData) => {
     const p = section.props || {};
     const limit = Number(p.limit) || 12;
-    const items = products.slice(0, Math.max(limit, 10));
+    const targetCategorySlug = (p.categorySlug || "").toLowerCase().trim();
+
+    // If categorySlug is selected, filter products by that category
+    let items = products;
+    if (targetCategorySlug) {
+      const filtered = products.filter((prod: any) => {
+        const prodSlug = (prod.category?.slug || prod.categorySlug || "").toLowerCase();
+        const prodName = (prod.category?.name || prod.categoryName || "").toLowerCase();
+        return (
+          prodSlug === targetCategorySlug ||
+          prodSlug.includes(targetCategorySlug) ||
+          targetCategorySlug.includes(prodSlug) ||
+          prodName.includes(targetCategorySlug)
+        );
+      });
+      if (filtered.length > 0) {
+        items = filtered;
+      }
+    }
+
+    const displayItems = items.slice(0, Math.max(limit, 10));
 
     return (
       <AutoScrollProductSection
@@ -959,8 +979,8 @@ export function HomeSectionsRenderer({
         headline={p.headline || "Featured Products"}
         subtitle={p.subtitle || "Best selling and most popular products"}
         ctaText={p.ctaText || "View All"}
-        ctaLink={p.ctaLink || "/shop"}
-        items={items}
+        ctaLink={p.ctaLink || (targetCategorySlug ? `/shop?category=${encodeURIComponent(targetCategorySlug)}` : "/shop")}
+        items={displayItems}
         isEditorMode={isEditorMode}
         addedProductId={addedProductId}
         onQuickAdd={onQuickAdd}

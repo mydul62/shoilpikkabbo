@@ -64,6 +64,19 @@ const AVAILABLE_PAGES: PageConfig[] = [
   { slug: "contact", title: "Contact Us", banglaTitle: "যোগাযোগ", icon: PhoneCall, path: "/contact" },
 ];
 
+const DEFAULT_CATEGORIES = [
+  { slug: "handicraft", name: "Handicrafts (হস্তশিল্প)" },
+  { slug: "jute-items", name: "Jute Items (পাটজাত পণ্য)" },
+  { slug: "polymer", name: "Polymer (পলিমার পণ্য)" },
+  { slug: "baby-items", name: "Baby Items (শিশুদের পণ্য)" },
+  { slug: "corporate-gift-items", name: "Corporate Gift Items (কর্পোরেট গিফট)" },
+  { slug: "rudiment-garments", name: "Rudiment Garments (গার্মেন্টস)" },
+  { slug: "industrial-solutions", name: "Industrial Solutions (শিল্প সমাধান)" },
+  { slug: "health-and-beauty", name: "Health and Beauty (স্বাস্থ্য ও রূপচর্চা)" },
+  { slug: "agriculture", name: "Agriculture (কৃষি ও মধু)" },
+  { slug: "e-sheba", name: "Special E-Sheba & Services (ই-সেবা)" },
+];
+
 export default function AdminVisualPageEditor() {
   const [selectedPageSlug, setSelectedPageSlug] = React.useState<string>("home");
   const [sections, setSections] = React.useState<HomeSectionData[]>([]);
@@ -91,6 +104,7 @@ export default function AdminVisualPageEditor() {
   // Live products & categories for live canvas simulation
   const [liveProducts, setLiveProducts] = React.useState<any[]>([]);
   const [liveCategories, setLiveCategories] = React.useState<any[]>([]);
+  const activeCategoriesList = liveCategories.length > 0 ? liveCategories : DEFAULT_CATEGORIES;
 
   // Fetch live store items once
   React.useEffect(() => {
@@ -1097,55 +1111,68 @@ export default function AdminVisualPageEditor() {
                       </div>
 
                       {/* Category Selector Dropdown for Category Showcase */}
-                      {("categorySlug" in selectedSection.props || selectedSection.type === "category_showcase") && (
-                        <div className="space-y-2 p-3 rounded-xl bg-emerald-50/80 border border-emerald-200">
-                          <label className="font-bold text-[#0D3B37] flex items-center justify-between">
-                            <span>প্রদর্শিত ক্যাটাগরি (Select Category) *</span>
-                            <span className="text-[10px] text-emerald-800 font-bold bg-emerald-100 px-1.5 py-0.5 rounded">
-                              Auto-Filtered
+                      {(
+                        selectedSection.type?.toLowerCase().includes("featured") ||
+                        selectedSection.type?.toLowerCase().includes("category") ||
+                        selectedSection.type?.toLowerCase().includes("product") ||
+                        "categorySlug" in selectedSection.props ||
+                        "limit" in selectedSection.props
+                      ) && (
+                        <div className="space-y-2 p-3.5 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50/70 border-2 border-emerald-300 shadow-xs">
+                          <label className="font-bold text-[#0D3B37] flex items-center justify-between text-xs sm:text-sm">
+                            <span className="flex items-center gap-1.5">
+                              <Sparkles className="w-4 h-4 text-[#E0592A]" />
+                              <span>প্রদর্শিত ক্যাটাগরি (Select Category)</span>
+                            </span>
+                            <span className="text-[10px] text-emerald-900 font-bold bg-emerald-200/80 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                              1-Click Filter
                             </span>
                           </label>
                           <select
-                            value={selectedSection.props.categorySlug || "handicraft"}
+                            value={selectedSection.props.categorySlug || ""}
                             onChange={(e) => {
                               const slug = e.target.value;
-                              const matched = liveCategories.find((c) => c.slug === slug);
+                              const matched = activeCategoriesList.find((c: any) => c.slug === slug);
                               const updatedProps: Record<string, any> = {
                                 ...selectedSection.props,
                                 categorySlug: slug,
-                                ctaLink: `/shop?category=${slug}`,
+                                ctaLink: slug ? `/shop?category=${slug}` : "/shop",
                               };
                               if (matched) {
-                                updatedProps.headline = `${matched.name} কালেকশন`;
-                                updatedProps.subtitle = matched.description || `${matched.name} এর সেরা ও আকর্ষণীয় হস্তশিল্প সম্ভার`;
+                                const cleanName = matched.name.split("(")[0].trim();
+                                updatedProps.headline = `${cleanName} কালেকশন`;
+                                updatedProps.subtitle = matched.description || `${cleanName} এর সেরা ও আকর্ষণীয় পণ্য সম্ভার`;
+                              } else if (!slug) {
+                                updatedProps.headline = "Featured Products";
+                                updatedProps.subtitle = "Best selling and most popular products";
                               }
                               const updated = sections.map((s) =>
                                 s.id === selectedSectionId
                                   ? {
                                       ...s,
-                                      name: `${matched ? matched.name : slug} শোকেস স্লাইডার`,
+                                      name: matched ? `${matched.name.split("(")[0].trim()} শোকেস স্লাইডার` : s.name,
                                       props: updatedProps,
                                     }
                                   : s
                               );
                               updateSections(updated);
                             }}
-                            className="w-full h-9 px-3 bg-white border border-emerald-300 rounded-lg text-xs font-semibold text-[#0D3B37] focus:outline-none focus:ring-2 focus:ring-[#0D3B37]/20 cursor-pointer"
+                            className="w-full h-10 px-3 bg-white border-2 border-emerald-400 focus:border-[#0D3B37] rounded-lg text-xs sm:text-sm font-bold text-[#0D3B37] focus:outline-none focus:ring-2 focus:ring-emerald-200 cursor-pointer shadow-2xs"
                           >
-                            <option value="">ক্যাটাগরি নির্বাচন করুন...</option>
-                            {liveCategories.map((cat) => (
+                            <option value="">সকল পণ্য (All Featured Products - ডিফল্ট)</option>
+                            {activeCategoriesList.map((cat: any) => (
                               <option key={cat.id || cat.slug} value={cat.slug}>
                                 {cat.name} ({cat.slug})
                               </option>
                             ))}
                           </select>
-                          <p className="text-[11px] text-emerald-800 font-normal leading-tight">
-                            ✓ যে ক্যাটাগরি বেছে নেবেন, হোমপেজে স্বয়ংক্রিয়ভাবে সেই ক্যাটাগরির প্রোডাক্টগুলো ফিল্টার হয়ে ৫টি করে অটো-স্ক্রল হবে।
+                          <p className="text-[11px] text-emerald-900 font-medium leading-relaxed">
+                            💡 <strong>টিপস:</strong> আপনি এখান থেকে যেকোনো ক্যাটাগরি (যেমন: <em>Handicrafts</em>) বেছে নিলে হোমপেজে স্বয়ংক্রিয়ভাবে ওই ক্যাটাগরির প্রোডাক্ট ৫টি করে স্ক্রল করবে। আর &quot;সকল পণ্য&quot; রাখলে সব জনপ্রিয় পণ্য দেখাবে।
                           </p>
                         </div>
                       )}
 
-                      {/* Overline / Pill / Badge */}
+                                            {/* Overline / Pill / Badge */}
                       {"pill" in selectedSection.props && (
                         <div className="space-y-1">
                           <label className="font-bold text-charcoal-800">
