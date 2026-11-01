@@ -76,3 +76,12 @@ app.use((req: Request, res: Response) => {
 
 // Centralized Error Handler
 app.use(errorHandler);
+
+export default app;
+
+// Support Vercel Serverless Functions and CommonJS module loaders
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = app;
+  module.exports.default = app;
+  module.exports.app = app;
+}
