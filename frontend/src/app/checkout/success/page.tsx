@@ -24,7 +24,7 @@ function CheckoutSuccessContent() {
     clearCart();
 
     if (orderNumber) {
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://shoilpikkabbo.onrender.com/api/v1";
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://shoilpikkabbo-backend.vercel.app/api/v1";
       fetch(`${API_BASE}/orders/track/${encodeURIComponent(orderNumber)}`)
         .then((res) => res.json())
         .then((data) => {

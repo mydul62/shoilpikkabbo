@@ -407,7 +407,7 @@ function CheckoutContent() {
     let orderNum = `SK-${Date.now().toString().slice(-6)}`;
     const now = new Date();
     const placedDate = `${now.getDate()} ${now.toLocaleString("default", { month: "long" })} ${now.getFullYear()}`;
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://shoilpikkabbo.onrender.com/api/v1";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://shoilpikkabbo-backend.vercel.app/api/v1";
 
     try {
       // First try to fetch real product IDs from database

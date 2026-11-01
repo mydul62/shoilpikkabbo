@@ -1,8 +1,8 @@
 export const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "https://shoilpikkabbo.onrender.com";
+  process.env.NEXT_PUBLIC_BACKEND_URL || "https://shoilpikkabbo-backend.vercel.app";
 
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "https://shoilpikkabbo.onrender.com/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "https://shoilpikkabbo-backend.vercel.app/api/v1";
 
 interface FetchOptions extends RequestInit {
   token?: string;

@@ -143,7 +143,7 @@ export default function AdminPaymentSetupPage() {
   const backendBaseUrl =
     typeof window !== "undefined" && window.location.hostname === "localhost"
       ? "http://localhost:5000"
-      : "https://shoilpikkabbo.onrender.com";
+      : (process.env.NEXT_PUBLIC_BACKEND_URL || "https://shoilpikkabbo-backend.vercel.app");
 
   return (
     <AdminLayoutShell>

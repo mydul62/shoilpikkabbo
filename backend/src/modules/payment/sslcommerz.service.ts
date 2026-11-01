@@ -16,7 +16,7 @@ export class SSLCommerzService {
     if (envUrl && !envUrl.includes("localhost")) {
       return envUrl.replace(/\/$/, "");
     }
-    return "https://shoilpikkabbo.onrender.com";
+    return "https://shoilpikkabbo-backend.vercel.app";
   }
 
 
