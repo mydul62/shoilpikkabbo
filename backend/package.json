@@ -5,7 +5,7 @@
   "main": "dist/src/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "prisma generate && tsc && node -e \"const fs = require('fs'); if (fs.existsSync('dist/src/server.js') && !fs.existsSync('dist/server.js')) fs.writeFileSync('dist/server.js', \\\"require('./src/server.js');\\\");\"",
+    "build": "prisma generate && node -e \"if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost')) { try { console.log('Syncing database schema with Prisma...'); require('child_process').execSync('npx prisma db push --skip-generate', { stdio: 'inherit' }); try { console.log('Checking and seeding initial data if needed...'); require('child_process').execSync('npx tsx prisma/seed.ts', { stdio: 'inherit' }); } catch(se) { console.warn('Seed notice:', se.message); } } catch(e) { console.warn('Prisma bootstrap notice:', e.message); } }\" && tsc && node -e \"const fs = require('fs'); if (fs.existsSync('dist/src/server.js') && !fs.existsSync('dist/server.js')) fs.writeFileSync('dist/server.js', \\\"require('./src/server.js');\\\");\"",
     "start": "node -e \"const { execSync } = require('child_process'); if (process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost')) { try { console.log('Syncing database schema with Prisma...'); execSync('npx prisma db push --skip-generate', { stdio: 'inherit' }); } catch(e) { console.warn('Prisma bootstrap notice:', e.message); } }\" && node dist/src/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
